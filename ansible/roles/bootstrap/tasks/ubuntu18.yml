@@ -18,10 +18,3 @@
         owner=root
         group=root
         mode=0644
-
-
-- name: ubuntu18 - apt installing basic tools
-  apt: name={{item}} state=latest update_cache=yes
-  with_items:
-    - nftables
-    - virtualenv

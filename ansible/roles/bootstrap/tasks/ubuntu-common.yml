@@ -91,6 +91,7 @@
     - hugepages
     - gddrescue
     - tcpreplay
+    - virtualenv
     - subnetcalc
     - traceroute
     - sysfsutils
