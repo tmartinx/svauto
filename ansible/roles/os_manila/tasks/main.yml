@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# References:
+# https://docs.openstack.org/manila/rocky
+
 - name: ubuntu - Including Manila Controller Node
   include: os_manila_ctrl.yml
   when: os_manila_ctrl == 'yes'

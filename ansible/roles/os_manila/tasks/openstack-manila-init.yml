@@ -12,6 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+- name: Creating OpenStack Manila User and Role
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack user create --domain default --password "{{ service_password }}" --email manila@{{ os_dns_domain }} manila
+  - openstack role add --project service --user manila --user-domain default admin
+
+
 - name: Creating OpenStack Manila Service
   environment: "{{ admin_openrc_env }}"
   command: "{{ item }}"
@@ -30,11 +39,3 @@
   - openstack endpoint create --region "{{ region }}" sharev2 public http://{{ os_public_addr }}:8786/v2/%\(tenant_id\)s
   - openstack endpoint create --region "{{ region }}" sharev2 internal http://{{ os_admin_addr }}:8786/v2/%\(tenant_id\)s
   - openstack endpoint create --region "{{ region }}" sharev2 admin http://{{ os_admin_addr }}:8786/v2/%\(tenant_id\)s
-
-
-- name: Creating OpenStack Manila User and Role
-  environment: "{{ admin_openrc_env }}"
-  command: "{{ item }}"
-  with_items:
-  - openstack user create --domain default --password "{{ service_password }}" --email manila@{{ os_dns_domain }} manila
-  - openstack role add --project service --user manila --user-domain default admin

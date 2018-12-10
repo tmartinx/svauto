@@ -13,9 +13,10 @@
 # limitations under the License.
 
 # Reference:
-# https://docs.openstack.org/manila/queens/install/install-share-ubuntu.html
+# NOTE: Following NHSS=False, for now (Option 1)
+# https://docs.openstack.org/manila/rocky/install/install-share-ubuntu.html
 
-- name: Installing Manila Share (NHSS=False, for now)
+- name: Installing Manila Share
   apt: name={{ item }} state=latest
   with_items:
     - lvm2
@@ -30,15 +31,20 @@
 
 
 - name: Updating manila.conf
-  template: src={{ os_release }}/manila.conf
-        dest=/etc/manila/manila.conf
-        owner=manila
-        group=manila
-        mode=0640
-        backup=yes
+  template: src={{ os_release }}/manila.conf.j2
+            dest=/etc/manila/manila.conf
+            owner=manila
+            group=manila
+            mode=0640
+            backup=yes
   when: item.os_project == "manila"
   with_items: '{{ mysql_databases }}'
   notify: restart-share
+
+
+- name: ubuntu - Creating LVM Volume Group on a loopback file / device
+  include: os_manila_loopback_lvm.yml
+  when: os_aio == 'yes' and deployment_mode == 'yes'
 
 
 - meta: flush_handlers

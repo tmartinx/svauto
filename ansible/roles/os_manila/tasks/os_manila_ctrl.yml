@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # Reference:
-# https://docs.openstack.org/manila/queens/install/install-controller-ubuntu.html
+# https://docs.openstack.org/manila/rocky/install/install-controller-ubuntu.html
 
 - name: Creating OpenStack MySQL databases
   mysql_db: name={{ item.db_name }} state=present
@@ -30,8 +30,8 @@
   with_items: '{{ mysql_databases }}'
 
 
-- include: openstack-manila-init.yml
-  when: deployment_mode == 'yes'
+#- include: openstack-manila-init.yml
+#  when: deployment_mode == 'yes'
 
 
 - name: Installing Manila
@@ -48,12 +48,12 @@
 
 
 - name: Updating manila.conf
-  template: src={{ os_release }}/manila.conf
-        dest=/etc/manila/manila.conf
-        owner=manila
-        group=manila
-        mode=0640
-        backup=yes
+  template: src={{ os_release }}/manila.conf.j2
+            dest=/etc/manila/manila.conf
+            owner=manila
+            group=manila
+            mode=0640
+            backup=yes
   when: item.os_project == "manila"
   with_items: '{{ mysql_databases }}'
   notify: restart-manila

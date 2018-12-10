@@ -17,3 +17,5 @@ mysql_databases:
 
 os_manila_ctrl: "no"
 os_manila_share: "no"
+
+bootstrap_host_loopback_manila_size: "10"
