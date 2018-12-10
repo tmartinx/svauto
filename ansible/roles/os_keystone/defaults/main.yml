@@ -1,0 +1,54 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+mysql_databases:
+  - { os_project: "keystone", db_name: "keystone", db_host: "%", db_user: "keystoneUser", db_pass: "keystonePass" }
+
+admin_token: "ADMIN_TOKEN"
+
+
+# 10 year expiration
+keystone_token_expiration: "315360000"
+
+
+# Note this is just a name and does not HAVE to match any ldap domain
+ldap_keystone_domain: "company.com"
+ldap_keystone_domain_description: "Company Domain"
+
+
+#
+# Optional OpenStack LDAP Definitions
+#
+
+# http://docs.openstack.org/admin-guide/keystone_integrate_identity_backend_ldap.html
+
+# Note: Assuming that every user should have their own project space you will
+#       need to create a project and user/project mappings for EVERY user.
+#       In the following example we have decided that every user will have
+#       a project with the same name as the user name mapped to them
+#      
+#       EG: User "jdoe".  
+#           openstack project create -domain company.com jdoe
+#           openstack role add --project jdoe --user jdoe --user-domain company.com user
+
+ldap_enabled: "no"
+ldap_url: "ldap://<ldap ip 1>,ldap://<ldap ip 2>"
+ldap_user: ""
+ldap_password: ""
+ldap_suffix: "dc=company,dc=com"
+ldap_query_scope: "sub"
+ldap_user_tree_dn: ""
+ldap_user_objectclass: ""
+ldap_user_name_attribute: ""

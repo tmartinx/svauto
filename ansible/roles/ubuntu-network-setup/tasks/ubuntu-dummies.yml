@@ -1,0 +1,160 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: ubuntu - config dummy module options
+  lineinfile: dest=/etc/modprobe.d/dummy.conf
+              line="options dummy numdummies=12"
+              create=yes
+
+- name: ubuntu - config dummy module
+  lineinfile: dest=/etc/modules
+              line="dummy"
+
+# BUG: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1774731
+- name: ubuntu - loading dummy module
+  shell: 'rmmod dummy ; modprobe dummy numdummies=12'
+
+# Need rmmod / modprobe again, after each reboot!!!   :-O
+# What is happening to Ubuntu?! I blame systemd...  LOL
+- name: ubuntu - copy dummies workaround for BUG LP#1774731
+  copy: src=ubuntu18/rc_local
+        dest=/etc/rc.local
+        owner=root
+        group=root
+        mode=0755
+
+
+- name: ubuntu - copy dummy0 config file for LBR
+  copy: src=ubuntu-common/interface_dummy0
+        dest=/etc/network/interfaces.d/dummy0.cfg
+        owner=root
+        group=root
+        mode=0644
+  when: os_neutron_lbr_enabled == 'yes'
+
+- name: ubuntu - copy dummy1 config file for LBR
+  copy: src=ubuntu-common/interface_dummy1
+        dest=/etc/network/interfaces.d/dummy1.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy2 config file
+  copy: src=ubuntu-common/interface_dummy2
+        dest=/etc/network/interfaces.d/dummy2.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy4 config file
+  copy: src=ubuntu-common/interface_dummy4
+        dest=/etc/network/interfaces.d/dummy4.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy5 config file
+  copy: src=ubuntu-common/interface_dummy5
+        dest=/etc/network/interfaces.d/dummy5.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy6 config file
+  copy: src=ubuntu-common/interface_dummy6
+        dest=/etc/network/interfaces.d/dummy6.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy7 config file
+  copy: src=ubuntu-common/interface_dummy7
+        dest=/etc/network/interfaces.d/dummy7.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy8 config file
+  copy: src=ubuntu-common/interface_dummy8
+        dest=/etc/network/interfaces.d/dummy8.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy9 config file
+  copy: src=ubuntu-common/interface_dummy9
+        dest=/etc/network/interfaces.d/dummy9.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy10 config file
+  copy: src=ubuntu-common/interface_dummy10
+        dest=/etc/network/interfaces.d/dummy10.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy11 config file
+  copy: src=ubuntu-common/interface_dummy11
+        dest=/etc/network/interfaces.d/dummy11.cfg
+        owner=root
+        group=root
+        mode=0644
+
+
+- name: ubuntu - restarting up dummy0
+  shell: 'ifdown dummy0 ; ifup dummy0'
+  when: os_neutron_lbr_enabled == 'yes'
+  ignore_errors: yes
+
+- name: ubuntu - restarting up dummy1
+  shell: 'ifdown dummy1 ; ifup dummy1'
+  ignore_errors: yes
+
+- name: ubuntu - restarting up dummy2
+  shell: 'ifdown dummy2 ; ifup dummy1'
+  ignore_errors: yes
+
+- name: ubuntu - restarting up dummy4
+  shell: 'ifdown dummy3 ; ifup dummy4'
+  ignore_errors: yes
+
+- name: ubuntu - restarting up dummy5
+  shell: 'ifdown dummy5 ; ifup dummy5'
+  ignore_errors: yes
+
+- name: ubuntu - restarting up dummy6
+  shell: 'ifdown dummy6 ; ifup dummy6'
+  ignore_errors: yes
+
+- name: ubuntu - restarting up dummy7
+  shell: 'ifdown dummy7 ; ifup dummy7'
+  ignore_errors: yes
+
+- name: ubuntu - restarting up dummy8
+  shell: 'ifdown dummy8 ; ifup dummy8'
+  ignore_errors: yes
+
+- name: ubuntu - restarting up dummy9
+  shell: 'ifdown dummy9 ; ifup dummy9'
+  ignore_errors: yes
+
+- name: ubuntu - restarting up dummy10
+  shell: 'ifdown dummy10 ; ifup dummy10'
+  ignore_errors: yes
+
+
+- name: ubuntu - re-read facts after configuring network interfaces
+  setup: filter=ansible_*

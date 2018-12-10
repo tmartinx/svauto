@@ -1,0 +1,76 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Reference:
+# https://docs.openstack.org/senlin/queens/install/install-source.html (not very usefull)
+
+- name: Creating OpenStack MySQL databases
+  mysql_db: name={{ item.db_name }} state=present
+  with_items: '{{ mysql_databases }}'
+
+
+- name: Creating OpenStack MySQL users
+  mysql_user:
+    host="{{ item.db_host }}"
+    name="{{ item.db_user }}"
+    password="{{ item.db_pass }}"
+    priv="{{ item.db_name }}.*:ALL,GRANT"
+    state=present
+  with_items: '{{ mysql_databases }}'
+
+
+- include: openstack-senlin-init.yml
+  when: deployment_mode == 'yes'
+
+
+- name: Installing Senlin
+  apt: name={{ item }} state=latest
+  with_items:
+    - senlin-api
+    - senlin-engine
+#    - python-senlin-dashboard
+  notify: restart-senlin
+
+
+- name: Updating senlin.conf
+  template: src={{ os_release }}/senlin.conf
+        dest=/etc/senlin/senlin.conf
+        owner=senlin
+        group=senlin
+        mode=0640
+        backup=yes
+  when: item.os_project == "senlin"
+  with_items: '{{ mysql_databases }}'
+  notify: restart-senlin
+
+
+- name: Populating Senlin Database
+  shell: su -s /bin/sh -c "senlin-manage db_sync" senlin
+
+
+#- name: Activating Senlin Dashboard on Horizon
+#  file: src=/usr/lib/python2.7/dist-packages/senlin_dashboard/enabled/_50_senlin.py
+#        dest=/usr/share/openstack-dashboard/openstack_dashboard/local/enabled/_50_senlin.py
+#        owner=root
+#        group=root
+#        state=link
+#  notify: restart-apache2
+
+
+#- name: Running manage.py collectstatic and compress to update Horizon
+#  shell: cd /usr/share/openstack-dashboard ; python manage.py collectstatic --noinput ; python manage.py compress
+#  notify: restart-apache2
+
+
+- meta: flush_handlers

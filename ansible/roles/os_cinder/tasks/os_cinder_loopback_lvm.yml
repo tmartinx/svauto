@@ -1,0 +1,50 @@
+---
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Reference:
+# https://github.com/openstack/openstack-ansible/blob/master/tests/roles/bootstrap-host/tasks/prepare_loopback_cinder.yml
+
+- name: Create sparse Cinder file
+  command: "truncate -s {{ bootstrap_host_loopback_cinder_size }}G /var/lib/cinder/cinderloop.img"
+  args:
+    creates: /var/lib/cinder/cinderloop.img
+  register: cinder_create
+
+
+- name: Create the loopback device
+  shell: "/sbin/losetup $(/sbin/losetup -f) /var/lib/cinder/cinderloop.img"
+
+
+- name: Get loopback device
+  shell: "losetup -l | awk '/cinderloop.img/ {print $1}'"
+  changed_when: false
+  register: cinder_losetup
+
+
+- name: Make LVM physical volume on the cinder device
+  shell: "pvcreate {{ cinder_losetup.stdout }} && touch /var/lib/cinder/cinder.pvcreate"
+  args:
+    creates: "/var/lib/cinder/cinder.pvcreate"
+
+
+- name: Run pvscan
+  command: "pvscan"
+  changed_when: false
+
+
+- name: Add cinder-volumes volume group
+  lvg:
+    vg: cinder-volumes
+    pvs: "{{ cinder_losetup.stdout }}"

@@ -1,0 +1,6 @@
+interface=dummybr2
+dhcp-range=dummybr2,192.168.192.2,192.168.192.126
+domain=ctrl.tcmc.rocks,192.168.192.0/25
+dhcp-host={{ stack_1_nfv_1_ctrl_mac }},stack-1-nfv-1
+dhcp-host={{ stack_1_eng_1_ctrl_mac }},stack-1-eng-1
+dhcp-host={{ stack_1_dba_1_ctrl_mac }},stack-1-dba-1

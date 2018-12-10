@@ -1,0 +1,8 @@
+DEVICE="eth0"
+BOOTPROTO="dhcp"
+IPV6INIT="yes"
+NM_CONTROLLED="no"
+ONBOOT="yes"
+TYPE="Ethernet"
+PEERDNS="yes"
+PERSISTENT_DHCLIENT="1"

@@ -1,0 +1,5 @@
+# Fake Provider Network NIC
+allow-hotplug dummy11
+iface dummy11 inet manual
+        up ip link set dev $IFACE up
+        down ip link set dev $IFACE down

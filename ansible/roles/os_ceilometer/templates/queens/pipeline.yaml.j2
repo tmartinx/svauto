@@ -1,0 +1,5 @@
+publishers:
+    # set address of Gnocchi
+    # + filter out Gnocchi-related activity meters (Swift driver)
+    # + set default archive policy
+    - gnocchi://?filter_project=service&archive_policy=low

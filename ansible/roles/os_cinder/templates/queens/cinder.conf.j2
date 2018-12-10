@@ -1,0 +1,70 @@
+[DEFAULT]
+
+#verbose = True
+
+my_ip = {{ hostvars[inventory_hostname]['ansible_'+os_mgmt]['ipv4']['address'] }}
+
+osapi_volume_listen = ::
+osapi_volume_workers = 4
+
+rootwrap_config = /etc/cinder/rootwrap.conf
+api_paste_confg = /etc/cinder/api-paste.ini
+state_path = /var/lib/cinder
+
+volume_name_template = volume-%s
+volume_group = cinder-volumes
+
+auth_strategy = keystone
+
+transport_url = rabbit://{{ rabbit_userid }}:{{ rabbit_password }}@{{ os_admin_addr }}
+
+
+{% if os_cinder_vol == 'yes' %}
+enabled_backends = lvm
+
+glance_api_servers = {{ endpoint_public_uri }}{{ image_endpoint_public }}:9292
+{% endif %}
+
+
+{% if os_cinder_backup == 'yes' %}
+backup_driver = cinder.backup.drivers.swift
+backup_swift_url = SWIFT_URL # TODO: Install Swift before
+{% endif %}
+
+
+[oslo_concurrency]
+
+lock_path = /var/lock/cinder
+
+
+[database]
+
+connection = mysql+pymysql://{{ item.db_user }}:{{ item.db_pass }}@{{ os_admin_addr }}/{{ item.db_name }}
+
+
+[keystone_authtoken]
+
+auth_uri = {{ endpoint_public_uri }}{{ identity_endpoint_public }}:5000
+auth_url = {{ endpoint_internal_uri }}{{ identity_endpoint_internal }}:5000
+
+memcached_servers = {{ os_admin_addr }}:11211
+
+auth_type = password
+
+project_domain_name = default
+user_domain_name = default
+
+project_name = service
+
+username = cinder
+password = {{ service_password }}
+
+
+{% if os_cinder_vol == 'yes' %}
+[lvm]
+
+volume_driver = cinder.volume.drivers.lvm.LVMVolumeDriver
+volume_group = cinder-volumes
+iscsi_protocol = iscsi
+iscsi_helper = tgtadm
+{% endif %}

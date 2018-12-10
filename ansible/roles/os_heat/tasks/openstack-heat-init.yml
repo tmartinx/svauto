@@ -1,0 +1,51 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Creating OpenStack Heat Users, Domain and Roles
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack user create --domain default --password "{{ service_password }}" --email "heat@{{ os_dns_domain }}" heat
+  - openstack role add --project service --user heat --user-domain default admin
+
+- name: Creating additional information in the Identity service to manage stacks
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack domain create --description "Stack projects and users" heat
+  - openstack user create --domain heat --password "{{ service_password }}" heat_domain_admin
+  - openstack role add --domain heat --user heat_domain_admin --user-domain heat admin
+  - openstack role create heat_stack_owner
+  - openstack role add --project demo --user demo --user-domain default heat_stack_owner
+  - openstack role create heat_stack_user
+
+
+- name: Creating OpenStack Heat Services
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack service create --name heat --description "Orchestration" orchestration
+  - openstack service create --name heat-cfn --description "Orchestration"  cloudformation
+
+
+- name: Creating OpenStack Heat Endpoint
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack endpoint create --region "{{ region }}" orchestration public "{{ endpoint_public_uri }}{{ orchestration_endpoint_public }}:8004/v1/%(tenant_id)s"
+  - openstack endpoint create --region "{{ region }}" orchestration internal "{{ endpoint_internal_uri }}{{ orchestration_endpoint_internal }}:8004/v1/%(tenant_id)s"
+  - openstack endpoint create --region "{{ region }}" orchestration admin "{{ endpoint_internal_uri }}{{ orchestration_endpoint_internal }}:8004/v1/%(tenant_id)s"
+  - openstack endpoint create --region "{{ region }}" cloudformation public "{{ endpoint_public_uri }}{{ cloudformation_endpoint_public }}:8000/v1"
+  - openstack endpoint create --region "{{ region }}" cloudformation internal "{{ endpoint_internal_uri }}{{ cloudformation_endpoint_internal }}:8000/v1"
+  - openstack endpoint create --region "{{ region }}" cloudformation admin "{{ endpoint_internal_uri }}{{ cloudformation_endpoint_internal }}:8000/v1"

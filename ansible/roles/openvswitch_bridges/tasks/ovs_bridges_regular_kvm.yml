@@ -1,0 +1,86 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Creating Open vSwitch Bridge - dummybr2
+  openvswitch_bridge: bridge=dummybr2 state=present
+
+- name: Configuring Open vSwitch Bridge Port - dummybr2
+  openvswitch_port: bridge=dummybr2 port=dummy8 state=present
+
+
+- name: Creating Open vSwitch Bridge - dummybr3
+  openvswitch_bridge: bridge=dummybr3 state=present
+
+- name: Configuring Open vSwitch Bridge Port - dummybr3
+  openvswitch_port: bridge=dummybr3 port=dummy9 state=present
+
+
+- name: Creating Open vSwitch Bridge - dummybr4
+  openvswitch_bridge: bridge=dummybr4 state=present
+
+- name: Configuring Open vSwitch Bridge Port - dummybr4
+  openvswitch_port: bridge=dummybr4 port=dummy10 state=present
+
+
+- name: Creating Open vSwitch Bridge - dummybr5
+  openvswitch_bridge: bridge=dummybr5 state=present
+
+- name: Configuring Open vSwitch Bridge Port - dummybr5
+  openvswitch_port: bridge=dummybr5 port=dummy11 state=present
+
+
+- name: ubuntu - copy dummybr2 config file for OVS interface
+  copy: src=ubuntu-common/interface_dummybr2
+        dest=/etc/network/interfaces.d/dummybr2.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummybr3 config file for OVS interface
+  copy: src=ubuntu-common/interface_dummybr3
+        dest=/etc/network/interfaces.d/dummybr3.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummybr4 config file for OVS interface
+  copy: src=ubuntu-common/interface_dummybr4
+        dest=/etc/network/interfaces.d/dummybr4.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummybr5 config file for OVS interface
+  copy: src=ubuntu-common/interface_dummybr5
+        dest=/etc/network/interfaces.d/dummybr5.cfg
+        owner=root
+        group=root
+        mode=0644
+
+
+- name: Restarting dummybr2 Interface
+  shell: 'ifdown dummybr2 ; ifup dummybr2'
+  ignore_errors: yes
+
+- name: Restarting dummybr3 Interface
+  shell: 'ifdown dummybr3 ; ifup dummybr3'
+  ignore_errors: yes
+
+- name: Restarting dummybr4 Interface
+  shell: 'ifdown dummybr4 ; ifup dummybr4'
+  ignore_errors: yes
+
+- name: Restarting dummybr5 Interface
+  shell: 'ifdown dummybr5 ; ifup dummybr5'
+  ignore_errors: yes

@@ -1,0 +1,5 @@
+[DEFAULT]
+nova_metadata_host = {{ os_admin_addr }}
+metadata_proxy_shared_secret = {{ metadata_secret }}
+[agent]
+[cache]

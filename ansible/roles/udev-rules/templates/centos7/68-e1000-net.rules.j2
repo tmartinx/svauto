@@ -1,0 +1,2 @@
+SUBSYSTEM=="net", ACTION=="add", KERNELS=="{{ eth0_pci_id }}" DRIVERS=="e1000", ATTR{type}=="1", NAME="eth0"
+SUBSYSTEM=="net", ACTION=="add", KERNELS=="{{ eth1_pci_id }}" DRIVERS=="e1000", ATTR{type}=="1", NAME="eth1"

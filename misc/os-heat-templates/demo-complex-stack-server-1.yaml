@@ -1,0 +1,135 @@
+heat_template_version: 2016-04-08
+
+description: >
+
+  HOT template to create standard setup, that contains Neutron Port definitions, Floating IP and Security Groups.
+
+
+  We have 1 Instance:
+
+
+  * Ubuntu as a server
+
+
+  We want to wire them as:
+
+    --|ctrl_subnet|---- Control Network (with Internet access via router_0_i0)
+    |
+   ---
+   | |
+   |U|
+   |B|
+   |U|
+   |N|
+   |T|
+   |U|
+   | |
+   ---
+
+parameters:
+  ssh_key:
+    type: string
+    label: "Your SSH keypair name (pre-create please!)"
+    description: |
+        If you have not created your key, please go to
+        Project/Compute/Access & Security, and either import
+        one or create one. If you create it, make sure you keep
+        the downloaded file (as you don't get a second chance)
+    default: default
+
+  public_network:
+    type: string
+    label: Public External Network
+    description: Public Network with Floating IP addresses
+    default: "ext-net"
+
+  demosrv_image:
+    type: string
+    label: "Ubuntu Server - 64-bit"
+    description: "Ubuntu - Xenial Xerus - LTS"
+    default: "ubuntu-16.04-amd64"
+
+resources:
+
+  # Network
+  ctrl_net:
+    type: OS::Neutron::Net
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-control' } }
+
+  ctrl_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-control' } }
+      dns_nameservers: [8.8.8.8, 8.8.4.4]
+      network: { get_resource: ctrl_net }
+      enable_dhcp: True
+      cidr: 192.168.192.0/25
+
+  # Neutron L3 Router and its ports
+  router_0:
+    type: OS::Neutron::Router
+    properties:
+      admin_state_up: True
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-router-0' } }
+      external_gateway_info:
+        network: { get_param: public_network }
+
+  router_0_i0:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router: { get_resource: router_0 }
+      subnet: { get_resource: ctrl_subnet }
+
+  # Security Group
+  basic_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-basic-rules' } }
+      rules:
+        - protocol: icmp
+        - protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+
+  # Neutron Port
+  demosrv_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ["-", [{ get_param: "OS::stack_name" } , "demosrv-port"]] }
+      network: { get_resource: ctrl_net }
+      security_groups:
+        - { get_resource: basic_security_group }
+
+  # Floating IP assiciated with a Neutron Port
+  floating_ip_1:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: demosrv_ctrl_port }
+
+  # Instances / Virtual Machines
+  demosrv:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-demosrv' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'demosrv_image' }
+      flavor: "m1.small"
+      networks:
+        - port: { get_resource: demosrv_ctrl_port }
+      user_data_format: RAW
+      user_data: |
+        #cloud-config
+        system_info:
+          default_user:
+            name: "tcmc"
+        chpasswd:
+          list: |
+            root:tcmc
+            tcmc:tcmc
+          expire: False
+        runcmd:
+        - 'su -c "\curl -s https://raw.githubusercontent.com/tmartinx/svauto/dev/scripts/svauto-deployments.sh | bash -s -- --base-os=ubuntu16 --ansible-remote-user=root --ansible-inventory-builder=all,localhost,ansible_connection=local,openstack_release=queens,ubuntu_install=server --ansible-playbook-builder=localhost,bootstrap\;base_os_upgrade=yes,grub-conf,post-cleanup" tcmc'
+
+outputs:

@@ -1,0 +1,57 @@
+{
+  "builders":
+  [
+    {
+      "type": "qemu",
+      "iso_urls": [
+        "/srv/ISO/CentOS-7-x86_64-Minimal-1810.iso",
+        "http://mirror.its.sfu.ca/mirror/CentOS/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso"
+      ],
+      "iso_checksum": "38d5d51d9d100fd73df031ffd6bd8b1297ce24660dc8c13a3b8b4534a4bd291c",
+      "iso_checksum_type": "sha256",
+      "output_directory": "",
+      "vm_name": "",
+      "ssh_wait_timeout": "30s",
+      "shutdown_command": "shutdown -P now",
+      "qemuargs": [
+        ["-m","4096M"],
+        [ "-smp", "2,sockets=2,cores=1,threads=1" ]
+      ],
+      "disk_size": 8192,
+      "format": "raw",
+      "headless": true,
+      "accelerator": "kvm",
+      "http_directory": "packer/http",
+      "http_port_min": 10082,
+      "http_port_max": 10089,
+      "ssh_host_port_min": 2222,
+      "ssh_host_port_max": 2229,
+      "ssh_username": "root",
+      "ssh_password": "tcmc",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "90m",
+      "net_device": "virtio-net",
+      "disk_interface": "virtio",
+      "boot_wait": "5s",
+      "boot_command":
+      [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos7-ks.cfg<enter><wait>"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "scripts": [
+            "packer/scripts/c7-ansible.sh"
+      ]
+    },
+    {
+      "type": "ansible-local",
+      "inventory_file": "",
+      "playbook_dir": "ansible/roles",
+      "playbook_file": "",
+      "group_vars": "ansible/group_vars"
+    }
+  ]
+}

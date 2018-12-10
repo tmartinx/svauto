@@ -1,0 +1,56 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# References:
+# https://docs.openstack.org/nova/rocky/install/compute-install-ubuntu.html
+
+- name: Installing Nova Compute KVM
+  apt: name={{item}} state=latest
+  with_items:
+    - nova-compute
+  notify: restart-nova-compute
+
+
+- name: Removing non-used sqlite database
+  file: path=/var/lib/nova/nova.sqlite state=absent
+  notify: restart-nova-compute
+
+
+- name: "Workarounding BUG LP #759725"
+  copy: src=kernel-postinst-statoverride
+        dest=/etc/kernel/postinst.d/statoverride
+        owner=root
+        group=root
+        mode=0755
+
+
+- name: Updating nova.conf
+  template: src={{os_release}}/nova.conf.j2
+            dest=/etc/nova/nova.conf
+            owner=nova
+            group=nova
+            mode=0640
+            backup=yes
+  when: item.os_project == "nova"
+  with_items: '{{mysql_databases}}'
+  notify: restart-nova-compute
+
+
+- meta: flush_handlers
+
+
+# Review the need for this, or maybe moving it to os_nova_ctrl and removing os_aio:
+- name: Nova Discovering Hosts
+  shell: su -s /bin/sh -c "nova-manage cell_v2 discover_hosts --verbose" nova
+  when: os_aio == 'yes'

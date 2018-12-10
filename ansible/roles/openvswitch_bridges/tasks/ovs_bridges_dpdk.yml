@@ -1,0 +1,103 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# Subscribers DPDK-based Bridge
+- name: ubuntu - Open vSwitch Bridge - dpdkbr0
+  shell: ovs-vsctl add-br dpdkbr0 -- set bridge dpdkbr0 datapath_type=netdev
+  ignore_errors: yes
+
+# Doesn't work yet: "unsupported parameter for module: set"
+# https://github.com/ansible/ansible-modules-extras/issues/3589
+#- name: ubuntu - Open vSwitch Bridge - dpdkbr0
+#  openvswitch_bridge: bridge=dpdkbr0 state=present
+#                      set="bridge dpdkbr0 datapath_type=netdev"
+
+- name: ubuntu - Open vSwitch Bridge Port - dpdkbr0 <-> dpdk0
+  openvswitch_port: bridge=dpdkbr0 port=dpdk0 state=present
+                    set="Interface dpdk0 type=dpdk options:n_rxq=2"
+
+#  The "stack-1" owns the entire bridge!
+- name: ubuntu - Open vSwitch Bridge Port - dpdkbr0 <-> stack-1-nfv-1-subscribers-1
+  openvswitch_port: bridge=dpdkbr0 port=stack-1-nfv-1-subscribers-1 state=present
+                    set="Interface stack-1-nfv-1-subscribers-1 type=dpdkvhostuser"
+  when: openvswitch_net_mode == 'flat'
+
+#  The "stack-1" can share the bridge with other stacks...
+- name: ubuntu - OpenvSwitch Bridge Port - Trunk on stack-1-nfv-1-subscribers-1
+  openvswitch_port: bridge=dpdkbr0 port=stack-1-nfv-1-subscribers-1 state=present
+                    set="port stack-1-nfv-1-subscribers-1 trunks=100,101"
+  when: openvswitch_net_mode == 'vlan'
+
+
+# Internet DPDK-based Bridge
+- name: ubuntu - Open vSwitch Bridge - dpdkbr1
+  shell: ovs-vsctl add-br dpdkbr1 -- set bridge dpdkbr1 datapath_type=netdev
+  ignore_errors: yes
+
+# Doesn't work yet: "unsupported parameter for module: set"
+# https://github.com/ansible/ansible-modules-extras/issues/3589
+#- name: ubuntu - Open vSwitch Bridge - dpdkbr1
+#  openvswitch_bridge: bridge=dpdkbr1 state=present
+#                      set="bridge dpdkbr1 datapath_type=netdev"
+
+- name: ubuntu - Open vSwitch Bridge Port - dpdkbr1 <-> dpdk1
+  openvswitch_port: bridge=dpdkbr1 port=dpdk1 state=present
+                    set="Interface dpdk1 type=dpdk options:n_rxq=2"
+
+#  The "stack-1" owns the entire bridge!
+- name: ubuntu - Open vSwitch Bridge Port - dpdkbr1 <-> stack-1-nfv-1-internet-1
+  openvswitch_port: bridge=dpdkbr1 port=stack-1-nfv-1-internet-1 state=present
+                    set="Interface stack-1-nfv-1-internet-1 type=dpdkvhostuser"
+  when: openvswitch_net_mode == 'flat'
+
+#  The "stack-1" can share the bridge with other stacks...
+- name: ubuntu - OpenvSwitch Bridge Port - Trunk on stack-1-nfv-1-internet-1
+  openvswitch_port: bridge=dpdkbr1 port=stack-1-nfv-1-internet-1 state=present
+                    set="port stack-1-nfv-1-internet-1 trunks=100,101"
+  when: openvswitch_net_mode == 'vlan'
+
+
+# OpenFlow Ninja Rules
+- name: ubuntu - Open vSwitch - Custom OpenFlow Rule
+  shell: ovs-ofctl add-flow dpdkbr0 "in_port=1,dl_vlan=2500 actions=mod_vlan_vid:2600,2"
+  when: openvswitch_openflow_rules == 'yes'
+
+- name: ubuntu - Open vSwitch - Custom OpenFlow Rule
+  shell: ovs-ofctl add-flow dpdkbr1 "in_port=1,dl_vlan=2600 actions=mod_vlan_vid:2500,2"
+  when: openvswitch_openflow_rules == 'yes'
+
+
+# Bring it up (not sure if needed)
+- name: ubuntu - copy dpdkbr0 config file for OVS-DPDK interface
+  copy: src=ubuntu-common/interface_dpdkbr0
+        dest=/etc/network/interfaces.d/dpdkbr0.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dpdkbr1 config file for OVS-DPDK interface
+  copy: src=ubuntu-common/interface_dpdkbr1
+        dest=/etc/network/interfaces.d/dpdkbr1.cfg
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - restarting dpdkbr0 interface
+  shell: 'ifdown dpdkbr0 ; ifup dpdkbr0'
+  ignore_errors: yes
+
+- name: ubuntu - restarting dpdkbr1 interface
+  shell: 'ifdown dpdkbr1 ; ifup dpdkbr1'
+  ignore_errors: yes

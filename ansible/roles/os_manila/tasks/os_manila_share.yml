@@ -1,0 +1,44 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Reference:
+# https://docs.openstack.org/manila/queens/install/install-share-ubuntu.html
+
+- name: Installing Manila Share (NHSS=False, for now)
+  apt: name={{ item }} state=latest
+  with_items:
+    - lvm2
+    - nfs-kernel-server
+    - manila-share
+  notify: restart-share
+
+
+- name: Removing non-used sqlite database
+  file: path=/var/lib/manila/manila.sqlite state=absent
+  notify: restart-share
+
+
+- name: Updating manila.conf
+  template: src={{ os_release }}/manila.conf
+        dest=/etc/manila/manila.conf
+        owner=manila
+        group=manila
+        mode=0640
+        backup=yes
+  when: item.os_project == "manila"
+  with_items: '{{ mysql_databases }}'
+  notify: restart-share
+
+
+- meta: flush_handlers

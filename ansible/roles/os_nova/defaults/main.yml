@@ -1,0 +1,47 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+mysql_databases:
+  - { os_project: "nova", db_name: "nova", db_host: "%", db_user: "novaUser", db_pass: "novaPass" }
+  - { os_project: "nova_cells", db_name: "nova_cell0", db_host: "%", db_user: "novaUser", db_pass: "novaPass" }
+  - { os_project: "nova_api", db_name: "nova_api", db_host: "%", db_user: "novaUser", db_pass: "novaPass" }
+  - { os_project: "placement", db_name: "placement", db_host: "%", db_user: "placementUser", db_pass: "placementPass" }
+
+# TODO:
+# Remove the nova_*_db* lines bellow, in favor of "mysql_databases / os_project" logic above.
+nova_api_db_name: "nova_api"
+nova_api_db_user: "novaUser"
+nova_api_db_pass: "novaPass"
+nova_placement_db_name: "placement"
+nova_placement_db_user: "placementUser"
+nova_placement_db_pass: "placementPass"
+
+os_aio: "no"
+
+os_nova_ctrl: "no"
+os_nova_cmpt: "no"
+
+linuxnet_interface_driver: "nova.network.linux_net.LinuxBridgeInterfaceDriver"
+
+metadata_secret: "UltraMeta13"
+
+# Nova ratios:
+# nova_cpu_allocation_ratio: "16.0"
+# nova_ram_allocation_ratio: "1.5"
+# nova_disk_allocation_ratio: "1.0"
+
+# Nova quotas
+# nova_quota_cores: "80"
+# nova_quota_instances: "30"
+# nova_quota_ram: "51200"

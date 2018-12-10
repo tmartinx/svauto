@@ -1,0 +1,84 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: ubuntu - registering how many CPUs supports 1G HugePages
+  shell: cat /proc/cpuinfo | grep pdpe1gb | wc -l
+  register: processor_count_1g_hugepages
+  tags: processor_count_1g_hugepages
+
+
+- name: ubuntu - apt installing Open vSwitch
+  apt: name={{item}} state=latest
+  with_items:
+    - openvswitch-switch
+  notify: restart-openvswitch
+  when: openvswitch_mode == 'regular'
+
+
+- name: ubuntu - apt installing Open vSwitch with DPDK
+  apt: name={{item}} state=latest
+  with_items:
+    - openvswitch-switch-dpdk
+  notify: restart-openvswitch
+  when: openvswitch_mode == 'dpdk'
+
+
+- name: ubuntu - ovs-vswitchd as default for OVS vSwitch Daemon
+  alternatives: name=ovs-vswitchd path=/usr/lib/openvswitch-switch/ovs-vswitchd
+  notify: restart-openvswitch
+  when: openvswitch_mode == 'regular'
+
+
+- name: ubuntu - ovs-vswitchd-dpdk as default for OVS vSwitch Daemon with DPDK
+  alternatives: name=ovs-vswitchd path=/usr/lib/openvswitch-switch-dpdk/ovs-vswitchd-dpdk
+  notify: restart-openvswitch
+  when: openvswitch_mode == 'dpdk'
+
+
+- name: ubuntu - apt installing Open vSwitch OVN Central
+  apt: name=ovn-central state=latest
+  notify: restart-openvswitch
+  when: ovn_central == 'yes'
+
+
+- name: ubuntu - apt installing Open vSwitch OVN Host
+  apt: name=ovn-host state=latest
+  notify: restart-openvswitch
+  when: ovn_host == 'yes'
+
+
+- meta: flush_handlers
+
+
+- name: ubuntu - enabling OpenvSwitch's DPDK mode
+  shell: ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
+  when: openvswitch_mode == 'dpdk'
+
+
+- name: ubuntu - allowing Libvirt user to access OpenvSwitch Unix Sockets
+  shell: ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-extra="--vhost-owner libvirt-qemu:kvm --vhost-perm 0664"
+  when: openvswitch_mode == 'dpdk'
+
+
+- name: ubuntu - configuring OpenvSwitch's DPDK Socket Mem value
+  shell: ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem="2048,0"
+  when: openvswitch_mode == 'dpdk' and processor_count_1g_hugepages >= 1
+
+
+- name: ubuntu - configuring the number of CPU Cores to OpenvSwitch DPDK
+  shell: ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask={{ ovs_dpdk_cpu_cores }}
+  when: openvswitch_mode == 'dpdk'
+
+
+- meta: flush_handlers

@@ -1,0 +1,14 @@
+[Unit]
+Description=Setup Default Interface
+Before=network.service
+ 
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/setupDefaultInterface
+RemainAfterExit=yes
+TimeoutSec=5
+# Output needs to appear in instance console output
+StandardOutput=journal+console
+ 
+[Install]
+WantedBy=multi-user.target

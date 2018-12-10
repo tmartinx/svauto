@@ -1,0 +1,12 @@
+DEVICE="eth0"
+BOOTPROTO="{{ eth0_bootproto }}"
+{% if eth0_bootproto == 'static' %}
+IPADDR={{ centos_eth0_ip }}
+NETMASK={{ centos_eth0_mask }}
+{% endif %}
+IPV6INIT="yes"
+NM_CONTROLLED="no"
+ONBOOT="yes"
+TYPE="Ethernet"
+PEERDNS="yes"
+PERSISTENT_DHCLIENT="1"

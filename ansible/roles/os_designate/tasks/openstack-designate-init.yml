@@ -1,0 +1,39 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Reference:
+# https://docs.openstack.org/project-install-guide/dns/ocata/install-ubuntu.html
+
+- name: Creating OpenStack Designate Service
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack service create --name designate --description "OpenStack DNS as a Service" dns
+  
+  
+- name: Creating OpenStack Designate Endpoint
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack endpoint create --region "{{ region }}" dns public "{{ endpoint_public_uri }}{{ dns_endpoint_public }}:9001"
+  - openstack endpoint create --region "{{ region }}" dns internal "{{ endpoint_internal_uri }}{{ dns_endpoint_internal }}:9001"
+  - openstack endpoint create --region "{{ region }}" dns admin "{{ endpoint_internal_uri }}{{ dns_endpoint_internal }}:9001"
+        
+
+- name: Creating OpenStack Designate User and Role
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack user create --domain default --password "{{ service_password }}" --email "designate@{{ os_dns_domain }}" designate
+  - openstack role add --project service --user designate --user-domain default admin

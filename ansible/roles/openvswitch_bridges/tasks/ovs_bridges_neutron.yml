@@ -1,0 +1,71 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Creating Open vSwitch Bridge - External Bridge
+  openvswitch_bridge: bridge={{ os_neutron_external_bridge }} state=present
+
+- name: Configuring Open vSwitch Bridge Port - External Bridge
+  openvswitch_port: bridge={{ os_neutron_external_bridge }} port={{ os_external }} state=present
+
+
+- name: Creating Open vSwitch Bridge - Provider Network 1
+  openvswitch_bridge: bridge={{ os_provider_net_1_ovs_bridge_interface }} state=present
+
+- name: Configuring Open vSwitch Bridge Port - Provider Network 1
+  openvswitch_port: bridge={{ os_provider_net_1_ovs_bridge_interface }} port={{ os_provider_net_1_ovs_interface }} state=present
+
+
+- name: Creating Open vSwitch Bridge - Provider Network 2
+  openvswitch_bridge: bridge={{ os_provider_net_2_ovs_bridge_interface }} state=present
+
+- name: Configuring Open vSwitch Bridge Port - Provider Network 2
+  openvswitch_port: bridge={{ os_provider_net_2_ovs_bridge_interface }} port={{ os_provider_net_2_ovs_interface }} state=present
+
+
+# br-ex = os_neutron_external_bridge
+- name: ubuntu - copy br-ex config file for OVS
+  copy: src=ubuntu-common/interface_br-ex
+        dest=/etc/network/interfaces.d/br-ex.cfg
+        owner=root
+        group=root
+        mode=0644
+
+# dummybr0 = os_provider_net_1_ovs_bridge_interface
+- name: ubuntu - copy dummybr0 config file for OVS
+  copy: src=ubuntu-common/interface_dummybr0
+        dest=/etc/network/interfaces.d/dummybr0.cfg
+        owner=root
+        group=root
+        mode=0644
+
+# dummybr0 = os_provider_net_2_ovs_bridge_interface
+- name: ubuntu - copy dummybr1 config file for OVS
+  copy: src=ubuntu-common/interface_dummybr1
+        dest=/etc/network/interfaces.d/dummybr1.cfg
+        owner=root
+        group=root
+        mode=0644
+
+
+- name: Restart br-ex Interface
+  shell: 'ifdown br-ex ; ifup br-ex'
+  ignore_errors: yes
+
+- name: Restarting dummybr0 Interface
+  shell: 'ifdown dummybr0 ; ifup dummybr0'
+  ignore_errors: yes
+
+- name: Restarting dummybr1 Interface
+  shell: 'ifdown dummybr1 ; ifup dummybr1'
+  ignore_errors: yes

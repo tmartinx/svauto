@@ -1,0 +1,5 @@
+# Fake External Interface
+allow-hotplug dummy0
+iface dummy0 inet static
+        address 172.31.254.129
+        netmask 25

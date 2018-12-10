@@ -1,0 +1,65 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+- name: ubuntu18 - re-enabling ifupdown, since SVAuto isn't ready for Netplan yet
+  apt: name={{item}} state=latest update_cache=yes
+  with_items:
+    - ifupdown
+  when: ansible_os_family == "Debian" and ansible_distribution_major_version == "18"
+
+
+- name: ubuntu - module nf_conntrack blacklisted
+  lineinfile: dest=/etc/modprobe.d/blacklist.conf line="blacklist nf_conntrack"
+  when: os_neutron_lbr_enabled == 'yes'
+
+
+# Activating br_netfilter module for bringing /proc/sys/net/bridge back.
+# https://askubuntu.com/questions/645638/directory-proc-sys-net-bridge-missing
+- name: ubuntu - config br_netfilter module
+  lineinfile: dest=/etc/modules line="br_netfilter"
+
+- name: ubuntu - loading br_netfilter module
+  command: 'modprobe br_netfilter'
+
+
+# Enabling /etc/network/interfaces.d subdirectory.
+- name: ubuntu - copy global network config file
+  copy: src=ubuntu-common/etc_network_interfaces
+        dest=/etc/network/interfaces
+        owner=root
+        group=root
+        mode=0644
+        backup=yes
+
+- name: ubuntu - creating global network config directory
+  file: path=/etc/network/interfaces.d
+        state=directory
+
+
+# Configuring Ubuntu's default NIC.
+- name: ubuntu - copy primary network interface config
+  template: src=ubuntu-common/primary_interface_cfg.j2
+            dest=/etc/network/interfaces.d/{{ ubuntu_primary_interface }}.cfg
+            owner=root
+            group=root
+            mode=0644
+            backup=yes
+  when: ubuntu_primary_interface_via_ifupdown == 'yes'
+
+
+# Including Dummy NIC setup.
+- name: ubuntu - include dummy NICs setup
+  include: ubuntu-dummies.yml
+  when: ubuntu_setup_dummy_nics == 'yes'

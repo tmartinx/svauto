@@ -1,0 +1,4 @@
+# Fake Provider Network NIC
+allow-hotplug dummybr5
+iface dummybr5 inet static
+	address 10.192.0.1/16

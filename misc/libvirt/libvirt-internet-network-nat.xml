@@ -1,0 +1,10 @@
+<network>
+  <name>internet</name>
+  <forward mode='nat'/>
+  <bridge name='internet' stp='off' delay='0'/>
+  <ip address='10.192.0.1' netmask='255.255.0.0'>
+    <dhcp>
+      <range start='10.192.0.2' end='10.192.255.254'/>
+    </dhcp>
+  </ip>
+</network>

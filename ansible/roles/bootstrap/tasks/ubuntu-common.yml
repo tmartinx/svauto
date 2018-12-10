@@ -1,0 +1,224 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: ubuntu - apt full-upgrade
+  apt: upgrade=dist update_cache=yes
+  when: base_os_upgrade == 'yes'
+
+
+- name: ubuntu - add Ansible's PPA Repository
+  apt_repository: repo='ppa:ansible/ansible'
+  when: ansible_ppa == 'yes'
+
+
+- name: ubuntu - add TCMC's PPA Repository
+  apt_repository: repo='ppa:tcmc/packages'
+  when: tcmc_ppa == 'yes'
+
+
+- name: ubuntu - apt installing basic tools
+  apt: name={{item}} state=latest update_cache=yes
+  with_items:
+    - jq
+    - pv
+    - mc
+    - gpm
+    - zip
+    - git
+    - zsh
+    - ssh
+    - atop
+    - lftp
+    - tmux
+    - curl
+    - htop
+    - bmon
+    - nmap
+    - flip
+    - lshw
+    - vlan
+    - gdisk
+    - unzip
+    - ngrep
+    - iftop
+    - iotop
+    - patch
+    - byobu
+    - socat
+    - monit
+    - ipset
+    - figlet
+    - bwm-ng
+    - ifstat
+    - strace
+    - ltrace
+    - man-db
+    - netcat
+    - telnet
+    - openssl
+    - numactl
+    - sysstat
+    - ansible
+    - iptables
+    - mlocate
+    - sysstat
+    - tcpdump
+    - iperf3
+    - logtop
+    - tcpick
+    - psmisc
+    - tzdata
+    - tshark
+    - netperf
+    - aptitude
+    - pm-utils
+    - xfsprogs
+    - dos2unix
+    - ppa-purge
+    - conntrack
+    - iptraf-ng
+    - hugepages
+    - gddrescue
+    - tcpreplay
+    - subnetcalc
+    - traceroute
+    - sysfsutils
+    - nbd-client
+    - python-pip
+    - btrfs-tools
+    - genisoimage
+    - ecryptfs-utils
+    - python-minimal
+    - python-libvirt
+    - python-mysqldb
+    - python-httplib2
+    - python-openvswitch
+    - silversearcher-ag
+    - command-not-found
+    - linux-image-generic
+    - linux-tools-generic
+    - ubuntu-cloud-keyring
+    - linux-cloud-tools-generic
+    - software-properties-common
+
+
+- name: ubuntu - apt installing NTP
+  apt: name=ntp state=latest update_cache=yes
+  when: ntp_or_chrony == 'ntp'
+
+
+- name: ubuntu - apt installing Chrony
+  apt: name=chrony state=latest update_cache=yes
+  when: ntp_or_chrony == 'chrony'
+
+
+- name: ubuntu - apt installing Server tools
+  apt: name={{item}} state=latest update_cache=yes
+  with_items:
+    - vim-nox
+    - mtr-tiny
+  when: ubuntu_install == 'server'
+
+
+- name: ubuntu - dpkg enabling MultiArch on Desktops
+  shell: dpkg --add-architecture i386
+  when: ubuntu_install == 'desktop'
+
+
+- name: ubuntu - apt installing Desktop tools
+  apt: name={{item}} state=latest update_cache=yes
+  with_items:
+    - vim
+    - mtr
+    - vlc
+    - cups
+    - meld
+    - clipit
+    - kdiff3
+    - xine-ui
+    - gparted
+    - ostinato
+    - rdesktop
+    - filezilla
+    - evolution
+    - terminator
+    - ssh-askpass
+    - default-jre
+    - wireshark-qt
+    - evolution-ews
+    - chromium-browser
+    - classicmenu-indicator
+    - ubuntu-restricted-extras
+    - compizconfig-settings-manager
+  when: ubuntu_install == 'desktop'
+
+
+- name: ubuntu - apt installing Desktop libraries (WebEx)
+  apt: name={{item}} state=latest update_cache=yes
+  with_items:
+    - libxmu6:i386
+    - libxft2:i386
+    - libgtk2.0-0:i386
+    - libpangox-1.0-0:i386
+    - libpangoxft-1.0-0:i386
+    - libpangoft2-1.0-0:i386
+  when: ubuntu_install == 'desktop'
+
+
+- name: ubuntu - updating Init RAMDisk
+  shell: update-initramfs -k all -u
+
+
+- name: ubuntu - grub updating menu
+  shell: update-grub
+
+
+- name: ubuntu - copy root's htop config directory
+  file: path=/root/.config/htop
+        state=directory
+
+- name: ubuntu - copy root's htoprc config file
+  copy: src=ubuntu-common/htoprc.j2
+        dest=/root/.config/htop/htoprc
+        owner=root
+        group=root
+        mode=0644
+
+
+- name: ubuntu - vim-nox as default for editor
+  alternatives: name=editor path=/usr/bin/vim.nox
+  when: ubuntu_install == 'server'
+
+
+- name: ubuntu - vim as default for editor
+  alternatives: name=editor path=/usr/bin/vim
+  when: ubuntu_install == 'desktop'
+
+
+- name: ubuntu - group add regular system user to know Server groups
+  user: name={{ regular_system_user }} groups=adm,dialout,cdrom,floppy,sudo,dip,plugdev append=yes
+  when: ubuntu_install == 'server'
+
+
+- name: ubuntu - group add regular system user to know Desktop groups
+  user: name={{ regular_system_user }} groups=adm,cdrom,sudo,dip,plugdev,lpadmin append=yes
+  when: ubuntu_install == 'desktop'
+
+
+- name: ubuntu - copy sudoers config file for members of group "sudo"
+  copy: src=ubuntu-common/sudo-group
+        dest=/etc/sudoers.d/sudo-group
+        owner=root
+        group=root
+        mode=0644

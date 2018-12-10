@@ -1,0 +1,57 @@
+{
+  "builders":
+  [
+    {
+      "type": "qemu",
+      "iso_urls": [
+        "/var/lib/libvirt/ISO/ubuntu-16.04.5-server-amd64.iso",
+        "http://mirror.csclub.uwaterloo.ca/ubuntu-releases/16.04.5/ubuntu-16.04.5-server-amd64.iso"
+      ],
+      "iso_checksum": "24636fd103a2a43c95659f1c3c63718e",
+      "iso_checksum_type": "md5",
+      "output_directory": "packer/ubuntu16-tmpl",
+      "vm_name": "ubuntu-16.04.5-server-amd64.raw",
+      "ssh_wait_timeout": "30s",
+      "shutdown_command": "sudo systemctl poweroff",
+      "qemuargs": [
+        ["-m","2048M"]
+      ],
+      "disk_size": 7168,
+      "format": "raw",
+      "headless": "false",
+      "accelerator": "kvm",
+      "http_directory": "packer/http",
+      "http_port_min": 10082,
+      "http_port_max": 10089,
+      "ssh_host_port_min": 2222,
+      "ssh_host_port_max": 2229,
+      "ssh_username": "tcmc",
+      "ssh_password": "tcmc",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "90m",
+      "net_device": "virtio-net",
+      "disk_interface": "virtio",
+      "boot_wait": "5s",
+      "boot_command": [
+        "<enter><wait>",
+        "<f6><esc>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs>",
+        "/install/vmlinuz ",
+        "initrd=/install/initrd.gz ",
+        "net.ifnames=0 ",
+        "auto-install/enable=true ",
+        "debconf/priority=critical ",
+        "preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/ubuntu16-preseed.cfg ",
+        "<enter>"
+      ]
+    }
+  ]
+}

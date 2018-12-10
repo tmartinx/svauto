@@ -1,0 +1,11 @@
+<network>
+  <name>control</name>
+  <forward mode='nat'/>
+  <bridge name='control' stp='on' delay='0'/>
+  <domain name='tcmc.rocks'/>
+  <ip address='192.168.192.1' netmask='255.255.255.128'>
+    <dhcp>
+      <range start='192.168.192.2' end='192.168.192.126'/>
+    </dhcp>
+  </ip>
+</network>

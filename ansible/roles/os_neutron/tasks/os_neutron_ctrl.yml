@@ -1,0 +1,111 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# References:
+# https://docs.openstack.org/neutron/rocky/install/controller-install-ubuntu.html
+
+- name: Creating OpenStack MySQL databases
+  mysql_db: name={{ item.db_name }} state=present
+  with_items: '{{ mysql_databases }}'
+
+
+- name: Creating OpenStack MySQL users
+  mysql_user:
+    host="{{ item.db_host }}"
+    name="{{ item.db_user }}"
+    password="{{ item.db_pass }}"
+    priv="{{ item.db_name }}.*:ALL,GRANT"
+    state=present
+  with_items: '{{ mysql_databases }}'
+
+
+- include: openstack-neutron-init.yml
+  when: deployment_mode == 'yes'
+
+
+- name: Installing Neutron Server
+  apt: name=neutron-server state=latest
+  notify: restart-neutron-server
+
+
+- name: Removing non-used sqlite database
+  file: path=/var/lib/neutron/neutron.sqlite state=absent
+  notify: restart-neutron-server
+
+
+- name: Updating neutron.conf
+  template: src={{ os_release }}/neutron.conf.j2
+            dest=/etc/neutron/neutron.conf
+            owner=root
+            group=neutron
+            mode=0640
+            backup=yes
+  when: item.os_project == 'neutron'
+  with_items: '{{ mysql_databases }}'
+  notify: restart-neutron-server
+
+
+- name: Updating ml2_conf.ini
+  template: src={{ os_release }}/ml2/ml2_conf.ini.j2
+            dest=/etc/neutron/plugins/ml2/ml2_conf.ini
+            owner=root
+            group=neutron
+            mode=0640
+            backup=yes
+  notify: restart-neutron-server
+
+
+- name: Populating Neutron Database
+  shell: su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
+
+
+#
+# Some customizations from here
+#
+
+# Allow regular users to attach to any VLAN networks created by admin
+- name: Updating Neutron's Policy
+  copy: src=open-provider-nets-to-regular-users.json
+        dest=/etc/neutron/policy.d/open-provider-nets-to-regular-users.json
+        owner=root
+        group=neutron
+        mode=0644
+        backup=yes
+  when: os_open_provider_nets_to_regular_users == 'yes'
+  notify: restart-neutron-server
+
+- name: Removing custom Neutron's Policy if condition is "no"
+  file: path=/etc/neutron/policy.d/open-provider-nets-to-regular-users.json
+        state=absent
+  when: os_open_provider_nets_to_regular_users == 'no'
+  notify: restart-neutron-server
+
+
+# If OVN enabled
+- name: Installing Neutron OVN Controller
+  apt: name={{ item }} state=latest
+  with_items:
+    - python-networking-ovn
+  when: os_neutron_ovn_enabled == 'yes'
+
+
+#- name: Updating ml2_conf.ovn.ini
+#  template: src={{ os_release }}/ml2/ml2_conf.ovn.ini.j2
+#            dest=/etc/neutron/plugins/ml2/ml2_conf.ovn.ini
+#            owner=root
+#            group=neutron
+#            mode=0640
+#            backup=yes
+#  notify: restart-neutron-server
+#  when: os_neutron_ovn_enabled == 'yes'

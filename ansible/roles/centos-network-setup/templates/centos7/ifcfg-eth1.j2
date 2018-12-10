@@ -1,0 +1,26 @@
+TYPE="Ethernet"
+NM_CONTROLLED="no"
+{% if centos_eth1_onboot == 'yes' %}
+ONBOOT="yes"
+{% else %}
+ONBOOT="no"
+{% endif %}
+NAME="eth1"
+DEVICE="eth1"
+BOOTPROTO="{{ eth1_bootproto }}"
+{% if eth1_bootproto == 'static' %}
+IPADDR={{ centos_eth1_ip }}
+NETMASK={{ centos_eth1_mask }}
+{% endif %}
+DEFROUTE="no"
+PEERROUTES="no"
+PEERDNS="no"
+USERCTL="yes"
+PERSISTENT_DHCLIENT="1"
+ZONE="trusted"
+IPV6INIT="yes"
+IPV6_AUTOCONF="yes"
+IPV6_DEFROUTE="no"
+IPV6_PEERDNS="no"
+IPV6_PEERROUTES="no"
+IPV6_FAILURE_FATAL="no"

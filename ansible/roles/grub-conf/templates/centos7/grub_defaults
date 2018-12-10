@@ -1,0 +1,11 @@
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL_OUTPUT="console"
+{% if centos_old_ifnames == 'yes' %}
+GRUB_CMDLINE_LINUX="console=ttyS0,115200n8 nomodeset crashkernel=auto net.ifnames=0 biosdevname=0 rhgb quiet"
+{% else %}
+GRUB_CMDLINE_LINUX="console=ttyS0,115200n8 nomodeset crashkernel=auto rhgb quiet"
+{% endif %}
+GRUB_DISABLE_RECOVERY="true"

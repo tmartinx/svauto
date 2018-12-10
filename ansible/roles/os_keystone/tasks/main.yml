@@ -1,0 +1,86 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Reference:
+# https://docs.openstack.org/keystone/rocky/install/keystone-install-ubuntu.html
+
+- name: Creating OpenStack MySQL databases
+  mysql_db: name={{ item.db_name }} state=present
+  with_items: '{{ mysql_databases }}'
+
+
+- name: Creating OpenStack MySQL users
+  mysql_user:
+    host="{{ item.db_host }}"
+    name="{{ item.db_user }}"
+    password="{{ item.db_pass }}"
+    priv="{{ item.db_name }}.*:ALL,GRANT"
+    state=present
+  with_items: '{{ mysql_databases }}'
+
+
+- name: Installing Keystone Server
+  apt: name={{ item }} state=latest
+  with_items:
+    - keystone
+
+
+- name: Removing non-used sqlite database
+  file: path=/var/lib/keystone/keystone.db state=absent
+
+
+- name: Updating keystone.conf
+  template: src={{ os_release }}/keystone.conf.j2
+            dest=/etc/keystone/keystone.conf
+            owner=root
+            group=root
+            mode=0644
+            backup=yes
+  when: item.os_project == "keystone"
+  with_items: '{{ mysql_databases }}'
+  notify: reload-apache2
+  tags: keystone_conf
+
+
+- name: Populating Keystone Database
+  shell: su -s /bin/sh -c "keystone-manage db_sync" keystone
+
+
+- name: Initialize Fernet keys
+  shell: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+
+- name: Initialize Fernet credential
+  shell: keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
+
+
+- name: Bootstrapping Identity Service
+  shell: keystone-manage bootstrap --bootstrap-password "{{ admin_password }}" --bootstrap-admin-url "{{ endpoint_internal_uri }}{{ identity_endpoint_internal }}:5000/v3/" --bootstrap-internal-url "{{ endpoint_internal_uri }}{{ identity_endpoint_internal }}:5000/v3/" --bootstrap-public-url "{{ endpoint_public_uri }}{{ identity_endpoint_public }}:5000/v3/" --bootstrap-region-id "{{ region }}"
+
+
+- meta: flush_handlers
+
+
+- name: Copying OpenStack RC files for your current system user
+  include: openrc-files.yml
+
+
+- name: Including Keystone Init 
+  include: openstack-keystone-init-{{ os_release }}.yml
+  when: deployment_mode == 'yes'
+
+
+- name: Checking whether to configure ldap
+  include: keystone-ldap.yml
+  when: ldap_enabled is defined and ldap_enabled == 'yes'
+  tags: keystone_conf

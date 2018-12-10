@@ -1,0 +1,4 @@
+<network>
+  <name>subscriber</name>
+  <bridge name='subscriber' stp='off' delay='0'/>
+</network>

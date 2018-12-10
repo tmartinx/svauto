@@ -1,0 +1,3 @@
+
+mysql_databases:
+  - { os_project: "senlin", db_name: "senlin", db_host: "%", db_user: "senlinUser", db_pass: "senlinPass" }

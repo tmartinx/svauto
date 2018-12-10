@@ -1,0 +1,9 @@
+<network>
+  <name>service</name>
+  <bridge name='service' stp='on' delay='0'/>
+  <ip address='192.168.192.129' netmask='255.255.255.128'>
+    <dhcp>
+      <range start='192.168.192.130' end='192.168.192.254'/>
+    </dhcp>
+  </ip>
+</network>

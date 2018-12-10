@@ -1,0 +1,52 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: centos6 - yum EPEL repository
+  yum: pkg=http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+
+
+- name: centos6 - yum SCL repository
+  yum: pkg=centos-release-scl
+
+
+- name: centos6 - yum installing basic tools
+  yum: pkg={{item}} state=latest update_cache=yes
+  with_items:
+    - nc
+    - man
+    - python33
+    - kernel
+
+
+- name: centos6 - yum installing Ansible from EPEL Testing
+  yum: pkg={{item}} state=latest update_cache=yes enablerepo=epel-testing
+  with_items:
+    - ansible
+    - libselinux-python
+
+
+- name: centos6 - copy SSH Daemon config
+  copy: src=centos6/sshd_config
+        dest=/etc/ssh/sshd_config
+        owner=root
+        group=root
+        mode=0600
+        backup=yes
+
+
+- name: centos6 - enable non-interactive fsck
+  lineinfile: dest=/fsckoptions
+              line=" -y"
+              create=yes
+              state=present

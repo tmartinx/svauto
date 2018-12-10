@@ -1,0 +1,9 @@
+#cloud-config
+system_info:
+  default_user:
+    name: "tcmc"
+chpasswd:
+  list: |
+    root:tcmc
+    tcmc:tcmc
+  expire: False

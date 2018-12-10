@@ -1,0 +1,8 @@
+# interfaces(5) file used by ifup(8) and ifdown(8)
+
+# The basic localhost / loopback interface config
+auto lo
+iface lo inet loopback
+
+# Include /etc/network/interfaces.d/*.cfg config files
+source /etc/network/interfaces.d/*.cfg

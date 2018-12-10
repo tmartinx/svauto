@@ -1,0 +1,36 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Creating OpenStack Neutron User and Role
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack user create --domain default --password "{{ service_password }}" --email "neutron@{{ os_dns_domain }}" neutron
+  - openstack role add --project service --user neutron --user-domain default admin
+
+
+- name: Creating OpenStack Neutron Service
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack service create --name neutron --description "OpenStack Networking" network
+
+
+- name: Creating OpenStack Neutron Endpoint
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack endpoint create --region "{{ region }}" network public "{{ endpoint_public_uri }}{{ network_endpoint_public }}:9696"
+  - openstack endpoint create --region "{{ region }}" network internal "{{ endpoint_internal_uri }}{{ network_endpoint_internal }}:9696"
+  - openstack endpoint create --region "{{ region }}" network admin "{{ endpoint_internal_uri }}{{ network_endpoint_internal }}:9696"

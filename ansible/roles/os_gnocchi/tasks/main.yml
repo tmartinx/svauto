@@ -1,0 +1,82 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Reference:
+# https://docs.openstack.org/ceilometer/queens/install/install-base-ubuntu.html
+
+- name: Creating OpenStack MySQL databases
+  mysql_db: name={{ item.db_name }} state=present
+  with_items: '{{ mysql_databases }}'
+
+
+- name: Creating OpenStack MySQL users
+  mysql_user:
+    host="{{ item.db_host }}"
+    name="{{ item.db_user }}"
+    password="{{ item.db_pass }}"
+    priv="{{ item.db_name }}.*:ALL,GRANT"
+    state=present
+  with_items: '{{ mysql_databases }}'
+
+
+- include: openstack-gnocchi-init.yml
+  when: deployment_mode == 'yes'
+
+
+- name: Installing Gnocchi
+  apt: name={{ item }} state=latest
+  with_items:
+# Comment gnocci-api due to bug: https://bugs.launchpad.net/ubuntu/+source/gnocchi/+bug/1746992
+#    - gnocchi-api
+    - python-gnocchi
+    - gnocchi-statsd
+    - gnocchi-metricd
+  notify: restart-gnocchi
+
+
+- name: Updating gnocchi.conf
+  template: src={{ os_release }}/gnocchi.conf
+        dest=/etc/gnocchi/gnocchi.conf
+        owner=gnocchi
+        group=gnocchi
+        mode=0640
+        backup=yes
+  when: item.os_project == "gnocchi"
+  with_items: '{{ mysql_databases }}'
+  notify: restart-gnocchi
+
+
+- name: Populating Gnocchi Database
+  shell: gnocchi-upgrade
+
+
+- name: Apache HTTP Virtual Host for Gnocchi API
+  copy: src={{ os_release }}/gnocchi-api.conf
+        dest=/etc/apache2/sites-available/gnocchi-api.conf
+        owner=root
+        group=root
+        mode=0644
+  notify: reload-apache2
+
+
+- name: Apache HTTP Virtual Host for Gnocchi API
+  file: src=/etc/apache2/sites-available/gnocchi-api.conf
+        dest=/etc/apache2/sites-enabled/gnocchi-api.conf
+        owner=root
+        group=root
+        state=link
+  notify: reload-apache2
+
+
+- meta: flush_handlers

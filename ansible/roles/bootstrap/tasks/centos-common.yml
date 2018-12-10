@@ -1,0 +1,139 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: centos - yum installing libselinux-python
+  yum: pkg=libselinux-python state=latest update_cache=yes
+
+- name: centos - selinux to permissive state
+  selinux: policy=targeted state=permissive
+  when: is_container != 'yes'
+
+- name: centos - selinux disabled
+  selinux: state=disabled
+  when: is_container != 'yes'
+
+
+- name: centos - copy Custom Main Yum repository config file
+  template: src=centos-common/Custom-Main.repo.j2
+            dest=/etc/yum.repos.d/Custom-Main.repo
+            owner=root
+            group=root
+            mode=0644
+  when: custom_main_yum_repo == 'yes'
+
+
+- name: centos - copy sudoers config file for members of group "wheel"
+  copy: src=centos-common/wheel-group
+        dest=/etc/sudoers.d/wheel-group
+        owner=root
+        group=root
+        mode=0644
+
+
+- name: centos - ZeroConf disabled
+  lineinfile: dest=/etc/sysconfig/network line="NOZEROCONF=yes"
+
+
+- name: centos7 - include custom book
+  include: centos7.yml
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+
+- name: centos6 - include custom book
+  include: centos6.yml
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "6"
+
+
+- name: centos - yum installing basic common tools
+  yum: pkg={{item}} state=latest update_cache=yes
+  with_items:
+    - at
+    - git
+    - vim
+    - man
+    - zip
+    - ntp
+    - gpm
+    - htop
+    - lftp
+    - curl
+    - wget
+    - tmux
+    - lsof
+    - nmap
+    - lshw
+    - perf
+    - mawk
+    - unzip
+    - iotop
+    - iftop
+    - acpid
+    - which
+    - bwm-ng
+    - figlet
+    - telnet
+    - psmisc
+    - iperf3
+    - parted
+    - tcpick
+    - cronie
+    - mlocate
+    - tcpdump
+    - sysstat
+    - rsyslog
+    - numactl
+    - dos2unix
+    - pciutils
+    - deltarpm
+    - tcpreplay
+    - dmidecode
+    - man-pages
+    - yum-utils
+    - bind-utils
+    - traceroute
+    - python-pip
+    - bridge-utils
+    - conntrack-tools
+    - python-virtualenv
+    - libhugetlbfs-utils
+
+
+- name: centos - copy root's Bash RC 
+  copy: src=centos-common/bashrc.j2
+        dest=/root/.bashrc
+        owner=root
+        group=root
+        mode=0640
+        backup=yes
+
+- name: centos - copy root's Bash Profile
+  copy: src=centos-common/bash_profile.j2
+        dest=/root/.bash_profile
+        owner=root
+        group=root
+        mode=0640
+        backup=yes
+
+
+- name: centos - service acpid enabled
+  service: name=acpid state=started enabled=yes
+  when: is_container != 'yes'
+
+
+- name: centos - service ntpd enabled
+  service: name=ntpd state=started enabled=yes
+
+
+- name: centos - yum upgrading CentOS itself
+  yum: name=* state=latest
+  when: base_os_upgrade == 'yes'

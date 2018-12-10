@@ -1,0 +1,43 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Reference:
+# https://docs.openstack.org/cinder/queens/install/cinder-storage-install-ubuntu.html
+
+- name: Installing Cinder Volume
+  apt: name={{ item }} state=latest
+  with_items:
+    - lvm2
+    - thin-provisioning-tools
+    - cinder-volume
+
+
+- name: Updating cinder.conf
+  template: src={{ os_release }}/cinder.conf.j2
+            dest=/etc/cinder/cinder.conf
+            owner=cinder
+            group=cinder
+            mode=0640
+            backup=yes
+  when: item.os_project == "cinder"
+  with_items: '{{ mysql_databases }}'
+  notify: restart-cinder-volume
+
+
+- name: ubuntu - Creating LVM Volume Group on a loopback file / device
+  include: os_cinder_loopback_lvm.yml
+  when: os_aio == 'yes' and deployment_mode == 'yes'
+
+
+- meta: flush_handlers

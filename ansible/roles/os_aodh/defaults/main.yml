@@ -1,0 +1,3 @@
+
+mysql_databases:
+  - { os_project: "aodh", db_name: "aodh", db_host: "%", db_user: "aodhUser", db_pass: "aodhPass" }

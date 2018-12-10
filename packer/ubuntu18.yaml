@@ -1,0 +1,49 @@
+{
+  "builders":
+  [
+    {
+      "type": "qemu",
+      "iso_urls": [
+        "/srv/ISO/ubuntu-18.04.1-server-amd64.iso",
+        "http://cdimage.ubuntu.com/ubuntu/releases/18.04/release/ubuntu-18.04.1-server-amd64.iso"
+      ],
+      "iso_checksum": "a5b0ea5918f850124f3d72ef4b85bda82f0fcd02ec721be19c1a6952791c8ee8",
+      "iso_checksum_type": "sha256",
+      "output_directory": "packer/ubuntu18-tmpl",
+      "vm_name": "ubuntu-18.04.1-server-amd64.raw",
+      "ssh_wait_timeout": "30s",
+      "shutdown_command": "sudo -S shutdown -P now",
+      "qemuargs": [
+        ["-m","2048M"]
+      ],
+      "disk_size": 7168,
+      "format": "raw",
+      "headless": "true",
+      "accelerator": "kvm",
+      "http_directory": "packer/http",
+      "http_port_min": 10082,
+      "http_port_max": 10089,
+      "ssh_host_port_min": 2222,
+      "ssh_host_port_max": 2229,
+      "ssh_username": "tcmc",
+      "ssh_password": "tcmc",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "90m",
+      "net_device": "virtio-net",
+      "disk_interface": "virtio",
+      "boot_wait": "5s",
+      "boot_command": [
+        "<esc><wait>",
+        "<esc><wait>",
+        "<enter><wait>",
+        "/install/vmlinuz ",
+        "initrd=/install/initrd.gz ",
+        "net.ifnames=0 ",
+        "auto-install/enable=true ",
+        "debconf/priority=critical ",
+        "preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/ubuntu18-preseed.cfg ",
+        "<enter>"
+      ]
+    }
+  ]
+}

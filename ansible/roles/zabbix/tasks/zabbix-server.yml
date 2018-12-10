@@ -1,0 +1,66 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: ubuntu - apt installing Zabbix 3.2 Repository Package
+  apt: deb=http://repo.zabbix.com/zabbix/3.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_3.2-1+xenial_all.deb
+
+
+- name: ubuntu - apt installing Zabbix Server and its Frontend
+  apt: name={{ item }} state=latest update_cache=yes
+  with_items:
+    - zabbix-server-mysql
+    - zabbix-frontend-php
+    - php7.0-bcmath
+    - php7.0-mbstring
+    - php7.0-xml
+  notify: reload-apache2
+
+
+- name: ubuntu - copy PHP Timezone config
+  copy: src=30-timezone.ini
+        dest=/etc/php/7.0/apache2/conf.d/30-timezone.ini
+        owner=root
+        group=root 
+        mode=0644
+  notify: reload-apache2
+
+
+- name: ubuntu - sql creating Zabbix database
+  mysql_db: name={{ zabbix_db }} state=present
+
+- name: ubuntu - sql creating Zabbix users and permissions
+  mysql_user:
+    host="{{ zabbix_db_host }}"
+    name="{{ zabbix_db_user }}"
+    password="{{ zabbix_db_pass }}"
+    priv="{{ zabbix_db }}.*:ALL,GRANT"
+    state=present
+
+- name: ubuntu - sql creating Zabbix database structure
+  mysql_db: name={{ zabbix_db }} state=import target=/usr/share/doc/zabbix-server-mysql/create.sql.gz
+
+
+- name: ubuntu - copy Zabbix Frontend config
+  template: src=zabbix.conf.php.j2
+        dest=/etc/zabbix/web/zabbix.conf.php
+        owner=root
+        group=root 
+        mode=0644
+  notify: reload-apache2
+
+- file: src=/etc/zabbix/web/zabbix.conf.php
+        dest=/usr/share/zabbix/conf/zabbix.conf.php
+        owner=root
+        group=root
+        state=link

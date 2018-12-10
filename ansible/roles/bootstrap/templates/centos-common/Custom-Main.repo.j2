@@ -1,0 +1,13 @@
+# Custom-Main.repo
+#
+#
+
+[custom]
+name=Custom - Main
+{% if release == 'dev' %}
+baseurl=ftp://{{ svauto_yum_host }}/centos/{{ release_code_name }}/$releasever/os/$basearch
+{% endif %}
+enabled=1
+protect=0
+gpgcheck=0
+sslverify=0

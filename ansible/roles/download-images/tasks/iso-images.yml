@@ -1,0 +1,41 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: downloading ubuntu-18.04.1-server-amd64.iso
+  get_url:
+    url: http://cdimage.ubuntu.com/ubuntu/releases/18.04/release/ubuntu-18.04.1-server-amd64.iso
+    dest: /srv/ISO/ubuntu-18.04.1-server-amd64.iso
+    mode: 0640
+  when: download_ubuntu == "yes"
+
+- name: downloading ubuntu-16.04.5-server-amd64.iso
+  get_url:
+    url: http://mirror.csclub.uwaterloo.ca/ubuntu-releases/16.04.5/ubuntu-16.04.5-server-amd64.iso
+    dest: /srv/ISO/ubuntu-16.04.5-server-amd64.iso
+    mode: 0640
+  when: download_ubuntu == "yes"
+
+- name: downloading CentOS-7-x86_64-Minimal-1810.iso
+  get_url:
+    url: http://mirror.its.sfu.ca/mirror/CentOS/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso
+    dest: /srv/ISO/CentOS-7-x86_64-Minimal-1810.iso
+    mode: 0640
+  when: download_centos == "yes"
+
+- name: downloading CentOS-6.10-x86_64-minimal.iso
+  get_url:
+    url: http://mirror.its.sfu.ca/mirror/CentOS/6.10/isos/x86_64/CentOS-6.10-x86_64-minimal.iso
+    dest: /srv/ISO/CentOS-6.10-x86_64-minimal.iso
+    mode: 0640
+  when: download_centos == "yes"

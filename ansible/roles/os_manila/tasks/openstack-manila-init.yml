@@ -1,0 +1,40 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Creating OpenStack Manila Service
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items: 
+  - openstack service create --name manila --description "OpenStack Shared File Systems" share
+  - openstack service create --name manilav2 --description "OpenStack Shared File Systems" sharev2
+
+
+- name: Creating OpenStack Manila Endpoint
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack endpoint create --region "{{ region }}" share public http://{{ os_public_addr }}:8786/v1/%\(tenant_id\)s
+  - openstack endpoint create --region "{{ region }}" share internal http://{{ os_admin_addr }}:8786/v1/%\(tenant_id\)s
+  - openstack endpoint create --region "{{ region }}" share admin http://{{ os_admin_addr }}:8786/v1/%\(tenant_id\)s
+  - openstack endpoint create --region "{{ region }}" sharev2 public http://{{ os_public_addr }}:8786/v2/%\(tenant_id\)s
+  - openstack endpoint create --region "{{ region }}" sharev2 internal http://{{ os_admin_addr }}:8786/v2/%\(tenant_id\)s
+  - openstack endpoint create --region "{{ region }}" sharev2 admin http://{{ os_admin_addr }}:8786/v2/%\(tenant_id\)s
+
+
+- name: Creating OpenStack Manila User and Role
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack user create --domain default --password "{{ service_password }}" --email manila@{{ os_dns_domain }} manila
+  - openstack role add --project service --user manila --user-domain default admin

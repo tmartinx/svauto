@@ -1,0 +1,3 @@
+
+mysql_databases:
+  - { os_project: "heat", db_name: "heat", db_host: "%", db_user: "heatUser", db_pass: "heatPass" }

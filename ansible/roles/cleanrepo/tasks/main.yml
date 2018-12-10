@@ -1,0 +1,31 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Creating new "/tmp/clean-yum-repo.sh" script
+  copy: src=clean-yum-repo.sh
+        dest=/tmp/clean-yum-repo.sh
+        owner=root
+        group=root
+        mode=0755
+  when: release == 'prod'
+
+
+- name: Cleaning up and disabling Custom's Yum Repositories
+  shell: /tmp/clean-yum-repo.sh
+  when: release == 'prod'
+
+
+- name: Deleting "/tmp/clean-yum-repo.sh" script
+  file: path=/tmp/clean-yum-repo.sh state=absent
+  when: release == 'prod'

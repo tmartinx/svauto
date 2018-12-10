@@ -1,0 +1,21 @@
+#! /bin/bash
+
+# Sorts based on:
+# eno (first) onboard NICS  (eg. vnxnet3) - followed by its numbers
+# ethx interfaces  (eg virtio) - followed by its numbers
+# pxpy interfaces (e1000, etc) - followed by its numbers
+# using "sort -V", which is a version type sort that allows numbers within letters
+
+FIRST_IF=$(ls /sys/class/net | awk '!/lo/ { print $1 }' | sort -V | head -1)
+
+if [ -n "$FIRST_IF" ] && [ "$FIRST_IF" != "eth0" ]; then
+
+	mv /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-$FIRST_IF
+
+	sed -i "s/eth0/$FIRST_IF/g" /etc/sysconfig/network-scripts/ifcfg-$FIRST_IF
+
+fi
+
+# disable the service (if enabled), so this process does not happen again.  We don't
+# want to intefere with user changes so they occur after the VM boots
+systemctl disable svnetwork-setup.service

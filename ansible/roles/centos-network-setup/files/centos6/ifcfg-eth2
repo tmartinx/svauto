@@ -1,0 +1,7 @@
+DEVICE="eth2"
+BOOTPROTO="none"
+IPV6INIT="no"
+NM_CONTROLLED="no"
+ONBOOT="no"
+TYPE="Ethernet"
+PEERDNS="no"

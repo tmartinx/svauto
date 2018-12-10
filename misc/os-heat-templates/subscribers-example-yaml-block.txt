@@ -1,0 +1,35 @@
+parameters:
+
+  ubuntusrv1_image:
+    type: string
+    label: "Ubuntu Server - 64-bit"
+    description: "Ubuntu - Trusty Thar - LTS"
+    default: "ubuntu-16.04-amd64"
+
+  debiansrv1_image:
+    type: string
+    label: "Debian - 64-bit"
+    description: "Debian - Jessie"
+    default: "debian-8.6.1-amd64"
+
+resources:
+
+  ubuntusrv1:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ubuntu-server' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'ubuntusrv1_image' }
+      flavor: "m1.little"
+      networks:
+        - network: { get_resource: data_real_subnet1 }
+
+  debiansrv1:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-debian-server' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'debiansrv1_image' }
+      flavor: "m1.little"
+      networks:
+        - network: { get_resource: data_real_subnet1 }

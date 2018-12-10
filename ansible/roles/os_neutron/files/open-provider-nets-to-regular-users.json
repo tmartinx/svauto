@@ -1,0 +1,11 @@
+{
+
+    "create_network:provider:network_type": "rule:admin_only",
+    "create_network:provider:physical_network": "rule:admin_only",
+    "create_network:provider:segmentation_id": "rule:admin_only",
+
+    "update_network:provider:network_type": "rule:admin_only",
+    "update_network:provider:physical_network": "rule:admin_only",
+    "update_network:provider:segmentation_id": "rule:admin_only"
+
+}

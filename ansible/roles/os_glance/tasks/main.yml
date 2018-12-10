@@ -1,0 +1,77 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Reference:
+# https://docs.openstack.org/glance/rocky/install/install-ubuntu.html
+
+- name: Creating OpenStack MySQL databases
+  mysql_db: name={{ item.db_name }} state=present
+  with_items: '{{ mysql_databases }}'
+
+
+- name: Creating OpenStack MySQL users
+  mysql_user:
+    host="{{ item.db_host }}"
+    name="{{ item.db_user }}"
+    password="{{ item.db_pass }}"
+    priv="{{ item.db_name }}.*:ALL,GRANT"
+    state=present
+  with_items: '{{ mysql_databases }}'
+
+
+- include: openstack-glance-init.yml
+  when: deployment_mode == 'yes'
+
+
+- name: Installing Glance Server
+  apt: name={{ item }} state=latest
+  with_items:
+    - glance
+  notify: restart-glance
+
+
+- name: Removing non-used sqlite database
+  file: path=/var/lib/glance/glance.sqlite state=absent
+  notify: restart-glance
+
+
+- name: Updating glance-api.conf
+  template: src={{ os_release }}/glance-api.conf
+        dest=/etc/glance/glance-api.conf
+        owner=glance
+        group=glance
+        mode=0644
+        backup=yes
+  when: item.os_project == "glance"
+  with_items: '{{ mysql_databases }}'
+  notify: restart-glance
+
+
+- name: Updating glance-registry.conf
+  template: src={{ os_release }}/glance-registry.conf
+        dest=/etc/glance/glance-registry.conf
+        owner=glance
+        group=glance
+        mode=0644
+        backup=yes
+  when: item.os_project == "glance"
+  with_items: '{{ mysql_databases }}'
+  notify: restart-glance
+
+
+- name: Populating Glance Database
+  shell: su -s /bin/sh -c "glance-manage db_sync" glance
+
+
+- meta: flush_handlers

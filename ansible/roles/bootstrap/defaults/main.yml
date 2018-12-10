@@ -1,0 +1,38 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# Upgrade Base OS:
+base_os_upgrade: "no"
+
+ubuntu_install: "server"
+
+# Vagrant run?
+vagrant_run: "no"
+
+tcmc_ppa: "no"
+ansible_ppa: "no"
+
+# bootstrap: Enable Main Yum Repository:
+custom_main_yum_repo: "no"
+
+# SVAuto-enabled Yum Reposiory host server address:
+svauto_yum_host: "null"
+
+# Release Code Name:
+release_code_name: "yukon"
+release_code_number: "18.10"
+
+# NTP or Chrony... To be, or not to be...
+ntp_or_chrony: "ntp"

@@ -1,0 +1,28 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: ubuntu - unpacking Code Collaborator Client
+  unarchive: src=https://s3.amazonaws.com/backups.smartbear/downloads/ccollab_client_8_4_8406_unix.tar.gz dest=/opt copy=no creates=/opt/ccollab-client/ccollab
+
+
+- name: ubuntu - creating the required symlinks under /usr/local/bin
+  file: src=/opt/ccollab-client/{{ item.src }} dest={{ item.dest }} state=link
+  with_items:
+    - { src: 'ccollab', dest: '/usr/local/bin/ccollab' }
+    - { src: 'ccollabexternaldiff', dest: '/usr/local/bin/ccollabexternaldiff' }
+    - { src: 'ccollabgui', dest: '/usr/local/bin/ccollabgui' }
+    - { src: 'p4collab', dest: '/usr/local/bin/p4collab' }
+    - { src: 'perforcetrigger', dest: '/usr/local/bin/perforcetrigger' }
+    - { src: 'smartbear-diff-shim', dest: '/usr/local/bin/smartbear-diff-shim' }
+    - { src: 'subversiontrigger', dest: '/usr/local/bin/subversiontrigger' }

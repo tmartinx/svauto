@@ -1,0 +1,56 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: ubuntu - registering how many CPUs supports 1G HugePages
+  shell: cat /proc/cpuinfo | grep pdpe1gb | wc -l
+  register: processor_count_1g_hugepages
+  tags: processor_count_1g_hugepages
+
+
+- name: ubuntu - apt installing DPDK
+  apt: name={{item}} state=latest
+  with_items:
+    - dpdk
+    - dpdk-igb-uio-dkms
+    - dpdk-rte-kni-dkms
+
+
+- name: ubuntu - copy dpdk.conf
+  template: src=dpdk.conf.j2
+            dest=/etc/dpdk/dpdk.conf
+            owner=root
+            group=root
+            mode=0644
+            backup=yes
+
+
+- name: ubuntu - copy interfaces
+  template: src=interfaces.j2
+            dest=/etc/dpdk/interfaces
+            owner=root
+            group=root
+            mode=0644
+            backup=yes
+
+
+- name: ubuntu - service dpdk enabled and started
+  shell: systemctl enable dpdk ; systemctl start dpdk
+
+
+# Not working:
+#- name: ubuntu - service dpdk enabled
+#  service: name=dpdk enabled=yes
+
+
+- meta: flush_handlers

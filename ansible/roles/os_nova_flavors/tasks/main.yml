@@ -1,0 +1,128 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# Deleting default OpenStack flavors
+- name: ubuntu - nova deleting default m1.tiny
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=absent
+    name=m1.tiny
+  when: deployment_mode == 'yes'
+
+- name: ubuntu - nova deleting default m1.small
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=absent
+    name=m1.small
+  when: deployment_mode == 'yes'
+
+- name: ubuntu - nova deleting default m1.medium
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=absent
+    name=m1.medium
+  when: deployment_mode == 'yes'
+
+- name: ubuntu - nova deleting default m1.large
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=absent
+    name=m1.large
+  when: deployment_mode == 'yes'
+
+- name: ubuntu - nova deleting default m1.xlarge
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=absent
+    name=m1.xlarge
+  when: deployment_mode == 'yes'
+
+
+# Creating new default flavors for OpenStack
+- name: ubuntu - nova creating m1.micro flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=present
+    name=m1.micro
+    ram=256
+    swap=128
+    vcpus=1
+    disk=2
+
+- name: ubuntu - nova creating m1.tiny flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=present
+    name=m1.tiny
+    ram=512
+    swap=256
+    vcpus=1
+    disk=4
+    ephemeral=1
+
+- name: ubuntu - nova creating m1.little flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=present
+    name=m1.little
+    ram=1024
+    swap=512
+    vcpus=1
+    disk=8
+    ephemeral=2
+
+- name: ubuntu - nova creating m1.small flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=present
+    name=m1.small
+    ram=2048
+    swap=1024
+    vcpus=2
+    disk=20
+    ephemeral=4
+
+- name: ubuntu - nova creating m1.medium flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=present
+    name=m1.medium
+    ram=4096
+    swap=2048
+    vcpus=2
+    disk=40
+    ephemeral=8
+
+- name: ubuntu - nova creating m1.large flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=present
+    name=m1.large
+    ram=8192
+    swap=4096
+    vcpus=4
+    disk=80
+    ephemeral=16
+
+- name: ubuntu - nova creating m1.xlarge flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    state=present
+    name=m1.xlarge
+    ram=16384
+    swap=8192
+    vcpus=8
+    disk=160
+    ephemeral=32

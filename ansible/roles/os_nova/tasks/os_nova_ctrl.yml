@@ -1,0 +1,87 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# References:
+# https://docs.openstack.org/nova/rocky/install/controller-install-ubuntu.html
+
+
+- name: Creating OpenStack MySQL databases
+  mysql_db: name={{item.db_name}} state=present
+  with_items: '{{mysql_databases}}'
+
+- name: Creating OpenStack MySQL users
+  mysql_user:
+    host="{{item.db_host}}"
+    name="{{item.db_user}}"
+    password="{{item.db_pass}}"
+    priv="{{item.db_name}}.*:ALL,GRANT"
+    append_privs=true
+    state=present
+  with_items: '{{mysql_databases}}'
+
+
+- include: openstack-nova-init.yml
+  when: deployment_mode == 'yes'
+
+
+- include: openstack-nova-placement-init.yml
+  when: deployment_mode == 'yes'
+
+
+- name: Installing Nova Services
+  apt: name={{item}} state=latest
+  with_items:
+    - nova-api
+    - nova-scheduler
+    - nova-conductor
+    - nova-spiceproxy
+  notify: restart-nova
+
+
+- name: Installing Nova Placement API
+  apt: name={{item}} state=latest
+  with_items:
+    - nova-placement-api
+  notify: reload-apache2
+
+
+- name: Removing non-used sqlite database
+  file: path=/var/lib/nova/nova.sqlite state=absent
+  notify: restart-nova
+
+
+- name: Updating nova.conf
+  template: src={{os_release}}/nova.conf.j2
+            dest=/etc/nova/nova.conf
+            owner=nova
+            group=nova
+            mode=0640
+            backup=yes
+  when: item.os_project == "nova"
+  with_items: '{{mysql_databases}}'
+  notify: restart-nova
+
+
+- name: Populating Nova API and Placement Databases
+  shell: su -s /bin/sh -c "nova-manage api_db sync" nova
+
+- name: Register the cell0 database
+  shell: su -s /bin/sh -c "nova-manage cell_v2 map_cell0" nova
+
+- name: Create the cell1 cell
+  shell: su -s /bin/sh -c "nova-manage cell_v2 create_cell --name=cell1 --verbose" nova
+  when: deployment_mode == 'yes'
+
+- name: Populate the Nova database
+  shell: su -s /bin/sh -c "nova-manage db sync" nova

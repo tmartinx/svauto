@@ -1,0 +1,4 @@
+# Fake Provider Network NIC
+allow-hotplug dummybr3
+iface dummybr3 inet static
+	address 192.168.192.129/25

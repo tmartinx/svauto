@@ -1,0 +1,4 @@
+<network>
+  <name>internet</name>
+  <bridge name='internet' stp='off' delay='0'/>
+</network>
