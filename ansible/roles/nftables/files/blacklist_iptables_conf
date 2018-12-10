@@ -1,0 +1,5 @@
+# Blacklist IPTables, NFTables is the way to go!
+
+install ipt_MASQUERADE /bin/false
+install iptable_nat /bin/false
+install iptable_filter /bin/false
