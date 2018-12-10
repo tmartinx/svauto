@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# TODO: Only use hard-coded variables, if there are no settings already
+# configured on the local system.
 UBUNTU_USERNAME="ubuntu"
 UBUNTU_HOSTNAME="controller-1"
 YOUR_DOMAIN="yourdomain.com"
