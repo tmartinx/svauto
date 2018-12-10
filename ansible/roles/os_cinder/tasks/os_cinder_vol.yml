@@ -13,14 +13,14 @@
 # limitations under the License.
 
 # Reference:
-# https://docs.openstack.org/cinder/queens/install/cinder-storage-install-ubuntu.html
+# https://docs.openstack.org/cinder/rocky/install/cinder-storage-install-ubuntu.html
 
 - name: Installing Cinder Volume
   apt: name={{ item }} state=latest
   with_items:
+    - cinder-volume
     - lvm2
     - thin-provisioning-tools
-    - cinder-volume
 
 
 - name: Updating cinder.conf

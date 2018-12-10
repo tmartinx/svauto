@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # Reference:
-# https://github.com/openstack/openstack-ansible/blob/master/tests/roles/bootstrap-host/tasks/prepare_loopback_cinder.yml
+# https://github.com/openstack/openstack-ansible/blob/stable/rocky/tests/roles/bootstrap-host/tasks/prepare_loopback_cinder.yml
 
 - name: Create sparse Cinder file
   command: "truncate -s {{ bootstrap_host_loopback_cinder_size }}G /var/lib/cinder/cinderloop.img"

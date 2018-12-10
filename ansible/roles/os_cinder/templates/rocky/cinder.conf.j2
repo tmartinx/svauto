@@ -9,6 +9,7 @@ osapi_volume_workers = 4
 
 rootwrap_config = /etc/cinder/rootwrap.conf
 api_paste_confg = /etc/cinder/api-paste.ini
+
 state_path = /var/lib/cinder
 
 volume_name_template = volume-%s
@@ -44,20 +45,21 @@ connection = mysql+pymysql://{{ item.db_user }}:{{ item.db_pass }}@{{ os_admin_a
 
 [keystone_authtoken]
 
-auth_uri = {{ endpoint_public_uri }}{{ identity_endpoint_public }}:5000
+www_authenticate_uri = {{ endpoint_public_uri }}{{ identity_endpoint_public }}:5000
+
 auth_url = {{ endpoint_internal_uri }}{{ identity_endpoint_internal }}:5000
+
+project_domain_name = default
+project_name = service
+
+user_domain_name = default
+
+username = cinder
+password = {{ service_password }}
 
 memcached_servers = {{ os_admin_addr }}:11211
 
 auth_type = password
-
-project_domain_name = default
-user_domain_name = default
-
-project_name = service
-
-username = cinder
-password = {{ service_password }}
 
 
 {% if os_cinder_vol == 'yes' %}

@@ -12,6 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+- name: Creating OpenStack Cinder User and Role
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - openstack user create --domain default --password "{{ service_password }}" --email "cinder@{{ os_dns_domain }}" cinder
+  - openstack role add --project service --user cinder --user-domain default admin
+
+
 - name: Creating OpenStack Cinder Services
   environment: "{{ admin_openrc_env }}"
   command: "{{ item }}"
@@ -30,10 +39,3 @@
   - openstack endpoint create --region "{{ region }}" volumev3 public "{{ endpoint_public_uri }}{{ volumev2_endpoint_public }}:8776/v3/%(project_id)s"
   - openstack endpoint create --region "{{ region }}" volumev3 internal "{{ endpoint_internal_uri }}{{ volumev2_endpoint_internal }}:8776/v3/%(project_id)s"
   - openstack endpoint create --region "{{ region }}" volumev3 admin "{{ endpoint_internal_uri }}{{ volumev2_endpoint_internal }}:8776/v3/%(project_id)s"
-
-- name: Creating OpenStack Cinder User and Role
-  environment: "{{ admin_openrc_env }}"
-  command: "{{ item }}"
-  with_items:
-  - openstack user create --domain default --password "{{ service_password }}" --email "cinder@{{ os_dns_domain }}" cinder
-  - openstack role add --project service --user cinder --user-domain default admin

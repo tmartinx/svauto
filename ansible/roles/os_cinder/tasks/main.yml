@@ -27,5 +27,4 @@
   when: os_cinder_backup == 'yes'
 
 
-
 - meta: flush_handlers
