@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Default login/pass: Admin / zabbix
+
 # Zabbix MySQL variables
 mysql_db_host: "localhost"
 zabbix_db: "zabbixdb"
@@ -27,3 +29,6 @@ zabbix_server: "localhost"
 zabbix_server_name: "Custom Monitoring"
 
 zabbix_server_ip: "127.0.0.1"
+
+# PHP Date Timezone
+php_date_timezone: "America/Toronto"

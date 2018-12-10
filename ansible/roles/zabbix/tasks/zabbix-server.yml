@@ -12,8 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: ubuntu - apt installing Zabbix 3.2 Repository Package
-  apt: deb=http://repo.zabbix.com/zabbix/3.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_3.2-1+xenial_all.deb
+# References:
+# https://www.zabbix.com/documentation/4.0/manual/installation/install_from_packages/debian_ubuntu
+
+- name: ubuntu - apt installing Zabbix 4.0 LTS Repository Package
+  apt: deb=https://repo.zabbix.com/zabbix/4.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_4.0-2+bionic_all.deb
 
 
 - name: ubuntu - apt installing Zabbix Server and its Frontend
@@ -21,15 +24,12 @@
   with_items:
     - zabbix-server-mysql
     - zabbix-frontend-php
-    - php7.0-bcmath
-    - php7.0-mbstring
-    - php7.0-xml
   notify: reload-apache2
 
 
-- name: ubuntu - copy PHP Timezone config
-  copy: src=30-timezone.ini
-        dest=/etc/php/7.0/apache2/conf.d/30-timezone.ini
+- name: ubuntu - copy Zabbix's Apache2 Config File
+  template: src=apache2_zabbix.conf.j2
+        dest=/etc/apache2/conf-enabled/zabbix.conf
         owner=root
         group=root 
         mode=0644
@@ -37,7 +37,11 @@
 
 
 - name: ubuntu - sql creating Zabbix database
-  mysql_db: name={{ zabbix_db }} state=present
+  mysql_db:
+    name={{ zabbix_db }}
+    state=present
+    collation=utf8_bin
+    encoding=utf8
 
 - name: ubuntu - sql creating Zabbix users and permissions
   mysql_user:
@@ -46,6 +50,7 @@
     password="{{ zabbix_db_pass }}"
     priv="{{ zabbix_db }}.*:ALL,GRANT"
     state=present
+
 
 - name: ubuntu - sql creating Zabbix database structure
   mysql_db: name={{ zabbix_db }} state=import target=/usr/share/doc/zabbix-server-mysql/create.sql.gz
@@ -58,9 +63,3 @@
         group=root 
         mode=0644
   notify: reload-apache2
-
-- file: src=/etc/zabbix/web/zabbix.conf.php
-        dest=/usr/share/zabbix/conf/zabbix.conf.php
-        owner=root
-        group=root
-        state=link
