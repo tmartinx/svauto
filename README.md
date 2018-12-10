@@ -128,7 +128,9 @@ Building a CentOS 7 QCoW (compressed) with Packer and Ansible:
     cd ~/svauto
     ./packer-build/centos7.sh
 
-*NOTE: those O.S. Images have Cloud Init support and its file system grows automatically in a Cloud Environment!*
+*NOTES:*
+
+*Those O.S. Images have Cloud Init support and its file system grows automatically in a Cloud Environment!*
 
 #### SVAuto Local Config File
 
