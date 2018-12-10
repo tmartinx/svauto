@@ -18,7 +18,7 @@
       ],
       "disk_size": 7168,
       "format": "raw",
-      "headless": "false",
+      "headless": "true",
       "accelerator": "kvm",
       "http_directory": "packer/http",
       "http_port_min": 10082,
