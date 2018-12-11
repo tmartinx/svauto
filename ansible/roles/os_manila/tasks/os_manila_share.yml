@@ -13,7 +13,11 @@
 # limitations under the License.
 
 # Reference:
+#
 # NOTE: Following NHSS=False, for now (Option 1)
+#       Subdirectories for each share will appear under /var/lib/manila/share
+#       There will be a need to manually export each share after its creation.
+#
 # https://docs.openstack.org/manila/rocky/install/install-share-ubuntu.html
 
 - name: Installing Manila Share
@@ -40,6 +44,13 @@
   when: item.os_project == "manila"
   with_items: '{{ mysql_databases }}'
   notify: restart-share
+
+- name: Creating OpenStack Manila Share Type
+  environment: "{{ admin_openrc_env }}"
+  command: "{{ item }}"
+  with_items:
+  - manila type-create default_share_type False
+  when: deployment_mode == 'yes'
 
 
 - meta: flush_handlers
