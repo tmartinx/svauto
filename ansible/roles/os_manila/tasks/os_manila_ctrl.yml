@@ -30,8 +30,8 @@
   with_items: '{{ mysql_databases }}'
 
 
-#- include: openstack-manila-init.yml
-#  when: deployment_mode == 'yes'
+- include: openstack-manila-init.yml
+  when: deployment_mode == 'yes'
 
 
 - name: Installing Manila
@@ -40,6 +40,13 @@
     - manila-api
     - manila-scheduler
   notify: restart-manila
+
+
+# NOTE: "Cross dependency" with os_horizon role
+# The Manila UI depends on Horizon!
+# Might be a good idea to find an Ansible way of fixing this.
+- name: Installing Manila UI
+  apt: name=python-manila-ui state=latest
 
 
 - name: Removing non-used sqlite database
