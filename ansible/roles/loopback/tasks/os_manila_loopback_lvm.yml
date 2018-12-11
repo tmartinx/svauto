@@ -17,7 +17,7 @@
 # https://github.com/openstack/openstack-ansible/blob/stable/rocky/tests/roles/bootstrap-host/tasks/prepare_loopback_cinder.yml
 
 - name: Create sparse Manila file
-  command: "truncate -s {{ bootstrap_host_loopback_manila_size }}G /var/lib/manila/manilaloop.img"
+  command: "truncate -s {{ bootstrap_host_loopback_size }}G /var/lib/manila/manilaloop.img"
   args:
     creates: /var/lib/manila/manilaloop.img
   register: manila_create

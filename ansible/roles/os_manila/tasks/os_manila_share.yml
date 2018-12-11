@@ -42,9 +42,4 @@
   notify: restart-share
 
 
-- name: ubuntu - Creating LVM Volume Group on a loopback file / device
-  include: os_manila_loopback_lvm.yml
-  when: os_aio == 'yes' and deployment_mode == 'yes'
-
-
 - meta: flush_handlers
