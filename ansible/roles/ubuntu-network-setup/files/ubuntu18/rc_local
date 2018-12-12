@@ -1,4 +1,0 @@
-#! /bin/bash
-
-rmmod dummy
-modprobe dummy numdummies=12

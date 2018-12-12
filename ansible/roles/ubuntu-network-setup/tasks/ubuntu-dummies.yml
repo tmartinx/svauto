@@ -12,28 +12,108 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: ubuntu - config dummy module options
-  lineinfile: dest=/etc/modprobe.d/dummy.conf
-              line="options dummy numdummies=12"
-              create=yes
+# Why creating the systemd-networkd files instead of migrating to Netplan once
+# for all?
+#
+# A.: Netplan doesn't support dummy interfaces right now:
+#     https://bugs.launchpad.net/netplan/+bug/1774203
+#
+# So, for now, let's just do this and wait for Ansible 2.8, that will have
+# Netplan support, I believe. Or maybe go to Ansible Galaxy Netplan...
+# Then, no more need for "ubuntu-network-setup" role! And bye bye ifupdown.
 
-- name: ubuntu - config dummy module
-  lineinfile: dest=/etc/modules
-              line="dummy"
-
-# BUG: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1774731
-- name: ubuntu - loading dummy module
-  shell: 'rmmod dummy ; modprobe dummy numdummies=12'
-
-# Need rmmod / modprobe again, after each reboot!!!   :-O
-# What is happening to Ubuntu?! I blame systemd...  LOL
-- name: ubuntu - copy dummies workaround for BUG LP#1774731
-  copy: src=ubuntu18/rc_local
-        dest=/etc/rc.local
+- name: ubuntu - copy dummy0 systemd-networkd
+  copy: src=ubuntu18/10-dummy0.netdev
+        dest=/etc/systemd/network/10-dummy0.netdev
         owner=root
         group=root
-        mode=0755
+        mode=0644
+  when: os_neutron_lbr_enabled == 'yes'
 
+- name: ubuntu - copy dummy1 systemd-networkd
+  copy: src=ubuntu18/11-dummy1.netdev
+        dest=/etc/systemd/network/11-dummy1.netdev
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy2 systemd-networkd
+  copy: src=ubuntu18/12-dummy2.netdev
+        dest=/etc/systemd/network/12-dummy2.netdev
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy3 systemd-networkd
+  copy: src=ubuntu18/13-dummy3.netdev
+        dest=/etc/systemd/network/13-dummy3.netdev
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy4 systemd-networkd
+  copy: src=ubuntu18/14-dummy4.netdev
+        dest=/etc/systemd/network/14-dummy4.netdev
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy5 systemd-networkd
+  copy: src=ubuntu18/15-dummy5.netdev
+        dest=/etc/systemd/network/15-dummy5.netdev
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy6 systemd-networkd
+  copy: src=ubuntu18/16-dummy6.netdev
+        dest=/etc/systemd/network/16-dummy6.netdev
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy7 systemd-networkd
+  copy: src=ubuntu18/17-dummy7.netdev
+        dest=/etc/systemd/network/17-dummy7.netdev
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy8 systemd-networkd
+  copy: src=ubuntu18/18-dummy8.netdev
+        dest=/etc/systemd/network/18-dummy8.netdev
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy9 systemd-networkd
+  copy: src=ubuntu18/19-dummy9.netdev
+        dest=/etc/systemd/network/19-dummy9.netdev
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy10 systemd-networkd
+  copy: src=ubuntu18/20-dummy10.netdev
+        dest=/etc/systemd/network/20-dummy0.netdev
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - copy dummy11 systemd-networkd
+  copy: src=ubuntu18/21-dummy11.netdev
+        dest=/etc/systemd/network/21-dummy11.netdev
+        owner=root
+        group=root
+        mode=0644
+
+- name: ubuntu - restart networkd service
+  systemd:
+    state: restarted
+    name: systemd-networkd
+
+
+# Still using ifupdown to manage the interfaces but, not for too long.
 
 - name: ubuntu - copy dummy0 config file for LBR
   copy: src=ubuntu-common/interface_dummy0
