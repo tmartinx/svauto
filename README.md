@@ -12,14 +12,17 @@ Looking forward to add support for Linux Containers (systemd-nspawn, LXD and Doc
 It uses the following Open Source projects:
 
 * Ubuntu Bionic 18.04
+* LXD 3.0
+* QEmu 2.11
 * systemd 237
 * Ansible 2.5
 * Packer 1.0.4
-* QEmu 2.11
 * VirtualBox 5.2
+
+On SVAuto's radar:
+
 * Vagrant 2.0.2
 * Docker 18.06
-* LXD 3.0
 * Amazon EC2 AMI & API Tools
 
 It contains Ansible Playbooks for Automated deployments of:
@@ -57,7 +60,7 @@ Bootstrap Ubuntu 18.04 Server, it upgrades and install a few applications for Se
     cd ~/svauto
     ./scripts/preset-ubuntu-server.sh
 
-*NOTE: You can edit those small scripts and add "--dry-run" to svauto.sh line, this way, it doesn't run Ansible against your localhost, it only outputs Ansible's Inventory and Playbook files. Then, you can run "cd ~/svauto/ansible ; ansible-playbook -i ansible-hosts-XXXX ansible-playbook-XXXX.yml" later, if you want.*
+*NOTE: You can edit those small scripts and add `--dry-run` to `vauto.sh` line, this way, it doesn't run Ansible against your localhost, it only outputs Ansible's Inventory and Playbook files. Then, you can run `cd ~/svauto/ansible ; ansible-playbook -i ansible-hosts-XXXX ansible-playbook-XXXX.yml` later, if you want.*
 
 ## Creating O.S. Images: QCoW, OVAs, VHD, etc 
 
@@ -108,15 +111,15 @@ or:
 
     sudo packer build packer/centos7-gui.yaml
 
-NOTE: The resulting images are created under packer/ubuntu18-tmpl, or packer/centos7-tmpl, or ...
+NOTE: The resulting images are created under `packer/ubuntu18-tmpl`, or `packer/centos7-tmpl`, or ...
 
 #### Packer and Ansible
 
 Those small Packer Templates tested on previous baby steps, are the base for the rest of "SVAuto Image Factory".
 
-For example: packer/ubuntu18.yaml is the base for packer/ubuntu18-template.yaml, where the "*-template.yaml" is the one actually being used by "svauto.sh".
+For example: `packer/ubuntu18.yaml` is the base for `packer/ubuntu18-template.yaml`, where the `*-template.yaml` is the one actually being used by `svauto.sh`.
 
-SVAuto basically glues together Packer and Ansible, under temporaries subdirectories (packer/build-something), it then goes there and runs "packer build" for you.
+SVAuto basically glues together Packer and Ansible, under temporaries subdirectories (`packer/build-something`), it then goes there and runs `packer build` for you.
 
 Building an Ubuntu 18.04 QCoW (compressed) with Packer and Ansible:
 
