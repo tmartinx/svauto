@@ -50,12 +50,12 @@ Download SVAuto into your home directory (Designed for Ubuntu LTS):
 Bootstrap Ubuntu 18.04 Desktop, it upgrades and installs many useful applications, like Google Chrome and etc...
 
     cd ~/svauto
-    ./scripts/preset-bionic-desktop.sh
+    ./scripts/preset-ubuntu-desktop.sh
 
 Bootstrap Ubuntu 18.04 Server, it upgrades and install a few applications for Servers.
 
     cd ~/svauto
-    ./scripts/preset-bionic-server.sh
+    ./scripts/preset-ubuntu-server.sh
 
 *NOTE: You can edit those small scripts and add "--dry-run" to svauto.sh line, this way, it doesn't run Ansible against your localhost, it only outputs Ansible's Inventory and Playbook files. Then, you can run "cd ~/svauto/ansible ; ansible-playbook -i ansible-hosts-XXXX ansible-playbook-XXXX.yml" later, if you want.*
 
