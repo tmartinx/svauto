@@ -134,7 +134,7 @@ Building a CentOS 7 QCoW (compressed) with Packer and Ansible:
 
 #### SVAuto Local Config File
 
-The local config file is "~/.svauto.conf", it overrides part of "~/svauto/svauto.conf" variables.
+The local config file is `~/.svauto.conf`, it overrides part of `~/svauto/svauto.conf` variables.
 
 If might have the following contents (example):
 
