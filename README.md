@@ -9,6 +9,8 @@ There is also a preliminary support for Vagrant with Ansible, that uses regular 
 
 Looking forward to add support for Linux Containers (systemd-nspawn, LXD and Docker).
 
+SVAuto was designed for Ubuntu Bionic 18.04 (latest LTS), Server or Desktop. But CentOS is also sypported.
+
 It uses the following Open Source projects:
 
 * Ubuntu Bionic 18.04
@@ -30,12 +32,6 @@ It contains Ansible Playbooks for Automated deployments of:
 * Ubuntu
 * CentOS
 * OpenStack on Ubuntu LTS
-
-*NOTES:*
-
-*For using Ansible against remore locations, make sure you can ssh to your instances using key authentication.*
-
-*SVAuto was designed for Ubuntu Bionic 18.04 (latest LTS), Server or Desktop. But CentOS is also sypported."
 
 # Quick Procedure
 
