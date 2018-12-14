@@ -91,7 +91,7 @@ To download SVAuto into your home directory, clone it with git, as follows:
 
 ## 5- The Preset Scripts
 
-With the Preset Scripts, it's super easy to bootstrap a fresh installed Ubuntu, Server or Desktop, with minimal featureset, as a KVM and/or LXD Hypervisor, and even deploy OpenStack!
+With the Preset Scripts, it's super easy to bootstrap a fresh installed Ubuntu, Server or Desktop, with minimal featureset, or for more specific use caes, as a KVM and/or LXD Hypervisor, OpenvSwitch with DPDK, and even deploy OpenStack!
 
 * Bootstrap Ubuntu 18.04 Desktop, it upgrades and installs many useful applications, like Google Chrome and etc:
 
@@ -110,7 +110,11 @@ Then, you can run Ansible manually, like:
     pushd ~/svauto/ansible
     ansible-playbook -i ansible-hosts-XXXX ansible-playbook-XXXX.yml
 
-## 6- Creating O.S. Images: QCoW, OVAs, VHD, etc 
+## 6- The Image Factory
+
+SVAuto uses Packaer with Ansible, to build O.S. images ready for a Cloud Environment.
+
+It's supports the following O.S. Images formats: QCoW2, VMDK, OVA, VHD and RAW. 
 
 ### 6.1- Bootstrapping your Ubuntu (Desktop or Server) for SVAuto
 
