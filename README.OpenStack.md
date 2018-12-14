@@ -1,17 +1,11 @@
 ﻿
 # SVAuto - The Save Automation
 
-# Ansible Playbooks for OpenStack
-
-Ansible playbooks for deploying `OpenStack`.  http://openstack.org
-
 ## Overview
 
 To deploy OpenStack with SVAuto, in your local machine, you'll need to first, follow the instructions on [README.md](README.md), about bootstrapping an Ubuntu Machine, script `./scripts/preset-ubuntu-[server|desktop]`.
 
 Then you'll have a fully upgraded `Ubuntu Bionic`, ready for deploying `OpenStack` on top of it!
-
-SVAuto's `Ansible` playbooks provides two ways for deploying `OpenStack`, first and quick mode, is by running it on your local machine by using one of the "Preset Scripts" `~/svauto/scripts`, the second mode is a advanced, where you'll be deploying `OpenStack` on remote computers, from your SVAuto's machine (actually, your "Ansible Server").
 
 This procedure will deploy `OpenStack` in your local machine, in a fashion called `all-in-one`. It follows `OpenStack` official documentation `https://docs.openstack.org`.
 
