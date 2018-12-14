@@ -92,7 +92,7 @@ The main `svauto.sh` script supports an option called `--dry-run`, which disable
 Then, you can run Ansible manually, like:
 
     pushd ~/svauto/ansible
-    ansible-playbook -i ansible-hosts-XXXX ansible-playbook-XXXX.yml` later, if you want.*
+    ansible-playbook -i ansible-hosts-XXXX ansible-playbook-XXXX.yml
 
 ## 6- Creating O.S. Images: QCoW, OVAs, VHD, etc 
 
@@ -100,7 +100,7 @@ Then, you can run Ansible manually, like:
 
 To build QCoWs/OVA images with Packer and Ansible, you need to "Bootstrap Ubuntu For SVAuto", so you can take advantage of all SVAuto's features to build O.S. images.
 
-NOTE: The following procedure download a few ISO images from the Internet, and store it under Libvirt's directory.
+*NOTE: The following procedure download a few ISO images from the Internet, and store it under `/srv/ISO` sub directory.*
 
 Ubuntu Desktop
 
@@ -118,9 +118,9 @@ After this, you'll be able to use Packer to build O.S. Images with Ansible!
 
 To make sure that your Packer installation is good and that you can actually run it and have a RAW Image in the end of the process, lets go baby steps first.
 
-SVAuto comes with bare-minimum Packer Templates, also very minimal Kickstart and Preseed files.
+SVAuto comes with bare-minimum Packer Templates, also very minimal Preseed for Ubuntu and Kickstarts for CentOS.
 
-*NOTE: Packer requires root because it runs the KVM binary directly (i.e., not via Libvirt), so, even if you're member of "libvirt" group, you still need to run it as root.*
+*NOTE: Packer requires `sudo` because it runs KVM directly, not via Libvirt.*
 
 Building an Ubuntu 18.04 or CentOS 7 RAW Images with just Packer:
 
