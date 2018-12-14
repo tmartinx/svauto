@@ -37,16 +37,45 @@ It contains Ansible Playbooks for Automated deployments of:
 
 *SVAuto was designed for Ubuntu Bionic 18.04 (latest LTS), Server or Desktop. But CentOS is also sypported."
 
-## Downloading
+# Quick Procedure
 
-Download SVAuto into your home directory (Designed for Ubuntu LTS):
+## 1- Install Ubuntu 18.04 (Server or Desktop), let's say with:
+
+- Hostname: "myserver-1"
+- User: "ubuntu"
+- Password: "whatever"
+    
+## 2- Hostname and Hosts Basic Configuration
+
+One line in `/etc/hostname` with your host's name (lol):
+
+    myserver-1
+    
+First two lines of `/etc/hosts` (leave the rest of your file untouched):
+
+    127.0.0.1 localhost.localdomain localhost
+    127.0.1.1 myserver-1.yourdomain.com myserver-1 myserver
+    
+*NOTE: If you have fixed IP (v4 or v6), you can use it here (recommended), instead of 127.0.1.1. But the default works very well, especially if you're connected via DHCP / WIFI.*
+
+Make sure it is working:
+
+    hostname        # Must returns ONLY your Hostname, nothing more.
+    hostname -d     # Must returns ONLY your Domain.
+    hostname -f     # Must returns your FQDN.
+    hostname -i     # Must returns 127.0.1.1 (or your local IP, if you configured it previsouly).
+    hostname -a     # Must returns your aliases.
+
+## Install Git & Python Minimal on Ubuntu 18.04
+
+    sudo apt install -y git python-minimal
+
+## Downloading SVAuto
+
+To download SVAuto into your home directory, clone it with git, as follows:
 
     cd ~
     git clone https://github.com/tmartinx/svauto
-
-## Install Python Minimal on Ubuntu 18.04
-
-    apt install python-minimal
 
 ## Bootstrapping local systems with the "Preset Scripts"
 
@@ -152,3 +181,9 @@ To remove the temporary files, run:
 
     cd ~/svauto
     ./svauto.sh --clean-all
+
+### Deploy OpenStack using SVAuto
+
+SVAuto supports deploying OpenStack in a very simple way, instructions at the following link:
+
+[OpenStack SVAuto](README.OpenStack.md)
