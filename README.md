@@ -141,20 +141,25 @@ After this, you'll be able to use Packer to build O.S. Images with Ansible!
 
 To make sure that your Packer installation is good and that you can actually run it and have a RAW Image in the end of the process, lets go baby steps first.
 
-SVAuto comes with bare-minimum Packer Templates, also very minimal Preseed for Ubuntu and Kickstarts for CentOS.
+SVAuto comes with bare-minimum Packer Templates, also very minimal Preseeds for Ubuntu and Kickstarts for CentOS.
 
 *NOTE: Packer requires `sudo` because it runs KVM directly, not via Libvirt.*
 
-Building an Ubuntu 18.04 or CentOS 7 RAW Images with just Packer:
+Building O.S. RAW Images with just Packer (no Ansible involved here):
+
+- Go to SVAuto's subdir
 
     cd ~/svauto
+
+- Ubuntu 18.04
+
     sudo packer build packer/ubuntu18.yaml
 
-or:
+- CentOS 7
 
     sudo packer build packer/centos7.yaml
 
-Enable KVM SDL Screen to see what Packer is doing!
+To have a better visual about what Packer is doing, you can enable the KVM GUI (SDL-based) screen.
 
 Allow local root user to use X Window System:
 
@@ -166,7 +171,9 @@ or:
 
     sudo packer build packer/centos7-gui.yaml
 
-NOTE: The resulting images are created under `packer/ubuntu18-tmpl`, or `packer/centos7-tmpl`, or ...
+*NOTE: You can export `PACKER_LOG=1` variable, to enable Packaer debug messages.*
+
+*NOTE: The resulting images are created under `packer/ubuntu18-tmpl`, or `packer/centos7-tmpl`...*
 
 ### 6.3- Packer and Ansible
 
