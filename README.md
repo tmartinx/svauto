@@ -5,11 +5,11 @@ SVAuto is an Open Source Automation Tool, it glues together a different set of t
 
 With SVAuto, you can create QCoWs, VMDKs, OVAs, and etc, with Packer and Ansible! It uses the official ISO Images as a base.
 
-There is also a preliminary support for Vagrant with Ansible, that uses regular CentOS / Ubuntu boxes hosted on Atlassian.
+There is also a preliminary support for Vagrant with Ansible, that uses regular Ubuntu / CentOS boxes hosted on Atlassian.
 
 Looking forward to add support for Linux Containers (systemd-nspawn, LXD and Docker).
 
-SVAuto was designed for Ubuntu Bionic 18.04 (latest LTS), Server or Desktop. But CentOS is also sypported.
+SVAuto was designed for Ubuntu Bionic 18.04 (latest LTS), Server or Desktop. But CentOS is also supported.
 
 It uses the following Open Source projects:
 
