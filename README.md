@@ -85,7 +85,7 @@ Bootstrap Ubuntu 18.04 Server, it upgrades and install a few applications for Se
     cd ~/svauto
     ./scripts/preset-ubuntu-server.sh
 
-*NOTE: You can edit those small scripts and add `--dry-run` to `vauto.sh` line, this way, it doesn't run Ansible against your localhost, it only outputs Ansible's Inventory and Playbook files. Then, you can run `cd ~/svauto/ansible ; ansible-playbook -i ansible-hosts-XXXX ansible-playbook-XXXX.yml` later, if you want.*
+*NOTE: You can edit the Preset Scripts above and add `--dry-run` to the line that starts with `./svauto.sh ...`, this way, it doesn't automatically runs Ansible, it only outputs Ansible's Inventory and Playbook files. Then, you can run Ansible manually, like: `pushd ~/svauto/ansible ; ansible-playbook -i ansible-hosts-XXXX ansible-playbook-XXXX.yml` later, if you want.*
 
 ## 6- Creating O.S. Images: QCoW, OVAs, VHD, etc 
 
