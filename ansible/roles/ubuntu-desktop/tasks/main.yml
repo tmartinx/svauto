@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: ubuntu - apt installing Ubuntu Unity Desktop
+- name: ubuntu - apt installing Ubuntu Desktop
   apt: name={{item}} state=latest
   with_items:
     - ubuntu-desktop
