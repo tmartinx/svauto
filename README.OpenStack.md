@@ -49,6 +49,8 @@ There are 4 predefined options to deploy OpenStack with SVauto, a minimal option
 
 The Preset Scripts are located under `svauto/scripts/preset-os-rocky*`. 
 
+*WARNING: The OpenStack's Preset Scripts have some hardcoded variables at the begining of each file, make sure to change those valies BEFORE running the scripts!*
+
 Go to SVAuto subdir, like:
 
     cd ~/svauto
