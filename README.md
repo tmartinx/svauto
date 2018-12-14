@@ -115,7 +115,7 @@ Then, you can run Ansible manually, like:
 
 ## 6- The Image Factory
 
-SVAuto uses Packaer with Ansible, to build O.S. images ready for a Cloud Environment.
+SVAuto uses Packer with Ansible, to build O.S. images ready for a Cloud Environment.
 
 It's supports the following O.S. Images formats: QCoW2, VMDK, OVA, VHD and RAW. 
 
@@ -171,7 +171,7 @@ or:
 
     sudo packer build packer/centos7-gui.yaml
 
-*NOTE: You can export `PACKER_LOG=1` variable, to enable Packaer debug messages.*
+*NOTE: You can export `PACKER_LOG=1` variable, to enable Packer debug messages.*
 
 *NOTE: The resulting images are created under `packer/ubuntu18-tmpl`, or `packer/centos7-tmpl`...*
 
