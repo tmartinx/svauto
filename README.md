@@ -185,7 +185,7 @@ To remove the temporary files, run:
     cd ~/svauto
     ./svauto.sh --clean-all
 
-## 9- Deploy OpenStack using SVAuto
+## 9- OpenStack SVAuto
 
 SVAuto supports deploying OpenStack in a very simple way, instructions at the following link:
 
