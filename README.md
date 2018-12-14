@@ -73,19 +73,26 @@ To download SVAuto into your home directory, clone it with git, as follows:
     cd ~
     git clone https://github.com/tmartinx/svauto
 
-## 5- Bootstrapping local systems with the "Preset Scripts"
+## 5- The Preset Scripts
 
-Bootstrap Ubuntu 18.04 Desktop, it upgrades and installs many useful applications, like Google Chrome and etc...
+With the Preset Scripts, it's super easy to bootstrap a fresh installed Ubuntu, Server or Desktop, with minimal featureset, as a KVM and/or LXD Hypervisor, and even deploy OpenStack!
+
+* Bootstrap Ubuntu 18.04 Desktop, it upgrades and installs many useful applications, like Google Chrome and etc:
 
     cd ~/svauto
     ./scripts/preset-ubuntu-desktop.sh
 
-Bootstrap Ubuntu 18.04 Server, it upgrades and install a few applications for Servers.
+* Bootstrap Ubuntu 18.04 Server, it upgrades and install a few applications for Servers:
 
     cd ~/svauto
     ./scripts/preset-ubuntu-server.sh
 
-*NOTE: You can edit the Preset Scripts above and add `--dry-run` to the line that starts with `./svauto.sh ...`, this way, it doesn't automatically runs Ansible, it only outputs Ansible's Inventory and Playbook files. Then, you can run Ansible manually, like: `pushd ~/svauto/ansible ; ansible-playbook -i ansible-hosts-XXXX ansible-playbook-XXXX.yml` later, if you want.*
+The main `svauto.sh` script supports an option called `--dry-run`, which disables the Ansible's Playbook execution. This way, `svauto.sh` only outputs Ansible's Inventiry and Playbooks files under `svauto/ansible` subdir.
+
+Then, you can run Ansible manually, like:
+
+    pushd ~/svauto/ansible
+    ansible-playbook -i ansible-hosts-XXXX ansible-playbook-XXXX.yml` later, if you want.*
 
 ## 6- Creating O.S. Images: QCoW, OVAs, VHD, etc 
 
