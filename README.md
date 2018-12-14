@@ -23,6 +23,9 @@ It uses the following Open Source projects:
 
 On SVAuto's radar:
 
+* Netplan
+* systemd-networkd
+* nftables
 * Vagrant 2.0.2
 * Docker 18.06
 * Amazon EC2 AMI & API Tools

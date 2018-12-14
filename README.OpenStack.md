@@ -101,5 +101,3 @@ Now, you shoud have OpenStack Rocky up and running!
       netmask 24
 
 *NOTE: SVAuto will create those files for you! When called via OpenStack's Preset Scripts. The Dummy interfaces managed by Ansible are hardcoded for now*
-
-*NOTE: The systemd-networkd support and/or Netplan is under the radar.
