@@ -62,18 +62,18 @@ Make sure it is working:
     hostname -i     # Must returns 127.0.1.1 (or your local IP, if you configured it previsouly).
     hostname -a     # Must returns your aliases.
 
-## Install Git & Python Minimal on Ubuntu 18.04
+## 3- Install Git & Python Minimal on Ubuntu 18.04
 
     sudo apt install -y git python-minimal
 
-## Downloading SVAuto
+## 4- Downloading SVAuto
 
 To download SVAuto into your home directory, clone it with git, as follows:
 
     cd ~
     git clone https://github.com/tmartinx/svauto
 
-## Bootstrapping local systems with the "Preset Scripts"
+## 5- Bootstrapping local systems with the "Preset Scripts"
 
 Bootstrap Ubuntu 18.04 Desktop, it upgrades and installs many useful applications, like Google Chrome and etc...
 
@@ -87,9 +87,9 @@ Bootstrap Ubuntu 18.04 Server, it upgrades and install a few applications for Se
 
 *NOTE: You can edit those small scripts and add `--dry-run` to `vauto.sh` line, this way, it doesn't run Ansible against your localhost, it only outputs Ansible's Inventory and Playbook files. Then, you can run `cd ~/svauto/ansible ; ansible-playbook -i ansible-hosts-XXXX ansible-playbook-XXXX.yml` later, if you want.*
 
-## Creating O.S. Images: QCoW, OVAs, VHD, etc 
+## 6- Creating O.S. Images: QCoW, OVAs, VHD, etc 
 
-### Bootstrapping your Ubuntu (Desktop or Server) for SVAuto
+### 6.1- Bootstrapping your Ubuntu (Desktop or Server) for SVAuto
 
 To build QCoWs/OVA images with Packer and Ansible, you need to "Bootstrap Ubuntu For SVAuto", so you can take advantage of all SVAuto's features to build O.S. images.
 
@@ -107,7 +107,7 @@ Ubuntu Server
 
 After this, you'll be able to use Packer to build O.S. Images with Ansible!
 
-#### Packer, Baby Steps
+### 6.2- Packer, Baby Steps
 
 To make sure that your Packer installation is good and that you can actually run it and have a RAW Image in the end of the process, lets go baby steps first.
 
@@ -138,7 +138,7 @@ or:
 
 NOTE: The resulting images are created under `packer/ubuntu18-tmpl`, or `packer/centos7-tmpl`, or ...
 
-#### Packer and Ansible
+### 6.3- Packer and Ansible
 
 Those small Packer Templates tested on previous baby steps, are the base for the rest of "SVAuto Image Factory".
 
@@ -160,7 +160,7 @@ Building a CentOS 7 QCoW (compressed) with Packer and Ansible:
 
 *Those O.S. Images have Cloud Init support and its file system grows automatically in a Cloud Environment!*
 
-#### SVAuto Local Config File
+## 7- SVAuto Local Config File
 
 The local config file is `~/.svauto.conf`, it overrides part of `~/svauto/svauto.conf` variables.
 
@@ -171,14 +171,14 @@ If might have the following contents (example):
     DNS_DOMAIN="yourdomain.com"
     SVAUTO_YUM_HOST="ftp.$DNS_DOMAIN"
 
-### Cleaning it up
+## 8- Cleaning it up
 
 To remove the temporary files, run:
 
     cd ~/svauto
     ./svauto.sh --clean-all
 
-### Deploy OpenStack using SVAuto
+## 9- Deploy OpenStack using SVAuto
 
 SVAuto supports deploying OpenStack in a very simple way, instructions at the following link:
 
