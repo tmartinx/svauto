@@ -15,6 +15,7 @@
 - name: ubuntu - apt installing QEmu/KVM Hypervisor - Server
   apt: name={{item}} state=latest
   with_items:
+    - ovmf
     - qemu-kvm
     - libvirt-daemon-system
   when: ubuntu_install == 'server'
@@ -23,6 +24,7 @@
 - name: ubuntu - apt installing QEmu/KVM Hypervisor - Desktop
   apt: name={{item}} state=latest
   with_items:
+    - ovmf
     - qemu-kvm
     - virt-viewer
     - virt-manager
