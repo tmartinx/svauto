@@ -16,5 +16,9 @@
   file: path=/srv/ISO owner=root state=directory
 
 
-- name: Downloading requested ISO Images...
+- name: Creating /srv/CLOUD subdirectory
+  file: path=/srv/CLOUD owner=root state=directory
+
+
+- name: Downloading requested O.S. Images...
   include: "{{ download_group }}-images.yml"
