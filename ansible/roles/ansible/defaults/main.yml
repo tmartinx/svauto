@@ -13,25 +13,5 @@
 # limitations under the License.
 
 
-# Upgrade Base OS:
-base_os_upgrade: "no"
-
-ubuntu_install: "server"
-
-# Vagrant run?
-vagrant_run: "no"
-
-tcmc_ppa: "no"
-
-# bootstrap: Enable Main Yum Repository:
-custom_main_yum_repo: "no"
-
-# SVAuto-enabled Yum Reposiory host server address:
-svauto_yum_host: "null"
-
-# Release Code Name:
-release_code_name: "yukon"
-release_code_number: "18.10"
-
-# NTP or Chrony... To be, or not to be...
-ntp_or_chrony: "ntp"
+# Install Ansible from PPA?
+ansible_ppa: "no"

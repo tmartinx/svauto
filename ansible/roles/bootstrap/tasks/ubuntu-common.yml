@@ -17,11 +17,6 @@
   when: base_os_upgrade == 'yes'
 
 
-- name: ubuntu - add Ansible's PPA Repository
-  apt_repository: repo='ppa:ansible/ansible'
-  when: ansible_ppa == 'yes'
-
-
 - name: ubuntu - add TCMC's PPA Repository
   apt_repository: repo='ppa:tcmc/packages'
   when: tcmc_ppa == 'yes'
@@ -69,7 +64,6 @@
     - openssl
     - numactl
     - sysstat
-    - ansible
     - iptables
     - mlocate
     - sysstat
