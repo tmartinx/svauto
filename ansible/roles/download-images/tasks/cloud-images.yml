@@ -60,10 +60,10 @@
   ignore_errors: yes
   when: download_fedora == "yes"
 
-- name: downloading cirros-0.3.4-x86_64-disk.img
+- name: downloading cirros-0.4.0-x86_64-disk.img
   get_url:
-    url: http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
-    dest: /srv/CLOUD/Downloads/cirros-0.3.4-x86_64-disk.img
+    url: http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
+    dest: /srv/CLOUD/Downloads/cirros-0.4.0-x86_64-disk.img
     mode: 0640
   ignore_errors: yes
   when: download_cirros == "yes

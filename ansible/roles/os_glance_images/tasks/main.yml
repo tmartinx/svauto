@@ -182,18 +182,18 @@
   when: fedora25_image_register.stat.exists == True
 
 
-- stat: path=/srv/CLOUD/cirros-0.3.4-x86_64-disk.img
+- stat: path=/srv/CLOUD/cirros-0.4.0-x86_64-disk.img
   register: cirros_image_register
 
-- name: uploading "cirros-0.3.4-amd64"
+- name: uploading "cirros-0.4.0-amd64"
   environment: "{{admin_openrc_env}}"
   os_image:
-    name: cirros-0.3.4-amd64
+    name: cirros-0.4.0-amd64
     is_public: yes
     container_format: bare 
     disk_format: qcow2
     state: present
-    filename: /srv/CLOUD/cirros-0.3.4-x86_64-disk.img
+    filename: /srv/CLOUD/cirros-0.4.0-x86_64-disk.img
     properties:
       cpu_arch: x86_64
   when: cirros_image_register.stat.exists == True
