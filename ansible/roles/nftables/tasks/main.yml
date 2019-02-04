@@ -18,7 +18,7 @@
     - nftables
 
 - name: ubuntu - blacklist iptables
-  copy: src=blacklist_iptables_conf dst=/etc/modprobe.d/blacklist-iptables.conf
+  copy: src=blacklist_iptables_conf dest=/etc/modprobe.d/blacklist-iptables.conf
 
 - name: ubuntu - copy nftables rules (very basic and static)
-  template: src=nftables_conf.j2 dst=/etc/nftables_conf
+  template: src=nftables_conf.j2 dest=/etc/nftables.conf
