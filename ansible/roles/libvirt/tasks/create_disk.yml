@@ -28,6 +28,7 @@
   set_fact:
     disk_destination: "{{ libvirt_pool_1 }}/{{ vm.name }}-disk0.{{ disk_format }}"
 
+
 - name: create disk {{ disk.name }} format qcow2 ({{ vm.name }})
   shell: "qemu-img create -f qcow2 {{ disk_destination }} {{ disk.size }}G"
   when: disk_format == "qcow2"
@@ -35,3 +36,11 @@
 - name: create disk {{ disk.name }} raw format ({{ vm.name }})
   shell: "qemu-img create {{ disk_destination }} {{ disk.size }}G"
   when: disk_format == "raw"
+
+
+- name: set file permissions for "{{ disk.name }}" ({{ vm.name }})
+  file:
+    path: "{{ disk_destination }}"
+    owner: libvirt-qemu
+    group: kvm
+    mode: 0600
