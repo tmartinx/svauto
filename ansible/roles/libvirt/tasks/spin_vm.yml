@@ -1,0 +1,42 @@
+---
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+  
+
+# Check if all variables required to create the VM are defined
+- name: include vm_pre_flight_check.yml ({{ vm.name }})
+  include: vm_pre_flight_check.yml
+
+
+- name: include create_disk.yml
+  include: create_disk.yml
+  with_items: "{{ vm.devices.disks }}"
+  loop_control:
+    loop_var: disk
+  when:
+  - vm_exists == False
+#  - create_disk_when_not_found
+#  - vm.devices.disks is defined
+
+
+- name: defining ({{ vm.name }})
+  virt:
+    name: "{{ vm.name }}"
+    command: define
+    xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
+  when: vm_exists == False
+
+- name: autostarting ({{ vm.name }})
+  shell: virsh autostart "{{ vm.name }}"
+  when: vm_exists == False

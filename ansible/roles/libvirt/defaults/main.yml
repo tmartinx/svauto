@@ -12,8 +12,113 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+maas_friendly: "no"
 
-image_group: "null"
+stack_name: "null"
 
 enable_multiqueue: 'no'
 number_of_queues: '0'
+
+libvirt_default_network_name: "default"
+libvirt_default_pool_name: "default"
+
+libvirt_pool_1: /var/lib/libvirt/images
+
+## VMs to be defined for this host
+vms:
+
+#- name: vunft-1
+#  description: "L3 Router with nftables"
+#  memory: 2049
+#  cpu: 2
+#  disk_size: 8
+#  devices:
+#    disks:
+#    - name: vunft-1
+#      size: 8
+#      driver:
+#        type: qcow2
+
+#- name: vuosa-1
+#  description: "OpenStack and Ceph Ansible Server"
+#  memory: 8192
+#  cpu: 4
+#  disk_size: 20
+#  devices:
+#    disks:
+#    - name: vuosa-1
+#      size: 8
+#      driver:
+#        type: qcow2
+
+- name: vuos-ctrl-1
+  description: "OpenStack Controller 1"
+  memory: 32768
+  cpu: 16
+  disk_size: 128
+  devices:
+    disks:
+    - name: vuos-ctrl-1
+      size: 128
+      driver:
+        type: qcow2
+
+- name: vuos-cmpt-1
+  description: "OpenStack LXD Virtual Compute 1"
+  memory: 65536
+  cpu: 32
+  disk_size: 25
+  devices:
+    disks:
+    - name: vuos-cmpt-1
+      size: 25
+      driver:
+        type: qcow2
+
+- name: vuceph-infra-1
+  description: "Ceph Infrastructure, Monitor and Manager"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vuceph-infra-1
+      size: 8
+      driver:
+        type: qcow2
+
+- name: vuceph-rgw-1
+  description: "Ceph Rados Gateway"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vuceph-rgw-1
+      size: 8
+      driver:
+        type: qcow2
+
+- name: vuceph-igw-1
+  description: "Ceph iSCSI Gateway"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vuceph-igw-1
+      size: 8
+      driver:
+        type: qcow2
+
+- name: vuceph-mtd-1
+  description: "Ceph Metadata"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vuceph-mtd-1
+      size: 8
+      driver:
+        type: qcow2
