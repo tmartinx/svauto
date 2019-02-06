@@ -53,6 +53,7 @@
     - socat
     - monit
     - ipset
+    - lldpd
     - figlet
     - bwm-ng
     - ifstat
