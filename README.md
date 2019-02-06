@@ -1,6 +1,8 @@
 
 # SVAuto - The Save Automation
 
+Because it saves you a lot of time!
+
 SVAuto is an Open Source Automation Tool, it glues together a different set of tools for building immutable servers images (QCoWs, OVAs, VHDs) and for Infrastructure Automation (Servers or Desktops).
 
 With SVAuto, you can create QCoWs, VMDKs, OVAs, and etc, with Packer and Ansible! It uses the official ISO Images as a base.
@@ -29,6 +31,8 @@ On SVAuto's radar:
 * Vagrant 2.0.2
 * Docker 18.06
 * Amazon EC2 AMI & API Tools
+* WireGuard
+* Ceph
 
 It contains Ansible Playbooks for Automated deployments of:
 
