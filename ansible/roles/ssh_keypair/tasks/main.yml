@@ -12,5 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: ubuntu - creating SSH Keypair
-  user: name={{regular_system_user}} generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+- name: Creating SSH Keypair
+  user:
+    name: "{{ regular_system_user }}"
+    generate_ssh_key: yes
+    ssh_key_bits: 4096
+    ssh_key_file: .ssh/id_rsa
+
+
+- name: Setting SSH Public Key as a fact
+  set_fact:
+    regular_user_pubkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
