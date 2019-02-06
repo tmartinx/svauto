@@ -51,74 +51,74 @@ vms:
 #      driver:
 #        type: qcow2
 
-- name: vuos-ctrl-1
+- name: vosctrl-1
   description: "OpenStack Controller 1"
   memory: 32768
   cpu: 16
   disk_size: 128
   devices:
     disks:
-    - name: vuos-ctrl-1
+    - name: vosctrl-1
       size: 128
       driver:
         type: qcow2
 
-- name: vuos-cmpt-1
+- name: voscmpt-1
   description: "OpenStack LXD Virtual Compute 1"
   memory: 65536
   cpu: 32
   disk_size: 25
   devices:
     disks:
-    - name: vuos-cmpt-1
+    - name: voscmpt-1
       size: 25
       driver:
         type: qcow2
 
-- name: vuceph-infra-1
+- name: vceinfr-1
   description: "Ceph Infrastructure, Monitor and Manager"
   memory: 8192
   cpu: 4
   disk_size: 8
   devices:
     disks:
-    - name: vuceph-infra-1
+    - name: vceinfr-1
       size: 8
       driver:
         type: qcow2
 
-- name: vuceph-rgw-1
+- name: vcerdgw-1
   description: "Ceph Rados Gateway"
   memory: 8192
   cpu: 4
   disk_size: 8
   devices:
     disks:
-    - name: vuceph-rgw-1
+    - name: vcerdgw-1
       size: 8
       driver:
         type: qcow2
 
-- name: vuceph-igw-1
+- name: vceisgw-1
   description: "Ceph iSCSI Gateway"
   memory: 8192
   cpu: 4
   disk_size: 8
   devices:
     disks:
-    - name: vuceph-igw-1
+    - name: vceisgw-1
       size: 8
       driver:
         type: qcow2
 
-- name: vuceph-mtd-1
+- name: vcemeta-1
   description: "Ceph Metadata"
   memory: 8192
   cpu: 4
   disk_size: 8
   devices:
     disks:
-    - name: vuceph-mtd-1
+    - name: vcemeta-1
       size: 8
       driver:
         type: qcow2
