@@ -111,7 +111,7 @@ Bootstrap Ubuntu 18.04 Server, it upgrades and install a few applications for Se
     cd ~/svauto
     ./scripts/preset-ubuntu-server.sh
 
-The main `svauto.sh` script supports an option called `--dry-run`, which disables the Ansible's Playbook execution. This way, `svauto.sh` only outputs Ansible's Inventiry and Playbooks files under `svauto/ansible` subdir.
+The main `svauto.sh` script supports an option called `--dry-run`, which disables the Ansible's Playbook execution. This way, `svauto.sh` only outputs Ansible's Inventory and Top-Level Playbook files under `svauto/ansible` subdir.
 
 Then, you can run Ansible manually, like:
 
