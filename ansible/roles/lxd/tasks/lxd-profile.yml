@@ -1,0 +1,16 @@
+---
+
+- name: Updating the LXD default profile
+  lxd_profile:
+    name: default
+    description: Default LXD profile
+    devices:
+      eth0:
+        name: eth0
+        nictype: bridged
+        parent: br-bond0
+        type: nic
+      root:
+        path: /
+        pool: default
+        type: disk

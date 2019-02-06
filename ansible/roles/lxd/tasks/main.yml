@@ -1,3 +1,4 @@
+---
 # Copyright 2018, TCMC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,11 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: ubuntu | apt installing LXD Linux Containers
-  apt: name={{item}} state=latest
-  with_items:
-    - lxd
 
-
-- name: ubuntu - group add regular system user to LXD group
-  user: name={{ regular_system_user }} groups=lxd append=yes
+- name: Including LXD requested tasks file
+  include: "lxd-{{ lxd_action }}.yml"
