@@ -39,17 +39,17 @@ vms:
 #      driver:
 #        type: qcow2
 
-#- name: vuosa-1
-#  description: "OpenStack and Ceph Ansible Server"
-#  memory: 8192
-#  cpu: 4
-#  disk_size: 20
-#  devices:
-#    disks:
-#    - name: vuosa-1
-#      size: 8
-#      driver:
-#        type: qcow2
+- name: vuosa-1
+  description: "OpenStack and Ceph Ansible Server"
+  memory: 8192
+  cpu: 4
+  disk_size: 20
+  devices:
+    disks:
+    - name: vuosa-1
+      size: 8
+      driver:
+        type: qcow2
 
 - name: vosctrl-1
   description: "OpenStack Controller 1"
