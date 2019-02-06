@@ -176,10 +176,6 @@
   shell: update-initramfs -k all -u
 
 
-- name: ubuntu - grub updating menu
-  shell: update-grub
-
-
 - name: ubuntu - copy root's htop config directory
   file: path=/root/.config/htop
         state=directory
