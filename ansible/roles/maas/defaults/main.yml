@@ -1,0 +1,23 @@
+---
+
+# Network details
+subnet_cidr: 172.16.35.0/24
+reserved_ip_start: 172.16.35.10
+reserved_ip_end: 172.16.35.249
+
+# Which component to deploy?
+maas_component: "none"
+
+# MaaS defaults
+maas_api_server: 172.16.34.1
+maas_url: http://{{ maas_api_server }}:5240/MAAS/api/2.0
+
+maas_admin_username: admin
+maas_admin_passwd: 123qwe
+maas_admin_email: thiagocmartinsc@gmail.com
+maas_admin_api_key: /home/{{ regular_system_user }}/maas_admin_api_key
+
+maas_admin_public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+# WARNING: Copying MaaS Secret into an Ansible Var!
+#maas_secret: "{{ lookup('file', '/var/lib/maas/secret') }}"

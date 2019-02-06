@@ -1,0 +1,38 @@
+---
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+- name: WARNING - Getting the MaaS Secret from the Region Controller
+  set_fact:
+    o_segredo_foi_revelado: "{{ hostvars[groups['maas-region-ctrl'][0]]['o_segredo_do_maas'] | default(False) }}"
+
+
+- name: Install MaaS Rack Controller
+  apt:
+    name: maas-rack-controller
+    update_cache: yes
+
+
+- name: Register MAAS Rack Controller
+  command: "maas-rack register --url http://{{ maas_api_server }}:5240/MAAS --secret {{ o_segredo_foi_revelado }}"
+
+
+- name: Create a 4096-bit SSH key for user maas in ~maas/.ssh/id_rsa
+  user:
+    name: maas
+    generate_ssh_key: yes
+    ssh_key_bits: 4096
+    ssh_key_file: .ssh/id_rsa
+
