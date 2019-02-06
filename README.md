@@ -22,6 +22,7 @@ It uses the following Open Source projects:
 * Ansible 2.5
 * Packer 1.0.4
 * VirtualBox 5.2
+* Python 2.7
 
 On SVAuto's radar:
 
@@ -81,13 +82,13 @@ The following `hostname` executions, must returns...
 
     hostname -i
 
-- your aliases:
+- Your aliases:
 
     hostname -a
 
-## 3- Install Git & Python Minimal on Ubuntu 18.04
+## 3- Install Python 2 and Git on Ubuntu 18.04
 
-    sudo apt install -y git python-minimal
+    sudo apt install -y python git
 
 ## 4- Downloading SVAuto
 
@@ -100,12 +101,12 @@ To download SVAuto into your home directory, clone it with git, as follows:
 
 With the Preset Scripts, it's super easy to bootstrap a fresh installed Ubuntu, Server or Desktop, with minimal featureset, or for more specific use caes, as a KVM and/or LXD Hypervisor, OpenvSwitch with DPDK, and even deploy OpenStack!
 
-* Bootstrap Ubuntu 18.04 Desktop, it upgrades and installs many useful applications, like Google Chrome and etc:
+- Bootstrap Ubuntu 18.04 Desktop, it upgrades and installs many useful applications, like Google Chrome and etc:
 
     cd ~/svauto
     ./scripts/preset-ubuntu-desktop.sh
 
-* Bootstrap Ubuntu 18.04 Server, it upgrades and install a few applications for Servers:
+- Bootstrap Ubuntu 18.04 Server, it upgrades and install a few applications for Servers:
 
     cd ~/svauto
     ./scripts/preset-ubuntu-server.sh
