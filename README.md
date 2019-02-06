@@ -66,23 +66,23 @@ It contains Ansible Playbooks for Automated deployments of:
 
 The following `hostname` executions, must returns...
 
-- ONLY your Hostname, nothing more:
+ONLY your Hostname, nothing more:
 
     hostname
 
-- ONLY your Domain:
+ONLY your Domain:
 
     hostname -d
 
-- ONLY your FQDN:
+ONLY your FQDN:
 
     hostname -f
 
-- 127.0.1.1 (or your local IP, if you configured it previsouly:
+127.0.1.1 (or your local IP, if you configured it previsouly:
 
     hostname -i
 
-- Your aliases:
+Your aliases:
 
     hostname -a
 
@@ -101,12 +101,12 @@ To download SVAuto into your home directory, clone it with git, as follows:
 
 With the Preset Scripts, it's super easy to bootstrap a fresh installed Ubuntu, Server or Desktop, with minimal featureset, or for more specific use caes, as a KVM and/or LXD Hypervisor, OpenvSwitch with DPDK, and even deploy OpenStack!
 
-- Bootstrap Ubuntu 18.04 Desktop, it upgrades and installs many useful applications, like Google Chrome and etc:
+Bootstrap Ubuntu 18.04 Desktop, it upgrades and installs many useful applications, like Google Chrome and etc:
 
     cd ~/svauto
     ./scripts/preset-ubuntu-desktop.sh
 
-- Bootstrap Ubuntu 18.04 Server, it upgrades and install a few applications for Servers:
+Bootstrap Ubuntu 18.04 Server, it upgrades and install a few applications for Servers:
 
     cd ~/svauto
     ./scripts/preset-ubuntu-server.sh
@@ -152,15 +152,15 @@ SVAuto comes with bare-minimum Packer Templates, also very minimal Preseeds for 
 
 Building O.S. RAW Images with just Packer (no Ansible involved here):
 
-- Go to SVAuto's subdir
+Go to SVAuto's subdir
 
     cd ~/svauto
 
-- Ubuntu 18.04
+Ubuntu 18.04
 
     sudo packer build packer/ubuntu18.yaml
 
-- CentOS 7
+CentOS 7
 
     sudo packer build packer/centos7.yaml
 
