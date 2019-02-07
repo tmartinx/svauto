@@ -14,5 +14,6 @@
 # limitations under the License.
 
 
-- name: Including LXD requested tasks file
-  include: "lxd-{{ setup }}.yml"
+- include: lxd-host.yml
+- include: lxd-profile.yml
+- include: lxd-container.yml
