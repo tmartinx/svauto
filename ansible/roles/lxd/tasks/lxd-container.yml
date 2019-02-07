@@ -1,11 +1,11 @@
 ---
 
-- name: Getting system user's public SSH key
+- name: "container - Getting system user's public SSH key"
   set_fact:
-    authorized_user: "{{ hostvars[groups['all'][0]]['regular_user_pubkey'] | default(False) }}"
+    authorized_user: "{{ hostvars[groups['metal-manual'][0]]['regular_user_pubkey'] | default(False) }}"
 
 
-- name: "LXD - Create and start MaaS Region Controller container"
+- name: "container - LXD - Create and start MaaS Region Controller container"
   lxd_container:
     name: vumreg-1
     state: started
@@ -47,7 +47,7 @@
     profiles: ["default"]
     wait_for_ipv4_addresses: true
 
-- name: "LXD - Create and start MaaS Rack Controller container"
+- name: "container - LXD - Create and start MaaS Rack Controller container"
   lxd_container:
     name: vumrck-1
     state: started

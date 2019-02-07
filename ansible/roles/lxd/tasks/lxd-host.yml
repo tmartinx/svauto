@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: ubuntu - apt installing LXD
+- name: host - apt installing LXD
   apt: name={{item}} state=latest
   with_items:
     - lxd
 
 
-- name: ubuntu - group add regular system user to LXD group
+- name: host - group add regular system user to LXD group
   user: name={{ regular_system_user }} groups=lxd append=yes

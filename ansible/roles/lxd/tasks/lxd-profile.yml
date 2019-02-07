@@ -1,10 +1,10 @@
 ---
 
-- name: Creating LXD default storage pool
+- name: profile - Creating LXD default storage pool
   shell: lxd init --storage-backend dir --auto
 
 
-- name: Updating the LXD default profile
+- name: profile - Updating the LXD default profile
   lxd_profile:
     name: default
     description: Default LXD profile
