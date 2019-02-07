@@ -36,3 +36,7 @@
     ssh_key_bits: 4096
     ssh_key_file: .ssh/id_rsa
 
+
+- name: Setting maas user's SSH Public Key as a fact
+  set_fact:
+    maas_user_pubkey: "{{ lookup('file', '/var/lib/maas/.ssh/id_rsa.pub') }}"
