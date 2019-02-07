@@ -172,10 +172,6 @@
   when: ubuntu_install == 'desktop'
 
 
-- name: ubuntu - updating Init RAMDisk
-  shell: update-initramfs -k all -u
-
-
 - name: ubuntu - copy root's htop config directory
   file: path=/root/.config/htop
         state=directory

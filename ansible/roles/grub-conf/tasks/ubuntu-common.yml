@@ -21,5 +21,9 @@
             backup=yes
 
 
+- name: ubuntu - updating Init RAMDisk
+  shell: update-initramfs -k all -u
+
+
 - name: ubuntu - grub updating config
   shell: update-grub
