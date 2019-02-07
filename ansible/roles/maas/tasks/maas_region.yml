@@ -14,7 +14,7 @@
 # limitations under the License.
 
 
-- name: Install MaaS Region Controller and MaaS CLI
+- name: region - Install MaaS Region Controller and MaaS CLI
   apt:
     name: "{{ item }}"
     update_cache: yes
@@ -23,14 +23,14 @@
     - maas-cli
 
 ## Review this:
-#- name: Update on which NIC MAAS is working on
+#- name: region - Update on which NIC MAAS is working on
 #  lineinfile:
 #    path: /etc/maas/regiond.conf
 #    regexp: "^maas_url"
 #    line: "maas_url: http://{{ maas_server }}:5240/MAAS"
 
 ## Move ti handlers
-#- name: restart rackd/regiond
+#- name: region - restart rackd/regiond
 #  service:
 #    state: restarted
 #    name: "{{ item }}"
@@ -38,16 +38,16 @@
 #    - maas-rackd
 #    - maas-regiond
 
-- name: ubuntu - Wait for 5240 to become open
+- name: region - Wait for 5240 to become open
   wait_for:
     port: 5240
     delay: 5
 
-- name: Create MAAS admin user
+- name: region - Create MAAS admin user
   command: "maas createadmin --username={{ maas_admin_username }} --password={{ maas_admin_passwd }} --email={{ maas_admin_email }}"
 
-- name: ubuntu - Including MaaS Login tasks
+- name: region - Including MaaS Login tasks
   include: maas_login.yml
 
-- name: ubuntu - Upload public key for MAAS admin
+- name: region - Upload public key for MAAS admin
   command: maas admin sshkeys create "key={{ maas_admin_public_key }}"

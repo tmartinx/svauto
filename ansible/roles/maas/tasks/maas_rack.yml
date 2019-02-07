@@ -14,29 +14,32 @@
 # limitations under the License.
 
 
-- name: WARNING - Getting the MaaS Secret from the Region Controller
+- name: rack - WARNING - Getting the MaaS Secret from the Region Controller
   set_fact:
     o_segredo_foi_revelado: "{{ hostvars[groups['maas-region-ctrl'][0]]['o_segredo_do_maas'] | default(False) }}"
 
 
-- name: Install MaaS Rack Controller
+- name: rack - Install MaaS Rack Controller
   apt:
     name: maas-rack-controller
     update_cache: yes
 
 
-- name: Register MAAS Rack Controller
+- name: rack - Register MAAS Rack Controller
   command: "maas-rack register --url http://{{ maas_api_server }}:5240/MAAS --secret {{ o_segredo_foi_revelado }}"
 
 
-- name: Create a 4096-bit SSH key for user maas in ~maas/.ssh/id_rsa
+- name: rack - Create a 4096-bit SSH key for user maas in ~maas/.ssh/id_rsa
   user:
     name: maas
     generate_ssh_key: yes
     ssh_key_bits: 4096
     ssh_key_file: .ssh/id_rsa
 
+- name: rack - set file permissions for "/var/lib/maas/.ssh"
+  command: cat /var/lib/maas/.ssh/id_rsa.pub
+  register: mmas_id_rsa_pub
 
-- name: Setting maas user's SSH Public Key as a fact
+- name: rack - Setting maas user's SSH Public Key as a fact
   set_fact:
-    maas_user_pubkey: "{{ lookup('file', '/var/lib/maas/.ssh/id_rsa.pub') }}"
+    set_fact: "{{ mmas_id_rsa_pub.stdout }}"

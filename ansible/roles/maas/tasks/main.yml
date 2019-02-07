@@ -14,12 +14,12 @@
 # limitations under the License.
 
 
-- name: ubuntu - add MaaS' Stable PPA Repository
+- name: main - Add MaaS' Stable PPA Repository
   apt_repository: repo='ppa:maas/stable'
 
 
-- name: ubuntu - Including MaaS requested component
-  include: "maas_{{ maas_component }}.yml"
+- name: main - Including MaaS requested component
+  include: "maas_{{ setup }}.yml"
 
 
 - meta: flush_handlers
