@@ -19,4 +19,9 @@
 
 
 - name: ubuntu - apt installing ansible
-  apt: name=ansible state=latest update_cache=yes
+  apt: name={{item}} state=latest update_cache=yes
+  with_items:
+    - ansible
+    - python-lxml
+    = python-libvirt
+    - python-shade
