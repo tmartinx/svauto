@@ -14,6 +14,10 @@
 # limitations under the License.
 
 
+- name: main - Add MaaS' Stable PPA Repository
+  apt_repository: repo='ppa:maas/stable'
+
+
 - name: rack - WARNING - Getting the MaaS Secret from the Region Controller
   set_fact:
     o_segredo_foi_revelado: "{{ hostvars[groups['maas-region-ctrl'][0]]['o_segredo_do_maas'] | default(False) }}"
@@ -29,17 +33,5 @@
   command: "maas-rack register --url http://{{ maas_api_server }}:5240/MAAS --secret {{ o_segredo_foi_revelado }}"
 
 
-- name: rack - Create a 4096-bit SSH key for user maas in ~maas/.ssh/id_rsa
-  user:
-    name: maas
-    generate_ssh_key: yes
-    ssh_key_bits: 4096
-    ssh_key_file: .ssh/id_rsa
-
-- name: rack - set file permissions for "/var/lib/maas/.ssh"
-  command: cat /var/lib/maas/.ssh/id_rsa.pub
-  register: mmas_id_rsa_pub
-
-- name: rack - Setting maas user's SSH Public Key as a fact
-  set_fact:
-    set_fact: "{{ mmas_id_rsa_pub.stdout }}"
+- name: main - Including MaaS SSH Keypair tasks
+  include: "maas_rack_keypair.yml"

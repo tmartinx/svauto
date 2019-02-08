@@ -18,7 +18,7 @@ maas_admin_email: thiagocmartinsc@gmail.com
 maas_admin_api_key: /home/{{ regular_system_user }}/maas_admin_api_key
 
 maas_admin_public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-maas_rack1_public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+#maas_rack1_public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
 # WARNING: Copying MaaS Secret into an Ansible Var!
 #maas_secret: "{{ lookup('file', '/var/lib/maas/secret') }}"

@@ -14,8 +14,17 @@
 # limitations under the License.
 
 
-- name: main - Including MaaS requested component
-  include: "maas_{{ setup }}.yml"
+- name: rack_keypair - Create a 4096-bit SSH key for user maas in ~maas/.ssh/id_rsa
+  user:
+    name: maas
+    generate_ssh_key: yes
+    ssh_key_bits: 4096
+    ssh_key_file: .ssh/id_rsa
 
+- name: rack_keypair - Getting "/var/lib/maas/.ssh/id_rsa.pub" contents
+  command: cat /var/lib/maas/.ssh/id_rsa.pub
+  register: mmas_id_rsa_pub
 
-- meta: flush_handlers
+- name: rack_keypair - Setting maas user's SSH Public Key as a fact
+  set_fact:
+    maas_rack1_public_key: "{{ mmas_id_rsa_pub.stdout }}"

@@ -14,6 +14,10 @@
 # limitations under the License.
 
 
+- name: main - Add MaaS' Stable PPA Repository
+  apt_repository: repo='ppa:maas/stable'
+
+
 - name: region - Install MaaS Region Controller and MaaS CLI
   apt:
     name: "{{ item }}"
