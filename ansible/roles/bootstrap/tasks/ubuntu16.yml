@@ -20,13 +20,6 @@
         mode=0644
 
 
-- name: ubuntu16 - apt installing basic tools
-  apt: name={{item}} state=latest update_cache=yes
-  with_items:
-    - nftables
-    - virtualenv
-
-
 - name: ubuntu16 - apt installing Ubuntu 16.04 HWE - Linux
   apt: name={{item}} state=installed update_cache=yes
   with_items:
