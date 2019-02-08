@@ -15,11 +15,11 @@
   
 
 # Check if all variables required to create the VM are defined
-- name: include vm_pre_flight_check.yml ({{ vm.name }})
+- name: spin_vm - include vm_pre_flight_check.yml ({{ vm.name }})
   include: vm_pre_flight_check.yml
 
 
-- name: include create_disk.yml
+- name: spin_vm - include create_disk.yml
   include: create_disk.yml
   with_items: "{{ vm.devices.disks }}"
   loop_control:
@@ -30,13 +30,13 @@
 #  - vm.devices.disks is defined
 
 
-- name: defining ({{ vm.name }})
+- name: spin_vm - defining ({{ vm.name }})
   virt:
     name: "{{ vm.name }}"
     command: define
     xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
   when: vm_exists == False
 
-- name: autostarting ({{ vm.name }})
+- name: spin_vm - autostarting ({{ vm.name }})
   shell: virsh autostart "{{ vm.name }}"
   when: vm_exists == False

@@ -14,9 +14,6 @@
 # limitations under the License.
 
 
-- name: include spin_vm.yml
-  include: spin_vm.yml
-  with_items:
-  - "{{ vms }}"
-  loop_control:
-    loop_var: vm
+- include: kvm-host.yml
+- include: kvm-maas.yml
+- include: kvm-vms.yml

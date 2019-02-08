@@ -14,12 +14,9 @@
 # limitations under the License.
 
 
-- name: Gathering Facts about VMs
-  include: "vm_facts.yml"
+- name: stack_osa - Spinning the Virtual Machines
+  include: spin_vm.yml
   with_items:
   - "{{ vms }}"
   loop_control:
     loop_var: vm
-
-- name: Including Stack
-  include: "{{ stack_name }}.yml"

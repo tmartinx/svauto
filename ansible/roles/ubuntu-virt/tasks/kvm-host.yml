@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: ubuntu - apt installing QEmu/KVM Hypervisor - Server
+- name: host - apt installing QEmu/KVM Hypervisor - Server
   apt: name={{item}} state=latest
   with_items:
     - ovmf
@@ -21,7 +21,7 @@
   when: ubuntu_install == 'server'
 
 
-- name: ubuntu - apt installing QEmu/KVM Hypervisor - Desktop
+- name: host - apt installing QEmu/KVM Hypervisor - Desktop
   apt: name={{item}} state=latest
   with_items:
     - ovmf
@@ -32,13 +32,13 @@
   when: ubuntu_install == 'desktop'
 
 
-#- name: ubuntu - virsh wiping out default network
+#- name: host - virsh wiping out default network
 #  shell: virsh net-destroy default ; virsh undefine default
 #  ignore_errors: yes
 
 
-#- name: ubuntu - group add regular system user to Libvirt/KVM groups
-#  user: name={{ regular_system_user }} groups=libvirt,kvm append=yes
+- name: host - group add regular system user to Libvirt/KVM groups
+  user: name={{ regular_system_user }} groups=libvirt,kvm append=yes
 
 
 # Review:

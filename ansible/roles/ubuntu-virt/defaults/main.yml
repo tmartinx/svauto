@@ -1,0 +1,192 @@
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+setup: "none"
+
+ubuntu_install: "server"
+
+pod: "null"
+
+stack_name: "null"
+
+enable_multiqueue: 'no'
+number_of_queues: '0'
+
+libvirt_default_network_name: "default"
+libvirt_default_pool_name: "default"
+
+libvirt_pool_1: /var/lib/libvirt/images
+
+## VMs to be defined for this host
+vms:
+
+#- name: vnft-{{ controller_sequence }}
+#  description: "L3 Router with nftables"
+#  memory: 2049
+#  cpu: 2
+#  disk_size: 8
+#  devices:
+#    disks:
+#    - name: vunft-{{ controller_sequence }}
+#      size: 8
+#      driver:
+#        type: qcow2
+
+#
+# OpenStack and Ceph Ansible
+#
+
+#- name: vuosa-{{ controller_sequence }}
+#  description: "OpenStack and Ceph Ansible Server"
+#  memory: 8192
+#  cpu: 4
+#  disk_size: 20
+#  devices:
+#    disks:
+#    - name: vuosa-{{ controller_sequence }}
+#      size: 8
+#      driver:
+#        type: qcow2
+
+- name: vosctrl-{{ controller_sequence }}
+  description: "OpenStack Controller 1"
+  memory: 32768
+  cpu: 16
+  disk_size: 128
+  devices:
+    disks:
+    - name: vosctrl-{{ controller_sequence }}
+      size: 108
+      driver:
+        type: qcow2
+
+- name: voscmpt-{{ controller_sequence }}
+  description: "OpenStack LXD Virtual Compute 1"
+  memory: 65536
+  cpu: 32
+  disk_size: 20
+  devices:
+    disks:
+    - name: voscmpt-{{ controller_sequence }}
+      size: 25
+      driver:
+        type: qcow2
+
+- name: vceinfr-{{ controller_sequence }}
+  description: "Ceph Infrastructure, Monitor and Manager"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vceinfr-{{ controller_sequence }}
+      size: 8
+      driver:
+        type: qcow2
+
+- name: vcerdgw-{{ controller_sequence }}
+  description: "Ceph Rados Gateway"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vcerdgw-{{ controller_sequence }}
+      size: 8
+      driver:
+        type: qcow2
+
+- name: vcemeta-{{ controller_sequence }}
+  description: "Ceph Metadata"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vcemeta-{{ controller_sequence }}
+      size: 8
+      driver:
+        type: qcow2
+
+#
+# Isolated Ceph Infrastructure
+#
+
+- name: vceph-infra-{{ controller_sequence }}
+  description: "Ceph Infrastructure, Monitor and Manager"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vceph-infra-{{ controller_sequence }}
+      size: 8
+      driver:
+        type: qcow2
+
+- name: vceph-radosgw-{{ controller_sequence }}
+  description: "Ceph Rados Gateway"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vceph-radosgw-{{ controller_sequence }}
+      size: 8
+      driver:
+        type: qcow2
+
+- name: vceph-meta-{{ controller_sequence }}
+  description: "Ceph Metadata"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vceph-meta-{{ controller_sequence }}
+      size: 8
+      driver:
+        type: qcow2
+
+
+#
+# Regular Virtual Machines to export Ceph RBD to users
+#
+
+# NOTE: It makes more sense to host those VMs on OpenStack.
+# Each of those will become a "Stack", a Heat Template.
+
+- name: viscsit-{{ controller_sequence }}
+  description: "iSCSI Targets"
+  memory: 8192
+  cpu: 4
+  disk_size: 4
+  devices:
+    disks:
+    - name: viscsi-{{ controller_sequence }}
+      size: 4
+      driver:
+        type: qcow2
+
+- name: vnfsgane-{{ controller_sequence }}
+  description: "NFS Server"
+  memory: 8192
+  cpu: 4
+  disk_size: 4
+  devices:
+    disks:
+    - name: vnfsgane-{{ controller_sequence }}
+      size: 4
+      driver:
+        type: qcow2
