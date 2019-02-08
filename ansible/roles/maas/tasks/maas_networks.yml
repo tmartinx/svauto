@@ -1,0 +1,46 @@
+---
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+- name: network - Including MaaS Login tasks
+  include: maas_login.yml
+
+
+- name: network - Creating Spaces
+  shell: |
+    maas admin spaces create name="mgmt"
+    maas admin spaces create name="infra"
+    maas admin spaces create name="internet"
+    maas admin spaces create name="cloud-public"
+    maas admin spaces create name="cloud-private"
+  ignore_errors: yes
+
+
+- name: network - Creating VLANs
+  shell: |
+    maas admin vlans create 0 space="infra" name="ipmi-1" vid=1000
+    maas admin vlans create 0 space="infra" name="srvs-1" vid=1001
+    maas admin vlans create 0 space="infra" name="srvc-1" vid=1002
+#    maas admin vlans create 1 space="mgmt" name="mgmt-1"
+  ignore_errors: yes
+
+
+- name: network - Creating Subnets
+  shell: |
+#    maas admin subnets create name="MGMT Subnet" cidr=192.168.0.0/24 gateway_ip=192.168.0.254 fabric=1
+    maas admin subnets create name="IPMI Subnet" cidr=172.16.31.0/24 gateway_ip=172.16.31.254 vid=1000 fabric=0
+    maas admin subnets create name="SRVS Subnet" cidr=172.16.32.0/24 gateway_ip=172.16.32.254 vid=1001 fabric=0
+    maas admin subnets create name="SRVC Subnet" cidr=172.16.33.0/24 gateway_ip=172.16.33.254 vid=1002 fabric=0
+  ignore_errors: yes
