@@ -15,7 +15,7 @@
 
 - name: maas - Set authorized key taken from MaaS Rack
   authorized_key:
-    user: shopmin
+    user: "{{ regular_system_user }}"
     state: present
     key: "{{ hostvars[groups['maas-rack-ctrl'][0]]['maas_rack1_public_key'] | default(False) }}"
 
@@ -32,11 +32,13 @@
   virt_pool:
     command: destroy
     name: default
+  ignore_errors: yes
 
 - name: maas - Deleting the default storage pool
   virt_pool:
     command: delete
     name: default
+  ignore_errors: yes
 
 
 - name: maas - Creating maas pool using same default subdir
