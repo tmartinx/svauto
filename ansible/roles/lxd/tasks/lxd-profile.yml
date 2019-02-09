@@ -2,9 +2,10 @@
 
 - name: profile - Creating LXD default storage pool
   shell: lxd init --storage-backend dir --auto
+  ignore_errors: yes
 
 
-- name: profile - Updating the LXD default profile
+- name: profile - Updating LXD default profile
   lxd_profile:
     name: default
     description: Default LXD profile
