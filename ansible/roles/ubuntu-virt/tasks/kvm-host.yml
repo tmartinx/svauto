@@ -17,6 +17,7 @@
   with_items:
     - ovmf
     - qemu-kvm
+    - python-lxml
     - libvirt-daemon-system
   when: ubuntu_install == 'server'
 
@@ -26,6 +27,7 @@
   with_items:
     - ovmf
     - qemu-kvm
+    - python-lxml
     - virt-viewer
     - virt-manager
     - spice-client-gtk
