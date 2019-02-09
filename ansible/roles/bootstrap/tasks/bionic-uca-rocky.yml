@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: ubuntu18 - copy Ubuntu Bionic default sources.list
-  copy: src=ubuntu18/sources.list.j2
-        dest=/etc/apt/sources.list
-        owner=root
-        group=root
-        mode=0644
+- name: bionic - rocky - apt Installing Cloud Archive Keyring
+  apt: name=ubuntu-cloud-keyring state=latest update_cache=yes
+
+
+- name: bionic - rocky - apt enabling Rocky Ubuntu Cloud Archive
+  apt_repository: repo='deb http://ubuntu-cloud.archive.canonical.com/ubuntu bionic-updates/rocky main'

@@ -14,26 +14,19 @@
 
 # CentOS Bootstrap tasks
 - name: centos - include common book
-  include: centos-common.yml
-  when: ansible_os_family == "RedHat"
+  include: "{{ ansible_distribution_release }}.yml"
 
 
 # Ubuntu Bootstrap tasks
-- name: ubuntu18 - include custom book
-  include: ubuntu18.yml
-  when: ansible_os_family == "Debian" and ansible_distribution_major_version == "18"
+- name: ubuntu - include custom book
+  include: "{{ ansible_distribution_release }}.yml"
 
-- name: ubuntu16 - include custom book
-  include: ubuntu16.yml
-  when: ansible_os_family == "Debian" and ansible_distribution_major_version == "16"
-
-- name: ubuntu18 - include uca book
-  include: ubuntu18-uca-{{ os_release }}.yml
-  when: (ansible_os_family == "Debian" and ansible_distribution_major_version == "18") and (os_release == 'rocky')
+- name: ubuntu - include uca book
+  include: "{{ ansible_distribution_release }}-uca-{{ os_release }}.yml"
 
 - name: ubuntu - include common book
   include: ubuntu-common.yml
-  when: ansible_os_family == "Debian"
+  when: ansible_distribution == "Ubuntu"
 
 
 # Common across distributions
