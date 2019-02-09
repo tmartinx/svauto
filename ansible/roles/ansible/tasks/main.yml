@@ -23,5 +23,6 @@
   with_items:
     - ansible
     - python-lxml
-    = python-libvirt
+    - python-libvirt
     - python-shade
+    - python-gssapi
