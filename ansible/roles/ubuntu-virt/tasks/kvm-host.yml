@@ -19,7 +19,7 @@
     - qemu-kvm
     - python-lxml
     - libvirt-daemon-system
-  when: ubuntu_install == 'server'
+  when: mode == 'server'
 
 
 - name: host - apt installing QEmu/KVM Hypervisor - Desktop
@@ -31,7 +31,7 @@
     - virt-viewer
     - virt-manager
     - spice-client-gtk
-  when: ubuntu_install == 'desktop'
+  when: mode == 'desktop'
 
 
 #- name: host - virsh wiping out default network

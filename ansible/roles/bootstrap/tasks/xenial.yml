@@ -30,7 +30,7 @@
   apt: name={{item}} state=latest update_cache=yes
   with_items:
     - xserver-xorg-hwe-16.04
-  when: ubuntu_install == 'desktop'
+  when: mode == 'desktop'
 
 
 - name: xenial - apt removing ubuntu-fan (it is broken)

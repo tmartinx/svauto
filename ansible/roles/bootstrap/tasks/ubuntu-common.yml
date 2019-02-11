@@ -22,7 +22,22 @@
   when: tcmc_ppa == 'yes'
 
 
-- name: ubuntu - apt installing basic tools
+- name: ubuntu - apt installing minimum tools
+  apt: name={{item}} state=latest update_cache=yes
+  with_items:
+    - curl
+    - tmux
+    - iftop
+    - lldpd
+    - bwm-ng
+    - ifstat
+    - psmisc
+    - tcpick
+    - tcpdump
+    - traceroute
+
+
+- name: ubuntu - apt installing extra tools
   apt: name={{item}} state=latest update_cache=yes
   with_items:
     - jq
@@ -35,8 +50,6 @@
     - ssh
     - atop
     - lftp
-    - tmux
-    - curl
     - htop
     - bmon
     - nmap
@@ -46,17 +59,13 @@
     - gdisk
     - unzip
     - ngrep
-    - iftop
     - iotop
     - patch
     - byobu
     - socat
     - monit
     - ipset
-    - lldpd
     - figlet
-    - bwm-ng
-    - ifstat
     - strace
     - ltrace
     - man-db
@@ -68,11 +77,8 @@
     - iptables
     - mlocate
     - sysstat
-    - tcpdump
     - iperf3
     - logtop
-    - tcpick
-    - psmisc
     - tzdata
     - tshark
     - netperf
@@ -88,7 +94,6 @@
     - tcpreplay
     - virtualenv
     - subnetcalc
-    - traceroute
     - sysfsutils
     - nbd-client
     - python-pip
@@ -107,16 +112,17 @@
     - ubuntu-cloud-keyring
     - linux-cloud-tools-generic
     - software-properties-common
+  when: mode == 'server' or mode == 'desktop'
 
 
 - name: ubuntu - apt installing NTP
   apt: name=ntp state=latest update_cache=yes
-  when: ntp_or_chrony == 'ntp'
+  when: ntp_or_chrony == 'ntp' and mode != 'container'
 
 
 - name: ubuntu - apt installing Chrony
   apt: name=chrony state=latest update_cache=yes
-  when: ntp_or_chrony == 'chrony'
+  when: ntp_or_chrony == 'chrony' and mode != 'container'
 
 
 - name: ubuntu - apt installing Server tools
@@ -124,12 +130,12 @@
   with_items:
     - vim-nox
     - mtr-tiny
-  when: ubuntu_install == 'server'
+  when: mode == 'container' or mode == 'server'
 
 
 - name: ubuntu - dpkg enabling MultiArch on Desktops
   shell: dpkg --add-architecture i386
-  when: ubuntu_install == 'desktop'
+  when: mode == 'desktop'
 
 
 - name: ubuntu - apt installing Desktop tools
@@ -157,7 +163,7 @@
     - classicmenu-indicator
     - ubuntu-restricted-extras
     - compizconfig-settings-manager
-  when: ubuntu_install == 'desktop'
+  when: mode == 'desktop'
 
 
 - name: ubuntu - apt installing Desktop libraries (WebEx)
@@ -169,7 +175,7 @@
     - libpangox-1.0-0:i386
     - libpangoxft-1.0-0:i386
     - libpangoft2-1.0-0:i386
-  when: ubuntu_install == 'desktop'
+  when: mode == 'desktop'
 
 
 - name: ubuntu - copy root's htop config directory
@@ -186,22 +192,22 @@
 
 - name: ubuntu - vim-nox as default for editor
   alternatives: name=editor path=/usr/bin/vim.nox
-  when: ubuntu_install == 'server'
+  when: mode == 'container' or mode == 'server'
 
 
 - name: ubuntu - vim as default for editor
   alternatives: name=editor path=/usr/bin/vim
-  when: ubuntu_install == 'desktop'
+  when: mode == 'desktop'
 
 
 - name: ubuntu - group add regular system user to know Server groups
   user: name={{ regular_system_user }} groups=adm,dialout,cdrom,floppy,sudo,dip,plugdev append=yes
-  when: ubuntu_install == 'server'
+  when: mode == 'container' or mode == 'server'
 
 
 - name: ubuntu - group add regular system user to know Desktop groups
   user: name={{ regular_system_user }} groups=adm,cdrom,sudo,dip,plugdev,lpadmin append=yes
-  when: ubuntu_install == 'desktop'
+  when: mode == 'desktop'
 
 
 - name: ubuntu - copy sudoers config file for members of group "sudo"
@@ -210,3 +216,4 @@
         owner=root
         group=root
         mode=0644
+  when: mode == 'server' or mode == 'desktop'

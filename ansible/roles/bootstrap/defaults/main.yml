@@ -16,7 +16,7 @@
 # Upgrade Base OS:
 base_os_upgrade: "no"
 
-ubuntu_install: "server"
+mode: "server"
 
 # Vagrant run?
 vagrant_run: "no"
