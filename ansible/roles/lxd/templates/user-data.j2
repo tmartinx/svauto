@@ -1,0 +1,9 @@
+#cloud-config
+users:
+  - name: ubuntu
+    ssh_authorized_keys:
+    - {{ authorized_user }}
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+packages:
+  - python

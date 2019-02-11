@@ -1,10 +1,5 @@
 ---
 
-- name: "container - Getting system user's public SSH key"
-  set_fact:
-    authorized_user: "{{ hostvars[groups['metal-manual'][0]]['regular_user_pubkey'] | default(False) }}"
-
-
 - name: "container - LXD - Create and start MaaS Region Controller container"
   lxd_container:
     name: vumreg-1
@@ -16,34 +11,8 @@
       protocol: simplestreams
       alias: bionic/amd64
     config:
-      user.network-config: |
-              # cloud-config
-              version: 2
-              ethernets:
-                  eth0:
-                      mtu: 1500
-                      addresses: []
-              vlans:
-                  eth0.7:
-                      mtu: 1500
-                      id: 7
-                      link: eth0
-                      addresses:
-                      - 172.16.34.1/24
-                      gateway4: 172.16.34.254
-                      nameservers:
-                          addresses: [ 8.8.8.8, 8.8.4.4 ]
-                          search: [ tcmc.com ]
-      user.vendor-data: |
-              #cloud-config
-              users:
-                - name: ubuntu
-                  ssh_authorized_keys:
-                  - {{ authorized_user }}
-                  shell: /bin/bash
-                  sudo: ['ALL=(ALL) NOPASSWD:ALL']
-              packages:
-                - python
+      user.network-config: "{{ lookup('template', 'maas-region-netplan.j2') }}"
+      user.vendor-data: "{{ lookup('template', 'user-data.j2') }}"
     profiles: ["default"]
     wait_for_ipv4_addresses: true
 
@@ -58,34 +27,7 @@
       protocol: simplestreams
       alias: bionic/amd64
     config:
-      user.network-config: |
-              # cloud-config
-              version: 2
-              ethernets:
-                  eth0:
-                      mtu: 1500
-                      addresses:
-                      - 172.16.35.1/24
-              vlans:
-                  eth0.7:
-                      mtu: 1500
-                      id: 7
-                      link: eth0
-                      addresses:
-                      - 172.16.34.250/24
-                      gateway4: 172.16.34.254
-                      nameservers:
-                          addresses: [ 8.8.8.8, 8.8.4.4 ]
-                          search: [ tcmc.com ]
-      user.vendor-data: |
-              #cloud-config
-              users:
-                - name: ubuntu
-                  ssh_authorized_keys:
-                  - {{ authorized_user }}
-                  shell: /bin/bash
-                  sudo: ['ALL=(ALL) NOPASSWD:ALL']
-              packages:
-                - python
+      user.network-config: "{{ lookup('template', 'maas-rack-netplan.j2') }}"
+      user.vendor-data: "{{ lookup('template', 'user-data.j2') }}"
     profiles: ["default"]
     wait_for_ipv4_addresses: true

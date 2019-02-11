@@ -1,0 +1,17 @@
+# cloud-config
+version: 2
+ethernets:
+    eth0:
+        mtu: 1500
+        addresses: []
+vlans:
+    eth0.7:
+        mtu: 1500
+        id: 7
+        link: eth0
+        addresses:
+        - {{ maas_reg_ip }}
+        gateway4: {{ maas_reg_gw }}
+        nameservers:
+            addresses: [ {{ dns_servers }} ]
+            search: [ {{ dns_servers }} ]

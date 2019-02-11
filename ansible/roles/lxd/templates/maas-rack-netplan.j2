@@ -1,0 +1,18 @@
+# cloud-config
+version: 2
+ethernets:
+    eth0:
+        mtu: 1500
+        addresses:
+        - {{ maas_rck_pxe }}
+vlans:
+    eth0.7:
+        mtu: 1500
+        id: 7
+        link: eth0
+        addresses:
+        - {{ maas_rck_ip }}
+        gateway4: {{ maas_rck_gw }}
+        nameservers:
+            addresses: [ {{ dns_servers }} ]
+            search: [ {{ dns_search }} ]

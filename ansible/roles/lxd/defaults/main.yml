@@ -1,3 +1,19 @@
 ---
 
 lxd_action: "none"
+
+authorized_user: "{{ hostvars[groups['metal-manual'][0]]['regular_user_pubkey'] | default(False) }}"
+
+# TODO: Make some sort of Netplan generator...
+#
+# At least, for LXD, the interface names are predictable (eth0, eth1, eth2...),
+# based on LXD Profile.
+dns_servers: "8.8.8.8, 1.1.1.1"
+dns_search: "tcmc.com"
+
+maas_reg_ip: "172.16.34.1/24"
+maas_reg_gw: "172.16.34.254"
+
+maas_rck_ip: "172.16.34.250/24"
+maas_rck_gw: "172.16.34.254"
+maas_rck_pxe: "172.16.35.1/24"
