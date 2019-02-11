@@ -35,7 +35,7 @@
 # Note: DHCP for PXE booting will need to be enabled on the 'untagged' VLAN.
 # https://docs.maas.io/2.5/en/manage-cli-common
 - name: dhcp -  provide dhcp for subnet
-  shell: "maas {{ maas_admin_username }} vlan update {{ fabric_id.stdout }} 0 dhcp_on=True primary_rack=vumrck-1"
+  shell: "maas {{ maas_admin_username }} vlan update {{ fabric_id.stdout }} 0 dhcp_on=True primary_rack=vmara-1"
   register: provide_dhcp
 
 - assert: { that: "'\"dhcp_on\": true' in provide_dhcp.stdout"}
