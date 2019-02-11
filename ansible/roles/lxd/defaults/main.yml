@@ -11,9 +11,13 @@ authorized_user: "{{ hostvars[groups['metal-manual'][0]]['regular_user_pubkey'] 
 dns_servers: "8.8.8.8, 1.1.1.1"
 dns_search: "tcmc.com"
 
-maas_reg_ip: "172.16.34.1/24"
-maas_reg_gw: "172.16.34.254"
+containers:
 
-maas_rck_ip: "172.16.34.250/24"
-maas_rck_gw: "172.16.34.254"
-maas_rck_pxe: "172.16.35.1/24"
+- name: vmare-{{ controller_sequence }}
+  ip: "172.16.34.1/24"
+  gw: "172.16.34.254"
+
+- name: vmara-{{ controller_sequence }}
+  ip: "172.16.34.250/24"
+  gw: "172.16.34.254"
+  ip_pxe: "172.16.35.1/24"

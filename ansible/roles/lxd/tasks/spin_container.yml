@@ -1,0 +1,17 @@
+---
+
+- name: "container - LXD - Create and start requested {{ container.name }} container"
+  lxd_container:
+    name: "{{ container.name }}"
+    state: started
+    source:
+      type: image
+      mode: pull
+      server: https://cloud-images.ubuntu.com/releases
+      protocol: simplestreams
+      alias: bionic/amd64
+    config:
+      user.network-config: "{{ lookup('template', '{{ container.name }}-netplan.j2') }}"
+      user.vendor-data: "{{ lookup('template', 'user-data.j2') }}"
+    profiles: ["default"]
+    wait_for_ipv4_addresses: true

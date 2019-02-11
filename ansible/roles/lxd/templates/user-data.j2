@@ -1,6 +1,6 @@
 #cloud-config
 users:
-  - name: ubuntu
+  - name: {{ regular_system_user }}
     ssh_authorized_keys:
     - {{ authorized_user }}
     shell: /bin/bash
