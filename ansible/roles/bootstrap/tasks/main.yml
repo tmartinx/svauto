@@ -14,18 +14,21 @@
 
 # CentOS Bootstrap tasks
 - name: centos - include common book
-  include: "{{ ansible_distribution_release }}.yml"
+  include: "{{ ansible_distribution }}.yml"
+  when: ansible_distribution == "CentOS"
 
 
 # Ubuntu Bootstrap tasks
 - name: ubuntu - include custom book
   include: "{{ ansible_distribution_release }}.yml"
+  when: ansible_distribution == "Ubuntu"
 
 - name: ubuntu - include uca book
   include: "{{ ansible_distribution_release }}-uca-{{ os_release }}.yml"
+  when: ansible_distribution == "Ubuntu"
 
 - name: ubuntu - include common book
-  include: ubuntu-common.yml
+  include: "{{ ansible_distribution }}.yml"
   when: ansible_distribution == "Ubuntu"
 
 

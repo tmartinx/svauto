@@ -45,13 +45,8 @@
   lineinfile: dest=/etc/sysconfig/network line="NOZEROCONF=yes"
 
 
-- name: centos7 - include custom book
-  include: centos7.yml
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
-
-- name: centos6 - include custom book
-  include: centos6.yml
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "6"
+- name: centos - include custom book
+  include: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
 
 
 - name: centos - yum installing basic common tools
