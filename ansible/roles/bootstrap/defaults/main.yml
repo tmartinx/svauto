@@ -21,8 +21,6 @@ mode: "server"
 # Vagrant run?
 vagrant_run: "no"
 
-tcmc_ppa: "no"
-
 # bootstrap: Enable Main Yum Repository:
 custom_main_yum_repo: "no"
 

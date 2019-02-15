@@ -17,11 +17,6 @@
   when: base_os_upgrade == 'yes'
 
 
-- name: ubuntu - add TCMC's PPA Repository
-  apt_repository: repo='ppa:tcmc/packages'
-  when: tcmc_ppa == 'yes'
-
-
 - name: ubuntu - apt installing minimum tools
   apt: name={{item}} state=latest update_cache=yes
   with_items:
