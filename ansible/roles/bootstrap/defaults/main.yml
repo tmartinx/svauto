@@ -18,6 +18,9 @@ base_os_upgrade: "no"
 
 mode: "server"
 
+network_tools: "no"
+extra_packages: "no"
+
 # Vagrant run?
 vagrant_run: "no"
 

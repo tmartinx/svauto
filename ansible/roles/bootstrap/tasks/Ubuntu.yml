@@ -20,6 +20,7 @@
 - name: ubuntu - apt installing minimum tools
   apt: name={{item}} state=latest update_cache=yes
   with_items:
+    - ssh
     - curl
     - tmux
     - iftop
@@ -32,7 +33,33 @@
     - traceroute
 
 
-- name: ubuntu - apt installing extra tools
+- name: ubuntu - apt installing network tools
+  apt: name={{item}} state=latest update_cache=yes
+  with_items:
+    - lftp
+    - bmon
+    - nmap
+    - vlan
+    - socat
+    - ipset
+    - ngrep
+    - netcat
+    - telnet
+    - iperf3
+    - tshark
+    - netperf
+    - openssl
+    - nftables
+    - iptables
+    - conntrack
+    - tcpreplay
+    - iptraf-ng
+    - subnetcalc
+    - nbd-client
+  when: network_tools == 'yes'
+
+
+- name: ubuntu - apt installing extra packages
   apt: name={{item}} state=latest update_cache=yes
   with_items:
     - jq
@@ -42,60 +69,40 @@
     - zip
     - git
     - zsh
-    - ssh
     - atop
-    - lftp
     - htop
-    - bmon
-    - nmap
     - flip
     - lshw
-    - vlan
     - gdisk
     - unzip
-    - ngrep
     - iotop
     - patch
     - byobu
-    - socat
     - monit
-    - ipset
     - figlet
     - strace
     - ltrace
     - man-db
-    - netcat
-    - telnet
-    - openssl
     - numactl
     - sysstat
-    - iptables
     - mlocate
     - sysstat
-    - iperf3
     - logtop
     - tzdata
-    - tshark
-    - netperf
+    - python
     - aptitude
     - pm-utils
     - xfsprogs
     - dos2unix
     - ppa-purge
-    - conntrack
-    - iptraf-ng
     - hugepages
     - gddrescue
-    - tcpreplay
     - virtualenv
-    - subnetcalc
     - sysfsutils
-    - nbd-client
     - python-pip
     - btrfs-tools
     - genisoimage
     - ecryptfs-utils
-    - python-minimal
     - python-libvirt
     - python-mysqldb
     - python-httplib2
@@ -107,7 +114,7 @@
     - ubuntu-cloud-keyring
     - linux-cloud-tools-generic
     - software-properties-common
-  when: mode == 'server' or mode == 'desktop'
+  when: extra_packages == 'yes' and (mode == 'server' or mode == 'desktop')
 
 
 - name: ubuntu - apt installing NTP
