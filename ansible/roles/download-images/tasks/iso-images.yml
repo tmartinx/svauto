@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: downloading ubuntu-18.04.1-server-amd64.iso
+- name: downloading ubuntu-18.04.2-server-amd64.iso
   get_url:
-    url: http://cdimage.ubuntu.com/ubuntu/releases/18.04/release/ubuntu-18.04.1-server-amd64.iso
-    dest: /srv/ISO/ubuntu-18.04.1-server-amd64.iso
+    url: http://cdimage.ubuntu.com/ubuntu/releases/18.04/release/ubuntu-18.04.2-server-amd64.iso
+    dest: /srv/ISO/ubuntu-18.04.2-server-amd64.iso
     mode: 0640
   when: download_ubuntu == "yes"
 

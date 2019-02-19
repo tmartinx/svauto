@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # Ubuntu 18.04 Packer Build with Ansible
-./svauto.sh --packer-builder --base-os=ubuntu18 --release=dev --product=ubuntu --version=18.04.1 --product-variant=sv-1 --qcow2 --ova --vm-xml --sha256sum \
+./svauto.sh --packer-builder --base-os=ubuntu18 --release=dev --product=ubuntu --version=18.04 --product-variant=sv-1 --qcow2 --ova --vm-xml --sha256sum \
 	--ansible-remote-user="root" \
 	--ansible-inventory-builder="svbox,localhost,mode=server,os_release=rocky" \
 	--ansible-playbook-builder="svbox,cloud-init,bootstrap;base_os_upgrade=yes,grub-conf,post-cleanup-image" \
