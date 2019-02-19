@@ -13,14 +13,16 @@
 # limitations under the License.
 
 
-- name: ubuntu - add Ansible's PPA Repository
+- name: main - Adding Ansible's PPA Repository
   apt_repository: repo='ppa:ansible/ansible'
   when: ansible_ppa == 'yes'
 
 
-- name: ubuntu - apt installing ansible
-  apt: name={{item}} state=latest update_cache=yes
-  with_items:
+- name: main - Installing Ansible
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
     - ansible
     - python-lxml
     - python-libvirt
