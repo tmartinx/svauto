@@ -22,7 +22,12 @@
 
 - name: bionic - Installing Linux HWE
   apt:
-  name: linux-generic-hwe-18.04
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - linux-generic-hwe-18.04
+    - linux-image-generic-hwe-18.04
+    - linux-cloud-tools-generic-hwe-18.04
   when: mode == 'server' or mode == 'desktop'
 
 - name: bionic - Installing XOrg HWE

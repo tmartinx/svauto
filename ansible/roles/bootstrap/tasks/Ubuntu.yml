@@ -106,13 +106,10 @@
     - python-libvirt
     - python-mysqldb
     - python-httplib2
-    - python-openvswitch
     - silversearcher-ag
     - command-not-found
-    - linux-image-generic
-    - linux-tools-generic
+    - python-openvswitch
     - ubuntu-cloud-keyring
-    - linux-cloud-tools-generic
     - software-properties-common
   when: extra_packages == 'yes' and (mode == 'server' or mode == 'desktop')
 
