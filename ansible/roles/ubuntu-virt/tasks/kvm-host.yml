@@ -19,15 +19,11 @@
     - qemu-kvm
     - python-lxml
     - libvirt-daemon-system
-  when: mode == 'server'
 
 
 - name: host - apt installing QEmu/KVM Hypervisor - Desktop
   apt: name={{item}} state=latest
   with_items:
-    - ovmf
-    - qemu-kvm
-    - python-lxml
     - virt-viewer
     - virt-manager
     - spice-client-gtk
