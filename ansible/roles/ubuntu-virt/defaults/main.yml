@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-setup: "none"
+setup: "null"
 
-mode: "server"
+mode: "null"
 
 pod: "null"
 
@@ -28,36 +28,48 @@ libvirt_default_pool_name: "default"
 
 libvirt_pool_1: /var/lib/libvirt/images
 
-## VMs to be defined for this host
+## VMs definitions
 vms:
 
-#- name: vnft-{{ controller_sequence }}
-#  description: "L3 Router with nftables"
-#  memory: 2049
-#  cpu: 2
-#  disk_size: 8
-#  devices:
-#    disks:
-#    - name: vunft-{{ controller_sequence }}
-#      size: 8
-#      driver:
-#        type: qcow2
+- name: svauto-{{ controller_sequence }}
+  description: "SVAuto Ubuntu Desktop, for Ansible, IPMI Access and Virt-Manager"
+  memory: 2049
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: svauto-{{ controller_sequence }}
+      size: 8
+      driver:
+        type: qcow2
+
+- name: vnft-{{ controller_sequence }}
+  description: "L3 Router with nftables"
+  memory: 2049
+  cpu: 2
+  disk_size: 8
+  devices:
+    disks:
+    - name: vunft-{{ controller_sequence }}
+      size: 8
+      driver:
+        type: qcow2
 
 #
-# OpenStack and Ceph Ansible
+# VMs for OpenStack and Ceph via "OpenStack Ansible" project
 #
 
-#- name: vuosa-{{ controller_sequence }}
-#  description: "OpenStack and Ceph Ansible Server"
-#  memory: 8192
-#  cpu: 4
-#  disk_size: 20
-#  devices:
-#    disks:
-#    - name: vuosa-{{ controller_sequence }}
-#      size: 8
-#      driver:
-#        type: qcow2
+- name: vosa-{{ controller_sequence }}
+  description: "OpenStack and Ceph Ansible Server"
+  memory: 8192
+  cpu: 4
+  disk_size: 20
+  devices:
+    disks:
+    - name: vosa-{{ controller_sequence }}
+      size: 20
+      driver:
+        type: qcow2
 
 - name: vosctrl-{{ controller_sequence }}
   description: "OpenStack Controller 1"
@@ -120,73 +132,80 @@ vms:
         type: qcow2
 
 #
-# Isolated Ceph Infrastructure
+# Isolated Ceph Infrastructure (not installed via `openstack-ansible`)
 #
 
-- name: vceph-infra-{{ controller_sequence }}
+- name: vuci-{{ controller_sequence }}
   description: "Ceph Infrastructure, Monitor and Manager"
   memory: 8192
   cpu: 4
   disk_size: 8
   devices:
     disks:
-    - name: vceph-infra-{{ controller_sequence }}
+    - name: vuci-{{ controller_sequence }}
       size: 8
       driver:
         type: qcow2
 
-- name: vceph-radosgw-{{ controller_sequence }}
+- name: vucr-{{ controller_sequence }}
   description: "Ceph Rados Gateway"
   memory: 8192
   cpu: 4
   disk_size: 8
   devices:
     disks:
-    - name: vceph-radosgw-{{ controller_sequence }}
+    - name: vucr-{{ controller_sequence }}
       size: 8
       driver:
         type: qcow2
 
-- name: vceph-meta-{{ controller_sequence }}
+- name: vucm-{{ controller_sequence }}
   description: "Ceph Metadata"
   memory: 8192
   cpu: 4
   disk_size: 8
   devices:
     disks:
-    - name: vceph-meta-{{ controller_sequence }}
+    - name: vucm-{{ controller_sequence }}
       size: 8
       driver:
         type: qcow2
 
-
-#
-# Regular Virtual Machines to export Ceph RBD to users
-#
+- name: vuco-{{ controller_sequence }}
+  description: "Ceph Virtual OSD for tests"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vuco-{{ controller_sequence }}
+      size: 8
+      driver:
+        type: qcow2
 
 # NOTE: It makes more sense to host those VMs on OpenStack.
 # Each of those will become a "Stack", a Heat Template.
 
-- name: viscsit-{{ controller_sequence }}
-  description: "iSCSI Targets"
-  memory: 8192
-  cpu: 4
-  disk_size: 4
-  devices:
-    disks:
-    - name: viscsi-{{ controller_sequence }}
-      size: 4
-      driver:
-        type: qcow2
-
-- name: vnfsgane-{{ controller_sequence }}
-  description: "NFS Server"
-  memory: 8192
-  cpu: 4
-  disk_size: 4
-  devices:
-    disks:
-    - name: vnfsgane-{{ controller_sequence }}
-      size: 4
-      driver:
-        type: qcow2
+#- name: viscsit-{{ controller_sequence }}
+#  description: "iSCSI Targets"
+#  memory: 8192
+#  cpu: 4
+#  disk_size: 4
+#  devices:
+#    disks:
+#    - name: viscsi-{{ controller_sequence }}
+#      size: 4
+#      driver:
+#        type: qcow2
+#
+#- name: vnfsgane-{{ controller_sequence }}
+#  description: "NFS Server"
+#  memory: 8192
+#  cpu: 4
+#  disk_size: 4
+#  devices:
+#    disks:
+#    - name: vnfsgane-{{ controller_sequence }}
+#      size: 4
+#      driver:
+#        type: qcow2

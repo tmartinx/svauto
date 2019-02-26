@@ -22,28 +22,35 @@
 
 - name: maas - Adding maas PXE network on top of br-bond0
   virt_net:
-    command: define
     name: maas
+    command: define
     xml: '{{ lookup("template", "maas-net.xml.j2") }}'
     autostart: yes
 
 
 - name: maas - Destroying the default storage pool
   virt_pool:
-    command: destroy
     name: default
+    command: destroy
   ignore_errors: yes
 
 - name: maas - Deleting the default storage pool
   virt_pool:
-    command: delete
     name: default
+    command: delete
   ignore_errors: yes
 
 
 - name: maas - Creating maas pool using same default subdir
   virt_pool:
-    command: define
     name: maas
+    command: define
     xml: '{{ lookup("template", "maas-pool.xml.j2") }}'
+  ignore_errors: yes
+
+- name: maas - Creating maas pool using same default subdir
+  virt_pool:
+    name: maas
+    state: active
     autostart: yes
+  ignore_errors: yes
