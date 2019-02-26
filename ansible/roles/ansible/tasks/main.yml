@@ -28,3 +28,4 @@
     - python-libvirt
     - python-shade
     - python-gssapi
+    - python-pyghmi
