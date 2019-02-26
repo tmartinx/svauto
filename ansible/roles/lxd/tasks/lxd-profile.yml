@@ -19,3 +19,28 @@
         path: /
         pool: default
         type: disk
+
+- name: profile - Updating LXD MaaS profile
+  lxd_profile:
+    name: maas_rack
+    description: MaaS with PXE LXD profile
+    devices:
+      eth0:
+        name: eth0
+        nictype: bridged
+        parent: br-bond0
+        type: nic
+      eth1:
+        name: eth1
+        nictype: bridged
+        parent: br-bond0.90
+        type: nic
+      eth2:
+        name: eth2
+        nictype: bridged
+        parent: br-ens1f0
+        type: nic
+      root:
+        path: /
+        pool: default
+        type: disk

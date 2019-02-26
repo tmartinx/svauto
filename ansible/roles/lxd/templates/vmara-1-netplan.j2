@@ -3,12 +3,19 @@ version: 2
 ethernets:
     eth0:
         mtu: 1500
+        addresses: []
+    eth2:
+        mtu: 1500
+        addresses:
+        - {{ container.ip_ipmi }}
+    eth1:
+        mtu: 1500
         addresses:
         - {{ container.ip_pxe }}
 vlans:
-    eth0.7:
+    eth0.100:
         mtu: 1500
-        id: 7
+        id: 100
         link: eth0
         addresses:
         - {{ container.ip }}
