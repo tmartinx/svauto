@@ -32,5 +32,5 @@
 
 - name: bionic - Installing XOrg HWE
   apt:
-  name: xserver-xorg-hwe-18.04
+    name: xserver-xorg-hwe-18.04
   when: mode == 'desktop'
