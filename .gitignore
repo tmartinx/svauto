@@ -19,5 +19,5 @@ ansible/*.retry
 ansible/*hosts*
 ansible/*playbook*
 ansible/*extra-vars*
-ansible/facts_storage/*
+ansible/facts/*
 ansible/vagrant-run-*
