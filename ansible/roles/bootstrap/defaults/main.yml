@@ -18,6 +18,8 @@ base_os_upgrade: "no"
 
 mode: "server"
 
+chrony_enabled: "no"
+
 network_tools: "no"
 extra_packages: "no"
 

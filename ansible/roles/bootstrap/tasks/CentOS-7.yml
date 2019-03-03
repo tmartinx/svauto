@@ -37,7 +37,7 @@
 
 - name: centos7 - yum installing Chrony
   yum: name=chrony state=latest update_cache=yes
-  when: mode != 'container'
+  when: chrony_enabled == 'yes' mode != 'container'
 
  
 - name: centos7 - dracut updating initrd of running kernel

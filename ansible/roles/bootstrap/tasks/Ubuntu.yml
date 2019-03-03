@@ -116,7 +116,7 @@
 
 - name: ubuntu - apt installing Chrony
   apt: name=chrony state=latest update_cache=yes
-  when: mode != 'container'
+  when: chrony_enabled == 'yes' mode != 'container'
 
 
 - name: ubuntu - apt installing Server tools
