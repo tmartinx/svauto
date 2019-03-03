@@ -25,6 +25,7 @@
   with_items:
     - nc
     - man
+    - ntp
     - python33
     - kernel
 
@@ -34,6 +35,10 @@
   with_items:
     - ansible
     - libselinux-python
+
+
+- name: centos6 - service ntpd enabled
+  service: name=ntpd state=started enabled=yes
 
 
 - name: centos6 - copy SSH Daemon config

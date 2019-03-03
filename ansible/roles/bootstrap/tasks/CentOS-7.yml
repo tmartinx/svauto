@@ -19,20 +19,25 @@
 - name: centos7 - yum installing basic tools
   yum: pkg={{item}} state=latest update_cache=yes
   with_items:
+    - kernel
     - ansible
     - python34
     - nmap-ncat
-    - dracut-config-generic
-    - kernel
     - kernel-tools
+    - dracut-config-generic
 
 
 - name: centos7 - yum uninstalling Network Manager
   yum: pkg={{item}} state=absent
   with_items:
     - NetworkManager
-    - NetworkManager-libnm
     - NetworkManager-tui
+    - NetworkManager-libnm
+
+
+- name: centos7 - yum installing Chrony
+  yum: name=chrony state=latest update_cache=yes
+  when: mode != 'container'
 
  
 - name: centos7 - dracut updating initrd of running kernel

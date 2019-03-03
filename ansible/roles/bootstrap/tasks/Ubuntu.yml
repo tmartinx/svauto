@@ -83,13 +83,13 @@
     - strace
     - ltrace
     - man-db
+    - logtop
+    - tzdata
+    - python
     - numactl
     - sysstat
     - mlocate
     - sysstat
-    - logtop
-    - tzdata
-    - python
     - aptitude
     - pm-utils
     - xfsprogs
@@ -114,14 +114,9 @@
   when: extra_packages == 'yes' and (mode == 'server' or mode == 'desktop')
 
 
-- name: ubuntu - apt installing NTP
-  apt: name=ntp state=latest update_cache=yes
-  when: ntp_or_chrony == 'ntp' and mode != 'container'
-
-
 - name: ubuntu - apt installing Chrony
   apt: name=chrony state=latest update_cache=yes
-  when: ntp_or_chrony == 'chrony' and mode != 'container'
+  when: mode != 'container'
 
 
 - name: ubuntu - apt installing Server tools
@@ -215,4 +210,3 @@
         owner=root
         group=root
         mode=0644
-  when: mode == 'server' or mode == 'desktop'

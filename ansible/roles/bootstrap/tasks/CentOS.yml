@@ -57,7 +57,6 @@
     - vim
     - man
     - zip
-    - ntp
     - gpm
     - htop
     - lftp
@@ -123,10 +122,6 @@
 - name: centos - service acpid enabled
   service: name=acpid state=started enabled=yes
   when: is_container != 'yes'
-
-
-- name: centos - service ntpd enabled
-  service: name=ntpd state=started enabled=yes
 
 
 - name: centos - yum upgrading CentOS itself
