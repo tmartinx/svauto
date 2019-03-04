@@ -73,6 +73,7 @@
     - htop
     - flip
     - lshw
+    - gpart
     - gdisk
     - unzip
     - iotop
