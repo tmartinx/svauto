@@ -30,6 +30,7 @@
     - psmisc
     - tcpick
     - tcpdump
+    - mlocate
     - traceroute
 
 
@@ -89,7 +90,6 @@
     - python
     - numactl
     - sysstat
-    - mlocate
     - sysstat
     - aptitude
     - pm-utils
