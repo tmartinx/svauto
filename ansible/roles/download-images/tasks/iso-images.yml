@@ -19,10 +19,10 @@
     mode: 0640
   when: download_ubuntu == "yes"
 
-- name: downloading ubuntu-16.04.5-server-amd64.iso
+- name: downloading ubuntu-16.04.6-server-amd64.iso
   get_url:
-    url: http://mirror.csclub.uwaterloo.ca/ubuntu-releases/16.04.5/ubuntu-16.04.5-server-amd64.iso
-    dest: /srv/ISO/ubuntu-16.04.5-server-amd64.iso
+    url: http://mirror.csclub.uwaterloo.ca/ubuntu-releases/16.04.6/ubuntu-16.04.6-server-amd64.iso
+    dest: /srv/ISO/ubuntu-16.04.6-server-amd64.iso
     mode: 0640
   when: download_ubuntu == "yes"
 
