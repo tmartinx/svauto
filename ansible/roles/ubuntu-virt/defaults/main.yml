@@ -33,6 +33,7 @@ vms:
 
 - name: svauto-{{ controller_sequence }}
   description: "SVAuto Ubuntu Desktop, for Ansible, IPMI Access and Virt-Manager"
+  firmware: efi
   memory: 2049
   cpu: 4
   disk_size: 8
@@ -45,6 +46,7 @@ vms:
 
 - name: vnft-{{ controller_sequence }}
   description: "L3 Router with nftables"
+  firmware: efi
   memory: 2049
   cpu: 2
   disk_size: 8
@@ -61,6 +63,7 @@ vms:
 
 - name: vosa-{{ controller_sequence }}
   description: "OpenStack and Ceph Ansible Server"
+  firmware: efi
   memory: 8192
   cpu: 4
   disk_size: 20
@@ -73,6 +76,7 @@ vms:
 
 - name: vosctrl-{{ controller_sequence }}
   description: "OpenStack Controller 1"
+  firmware: efi
   memory: 32768
   cpu: 16
   disk_size: 128
@@ -85,6 +89,7 @@ vms:
 
 - name: voscmpt-{{ controller_sequence }}
   description: "OpenStack LXD Virtual Compute 1"
+  firmware: efi
   memory: 65536
   cpu: 32
   disk_size: 20
@@ -97,6 +102,7 @@ vms:
 
 - name: vceinfr-{{ controller_sequence }}
   description: "Ceph Infrastructure, Monitor and Manager"
+  firmware: efi
   memory: 8192
   cpu: 4
   disk_size: 8
@@ -109,6 +115,7 @@ vms:
 
 - name: vcerdgw-{{ controller_sequence }}
   description: "Ceph Rados Gateway"
+  firmware: efi
   memory: 8192
   cpu: 4
   disk_size: 8
@@ -121,6 +128,7 @@ vms:
 
 - name: vcemeta-{{ controller_sequence }}
   description: "Ceph Metadata"
+  firmware: efi
   memory: 8192
   cpu: 4
   disk_size: 8
@@ -137,6 +145,7 @@ vms:
 
 - name: vuci-{{ controller_sequence }}
   description: "Ceph Infrastructure, Monitor and Manager"
+  firmware: efi
   memory: 8192
   cpu: 4
   disk_size: 8
@@ -149,6 +158,7 @@ vms:
 
 - name: vucr-{{ controller_sequence }}
   description: "Ceph Rados Gateway"
+  firmware: efi
   memory: 8192
   cpu: 4
   disk_size: 8
@@ -161,6 +171,7 @@ vms:
 
 - name: vucm-{{ controller_sequence }}
   description: "Ceph Metadata"
+  firmware: efi
   memory: 8192
   cpu: 4
   disk_size: 8
@@ -173,6 +184,7 @@ vms:
 
 - name: vuco-{{ controller_sequence }}
   description: "Ceph Virtual OSD for tests"
+  firmware: efi
   memory: 8192
   cpu: 4
   disk_size: 8
@@ -188,6 +200,7 @@ vms:
 
 #- name: viscsit-{{ controller_sequence }}
 #  description: "iSCSI Targets"
+#  firmware: efi
 #  memory: 8192
 #  cpu: 4
 #  disk_size: 4
@@ -200,6 +213,7 @@ vms:
 #
 #- name: vnfsgane-{{ controller_sequence }}
 #  description: "NFS Server"
+#  firmware: efi
 #  memory: 8192
 #  cpu: 4
 #  disk_size: 4
