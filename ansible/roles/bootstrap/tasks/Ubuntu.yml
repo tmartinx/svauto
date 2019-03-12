@@ -90,7 +90,6 @@
     - python
     - numactl
     - sysstat
-    - sysstat
     - aptitude
     - pm-utils
     - xfsprogs
