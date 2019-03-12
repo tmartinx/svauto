@@ -100,12 +100,6 @@
      </interface>
 {% endfor %}
 
-    <interface type='bridge'>
-      <source bridge='br-bond0'/>
-      <model type='virtio'/>
-      <boot order='3'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
-    </interface>
 {% if openvswitch_mode == 'regular' %}
     <interface type='bridge'>
       <source bridge='dummybr4'/>
