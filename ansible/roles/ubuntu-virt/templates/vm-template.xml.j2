@@ -150,7 +150,11 @@
     </sound>
     <video>
       <model type='virtio' heads='1' primary='yes'>
+{% if vm.3d == 'yes' %}
         <acceleration accel3d='yes'/>
+{% elif %}
+        <acceleration accel3d='no'/>
+{% endif %}
       </model>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
     </video>
