@@ -83,7 +83,7 @@ vms:
   devices:
     disks:
     - name: vosctrl-{{ controller_sequence }}
-      size: 108
+      size: 128
       driver:
         type: qcow2
 
@@ -92,11 +92,11 @@ vms:
   firmware: efi
   memory: 65536
   cpu: 32
-  disk_size: 20
+  disk_size: 32
   devices:
     disks:
     - name: voscmpt-{{ controller_sequence }}
-      size: 25
+      size: 32
       driver:
         type: qcow2
 
@@ -143,57 +143,66 @@ vms:
 # Isolated Ceph Infrastructure (not installed via `openstack-ansible`)
 #
 
-- name: vuci-{{ controller_sequence }}
-  description: "Ceph Infrastructure, Monitor and Manager"
-  firmware: efi
+- name: vucmons-{{ controller_sequence }}
+  description: "Ceph Monitor"
   memory: 8192
   cpu: 4
   disk_size: 8
   devices:
     disks:
-    - name: vuci-{{ controller_sequence }}
+    - name: vucmons-{{ controller_sequence }}
       size: 8
       driver:
         type: qcow2
 
-- name: vucr-{{ controller_sequence }}
+- name: vucmgrs-{{ controller_sequence }}
+  description: "Ceph Managers"
+  memory: 8192
+  cpu: 4
+  disk_size: 8
+  devices:
+    disks:
+    - name: vucmgrs-{{ controller_sequence }}
+      size: 8
+      driver:
+        type: qcow2
+
+- name: vucrgws-{{ controller_sequence }}
   description: "Ceph Rados Gateway"
-  firmware: efi
   memory: 8192
   cpu: 4
   disk_size: 8
   devices:
     disks:
-    - name: vucr-{{ controller_sequence }}
+    - name: vucrgws-{{ controller_sequence }}
       size: 8
       driver:
         type: qcow2
 
-- name: vucm-{{ controller_sequence }}
+- name: vucmdss-{{ controller_sequence }}
   description: "Ceph Metadata"
-  firmware: efi
   memory: 8192
   cpu: 4
   disk_size: 8
   devices:
     disks:
-    - name: vucm-{{ controller_sequence }}
+    - name: vucmdss-{{ controller_sequence }}
       size: 8
       driver:
         type: qcow2
 
-- name: vuco-{{ controller_sequence }}
-  description: "Ceph Virtual OSD for tests"
-  firmware: efi
-  memory: 8192
-  cpu: 4
-  disk_size: 8
-  devices:
-    disks:
-    - name: vuco-{{ controller_sequence }}
-      size: 8
-      driver:
-        type: qcow2
+#- name: vuco-{{ controller_sequence }}
+#  description: "Ceph Virtual OSD for tests"
+#  firmware: efi
+#  memory: 8192
+#  cpu: 4
+#  disk_size: 8
+#  devices:
+#    disks:
+#    - name: vuco-{{ controller_sequence }}
+#      size: 8
+#      driver:
+#        type: qcow2
 
 # NOTE: It makes more sense to host those VMs on OpenStack.
 # Each of those will become a "Stack", a Heat Template.
