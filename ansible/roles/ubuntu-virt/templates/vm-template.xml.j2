@@ -86,6 +86,20 @@
     <controller type='virtio-serial' index='0'>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x0'/>
     </controller>
+
+{% for interface in vm.interfaces %}
+     <interface type='bridge'>
+      <source bridge='{{ interface.source.bridge }}'/>
+       <model type='virtio'/>
+{% if interface.boot is defined %}
+{% if interface.boot.order is defined %}
+       <boot order='{{ interface.boot.order }}'/>
+{% endif %}
+{% endif %}
+       <address type='pci' domain='0x0000' bus='0x00' slot='{{ interface.address.slot }}' function='0x0'/>
+     </interface>
+{% endfor %}
+
     <interface type='bridge'>
       <source bridge='br-bond0'/>
       <model type='virtio'/>
