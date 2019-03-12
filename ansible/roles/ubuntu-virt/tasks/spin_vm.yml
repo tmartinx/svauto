@@ -18,6 +18,9 @@
 - name: spin_vm - include vm_pre_flight_check.yml ({{ vm.name }})
   include: vm_pre_flight_check.yml
 
+- name: spin_vm - Gathering Facts about VMs
+  include: "vm_facts.yml"
+
 
 - name: spin_vm - include create_disk.yml
   include: create_disk.yml
@@ -26,8 +29,6 @@
     loop_var: disk
   when:
   - vm_exists == False
-#  - create_disk_when_not_found
-#  - vm.devices.disks is defined
 
 
 - name: spin_vm - defining ({{ vm.name }})

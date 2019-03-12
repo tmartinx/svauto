@@ -20,14 +20,6 @@
     key: "{{ hostvars[groups['maas-rack-ctrl'][0]]['maas_rack1_public_key'] | default(False) }}"
 
 
-- name: maas - Adding maas PXE network on top of br-bond0
-  virt_net:
-    name: maas
-    command: define
-    xml: '{{ lookup("template", "maas-net.xml.j2") }}'
-    autostart: yes
-
-
 - name: maas - Destroying the default storage pool
   virt_pool:
     name: default

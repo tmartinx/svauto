@@ -14,12 +14,5 @@
 # limitations under the License.
 
 
-- name: vms - Gathering Facts about VMs
-  include: "vm_facts.yml"
-  with_items:
-  - "{{ vms }}"
-  loop_control:
-    loop_var: vm
-
 - name: vms - Including Stack
   include: "stack-{{ stack_name }}.yml"

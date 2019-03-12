@@ -18,6 +18,7 @@
     - ovmf
     - qemu-kvm
     - python-lxml
+    - python-libvirt
     - libvirt-daemon-system
 
 

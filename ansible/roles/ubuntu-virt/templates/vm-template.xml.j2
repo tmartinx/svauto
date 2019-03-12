@@ -14,9 +14,11 @@
   <vcpu placement='static'>{{ vm.cpu }}</vcpu>
   <os>
     <type arch='x86_64'>hvm</type>
+{% if vm.firmware is defined %}
 {% if vm.firmware == 'efi' %}
     <loader readonly='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE.fd</loader>
     <nvram>/var/lib/libvirt/qemu/nvram/u1804-1_VARS.fd</nvram>
+{% endif %}
 {% endif %}
     <bootmenu enable='yes'/>
   </os>
@@ -87,7 +89,7 @@
       <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x0'/>
     </controller>
 
-{% for interface in vm.interfaces %}
+{% for interface in vm.devices.interfaces %}
      <interface type='bridge'>
       <source bridge='{{ interface.source.bridge }}'/>
        <model type='virtio'/>
@@ -158,11 +160,7 @@
     </sound>
     <video>
       <model type='virtio' heads='1' primary='yes'>
-{% if vm.3d == 'yes' %}
-        <acceleration accel3d='yes'/>
-{% elif %}
         <acceleration accel3d='no'/>
-{% endif %}
       </model>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
     </video>
