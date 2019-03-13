@@ -3,6 +3,7 @@
   <description>{{ vm.description }}</description>
   <memory unit='KiB'>{{ vm.memory * 1024 }}</memory>
   <currentMemory unit='KiB'>{{ vm.memory * 1024 }}</currentMemory>
+
 {% if openvswitch_mode == 'dpdk' %}
   <memoryBacking>
     <hugepages/>
@@ -11,15 +12,18 @@
     <memory mode='strict' nodeset='0'/>
   </numatune>
 {% endif %}
+
   <vcpu placement='static'>{{ vm.cpu }}</vcpu>
   <os>
     <type arch='x86_64'>hvm</type>
+
 {% if vm.firmware is defined %}
 {% if vm.firmware == 'efi' %}
     <loader readonly='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE.fd</loader>
     <nvram>/var/lib/libvirt/qemu/nvram/u1804-1_VARS.fd</nvram>
 {% endif %}
 {% endif %}
+
     <bootmenu enable='yes'/>
   </os>
   <features>
@@ -29,14 +33,17 @@
   </features>
   <cpu mode='host-model' check='partial'>
     <model fallback='allow'/>
+
 {% if openvswitch_mode == 'dpdk' %}
     <numa>
       <cell id='0' cpus='0-3' memory='{{ vm.memory * 1024 }}' unit='KiB' memAccess='shared'/>
     </numa>
 {% endif %}
+
 {% if openvswitch_mode == 'regular' %}
     <model fallback='allow'/>
 {% endif %}
+
   </cpu>
   <clock offset='utc'>
     <timer name='rtc' tickpolicy='catchup'/>
@@ -45,7 +52,7 @@
   </clock>
   <on_poweroff>destroy</on_poweroff>
   <on_reboot>restart</on_reboot>
-  <on_crash>destroy</on_crash>
+  <on_crash>restart</on_crash>
   <pm>
     <suspend-to-mem enabled='no'/>
     <suspend-to-disk enabled='no'/>
@@ -116,6 +123,7 @@
       <virtualport type='openvswitch'/>
     </interface>
 {% endif %}
+
 {% if openvswitch_mode == 'dpdk' %}
     <interface type='vhostuser'>
       <source type='unix' path='/var/run/openvswitch/vuosa-1-subscribers-1' mode='client'/>
@@ -123,23 +131,29 @@
 {% if (enable_multiqueue == 'yes' and number_of_queues >= 1) %}
       <driver name='vhost' queues='{{ number_of_queues }}'/>
 {% endif %}
+
       <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
     </interface>
     <interface type='vhostuser'>
       <source type='unix' path='/var/run/openvswitch/vuosa-1-internet-1' mode='client'/>
       <model type='virtio'/>
+
 {% if (enable_multiqueue == 'yes' and number_of_queues >= 1) %}
       <driver name='vhost' queues='{{ number_of_queues }}'/>
 {% endif %}
+
       <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
     </interface>
 {% endif %}
+
     <serial type='pty'>
+      <log file='/var/log/libvirt/qemu/{{ vm.name }}-serial0.log' append='off'/>
       <target type='isa-serial' port='0'>
         <model name='isa-serial'/>
       </target>
     </serial>
     <console type='pty'>
+      <log file='/var/log/libvirt/qemu/{{ vm.name }}-serial0.log' append='off'/>
       <target type='serial' port='0'/>
     </console>
     <channel type='spicevmc'>
@@ -175,4 +189,3 @@
     </memballoon>
   </devices>
 </domain>
-
