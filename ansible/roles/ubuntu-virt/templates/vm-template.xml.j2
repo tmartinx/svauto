@@ -63,7 +63,7 @@
       <driver name='qemu' type='qcow2'/>
       <source file='{{ libvirt_pool_1 }}/{{ vm.name }}-disk0.qcow2'/>
       <target dev='sda' bus='scsi'/>
-      <boot order='1'/>
+      <boot order='3'/>
       <address type='drive' controller='0' bus='0' target='0' unit='0'/>
     </disk>
     <disk type='file' device='cdrom'>
