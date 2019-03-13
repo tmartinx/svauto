@@ -14,29 +14,14 @@
 # limitations under the License.
   
 
-- name: create_disk - set_fact disk_format
-  set_fact:
-    disk_format: "qcow2"
-  when: disk.driver.type == "qcow2"
-
-- name: create_disk - set_fact disk_format
-  set_fact:
-    disk_format: "raw"
-  when: disk.driver.type == "raw"
-
 - name: create_disk - set_fact disk_destination  "{{ disk.name }}" ({{ vm.name }})
   set_fact:
-    disk_destination: "{{ libvirt_pool_1 }}/{{ vm.name }}-disk0.{{ disk_format }}"
-
+    disk_destination: "{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}"
 
 - name: create_disk - {{ disk.name }} format qcow2 ({{ vm.name }})
-  shell: "qemu-img create -f qcow2 {{ disk_destination }} {{ disk.size }}G"
-  when: disk_format == "qcow2"
-
-- name: create_disk - {{ disk.name }} raw format ({{ vm.name }})
-  shell: "qemu-img create {{ disk_destination }} {{ disk.size }}G"
-  when: disk_format == "raw"
-
+  shell: "qemu-img create -f {{ disk.driver.type }} {{ disk_destination }} {{ disk.size }}G"
+  args:
+    creates: "{{ disk_destination }}"
 
 - name: create_disk -  set file permissions for "{{ disk.name }}" ({{ vm.name }})
   file:

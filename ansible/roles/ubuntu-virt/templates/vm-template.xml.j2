@@ -59,21 +59,26 @@
   </pm>
   <devices>
     <emulator>/usr/bin/kvm-spice</emulator>
+
+{% for disk in vm.devices.disks %}
+
     <disk type='file' device='disk'>
-      <driver name='qemu' type='qcow2'/>
-      <source file='{{ libvirt_pool_1 }}/{{ vm.disk.name }}.qcow2'/>
-      <target dev='sda' bus='scsi'/>
-      <boot order='3'/>
-      <address type='drive' controller='0' bus='0' target='0' unit='0'/>
-      <serial>{{ vm.disk.name }}</serial>
+      <driver name='qemu' type='{{ disk.driver.type }}'/>
+      <source file='{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}'/>
+      <target dev='{{ disk.target }}' bus='scsi'/>
+
+{% if disk.boot is defined %}
+{% if disk.boot.order is defined %}
+      <boot order='{{ disk.boot.order }}'/>
+{% endif %}
+{% endif %}
+
+      <address type='drive' controller='0' bus='0' target='0' unit='{{ disk.unit }}'/>
+      <serial>{{ disk.name }}</serial>
     </disk>
-    <disk type='file' device='cdrom'>
-      <driver name='qemu' type='raw'/>
-      <target dev='sdb' bus='scsi'/>
-      <readonly/>
-      <boot order='2'/>
-      <address type='drive' controller='0' bus='0' target='0' unit='1'/>
-    </disk>
+
+{% endfor %}
+
     <controller type='usb' index='0' model='ich9-ehci1'>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x0a' function='0x7'/>
     </controller>
@@ -101,11 +106,13 @@
      <interface type='bridge'>
       <source bridge='{{ interface.source.bridge }}'/>
        <model type='virtio'/>
+
 {% if interface.boot is defined %}
 {% if interface.boot.order is defined %}
        <boot order='{{ interface.boot.order }}'/>
 {% endif %}
 {% endif %}
+
        <address type='pci' domain='0x0000' bus='0x00' slot='{{ interface.address.slot }}' function='0x0'/>
      </interface>
 {% endfor %}

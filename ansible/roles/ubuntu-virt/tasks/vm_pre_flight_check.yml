@@ -34,7 +34,7 @@
     msg: "VM cpu is not defined"
   when: vm.cpu is undefined
 
-- name: fail when VM disk_size is not defined
+- name: fail when VM disks is not defined
   fail:
-    msg: "VM disk_size is not defined"
-  when: vm.disk_size is undefined
+    msg: "VM disks is not defined"
+  when: vm.devices.disks is undefined
