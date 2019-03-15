@@ -407,11 +407,11 @@ case $i in
 esac
 done
 
-ANSIBLE_INVENTORY_FILE="ansible-hosts-$BUILD_RAND"
+ANSIBLE_INVENTORY_FILE="$BUILD_RAND-hosts.ini"
 
-ANSIBLE_PLAYBOOK_FILE="ansible-playbook-$BUILD_RAND.yml"
+ANSIBLE_PLAYBOOK_FILE="$BUILD_RAND-playbook.yml"
 
-ANSIBLE_EXTRA_VARS_FILE="@ansible-extra-vars-$BUILD_RAND.json"
+ANSIBLE_EXTRA_VARS_FILE="@$BUILD_RAND-extra-vars.json"
 
 # SVAuto Ansible Inventory Builder
 #
