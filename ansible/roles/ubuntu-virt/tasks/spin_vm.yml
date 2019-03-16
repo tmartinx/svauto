@@ -36,6 +36,10 @@
     dest: "/var/lib/libvirt/qemu/nvram/{{ vm.name }}_VARS.fd"
   rsync_opts:
     - "--ignore-existing"
+  when:
+  - vm_exists == False
+  - vm.firmware is defined
+  - vm.firmware == 'efi'
 
 - name: spin_vm - Define ({{ vm.name }})
   virt:
