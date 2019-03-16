@@ -210,3 +210,11 @@
         owner=root
         group=root
         mode=0644
+
+
+- name: ubuntu - install QEmu Guest Agent
+  apt:
+    name: qemu-guest-agent
+    state: latest
+    update_cache: yes
+  when: ansible_virtualization_type == 'kvm' and ansible_virtualization_role == 'guest'
