@@ -20,7 +20,7 @@
 {% if vm.firmware is defined %}
 {% if vm.firmware == 'efi' %}
     <loader readonly='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE.fd</loader>
-    <nvram>/var/lib/libvirt/qemu/nvram/u1804-1_VARS.fd</nvram>
+    <nvram>/var/lib/libvirt/qemu/nvram/{{ vm.name }}_VARS.fd</nvram>
 {% endif %}
 {% endif %}
 
@@ -80,26 +80,26 @@
 {% endfor %}
 
     <controller type='usb' index='0' model='ich9-ehci1'>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x0a' function='0x7'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x7'/>
     </controller>
     <controller type='usb' index='0' model='ich9-uhci1'>
       <master startport='0'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x0a' function='0x0' multifunction='on'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x0' multifunction='on'/>
     </controller>
     <controller type='usb' index='0' model='ich9-uhci2'>
       <master startport='2'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x0a' function='0x1'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x1'/>
     </controller>
     <controller type='usb' index='0' model='ich9-uhci3'>
       <master startport='4'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x0a' function='0x2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x2'/>
+    </controller>
+    <controller type='scsi' index='0' model='virtio-scsi'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0d' function='0x0'/>
     </controller>
     <controller type='pci' index='0' model='pci-root'/>
-    <controller type='scsi' index='0' model='virtio-scsi'>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x0b' function='0x0'/>
-    </controller>
     <controller type='virtio-serial' index='0'>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0e' function='0x0'/>
     </controller>
 
 {% for interface in vm.devices.interfaces %}
@@ -136,6 +136,7 @@
     <interface type='vhostuser'>
       <source type='unix' path='/var/run/openvswitch/vuosa-1-subscribers-1' mode='client'/>
       <model type='virtio'/>
+
 {% if (enable_multiqueue == 'yes' and number_of_queues >= 1) %}
       <driver name='vhost' queues='{{ number_of_queues }}'/>
 {% endif %}
@@ -164,9 +165,13 @@
       <log file='/var/log/libvirt/qemu/{{ vm.name }}-serial0.log' append='off'/>
       <target type='serial' port='0'/>
     </console>
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>
+      <address type='virtio-serial' controller='0' bus='0' port='1'/>
+    </channel>
     <channel type='spicevmc'>
       <target type='virtio' name='com.redhat.spice.0'/>
-      <address type='virtio-serial' controller='0' bus='0' port='1'/>
+      <address type='virtio-serial' controller='0' bus='0' port='2'/>
     </channel>
     <input type='tablet' bus='usb'>
       <address type='usb' bus='0' port='1'/>
@@ -175,14 +180,29 @@
     <input type='keyboard' bus='ps2'/>
     <graphics type='spice' autoport='yes'>
       <listen type='address'/>
+
+{% if vm.spice is defined %}
+{% if vm.spice.fastlocal == 'yes' %}
       <image compression='off'/>
+      <streaming mode='off'/>
+{% endif %}
+{% endif %}
+
     </graphics>
     <sound model='ich6'>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x09' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0b' function='0x0'/>
     </sound>
     <video>
       <model type='virtio' heads='1' primary='yes'>
+
+{% if vm.spice is defined %}
+{% if vm.spice == 'yes' %}
+        <acceleration accel3d='yes'/>
+{% endif %}
+{% else %}
         <acceleration accel3d='no'/>
+{% endif %}
+
       </model>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
     </video>
@@ -193,7 +213,11 @@
       <address type='usb' bus='0' port='3'/>
     </redirdev>
     <memballoon model='virtio'>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x0d' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0f' function='0x0'/>
     </memballoon>
+    <rng model='virtio'>
+      <backend model='random'>/dev/urandom</backend>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x10' function='0x0'/>
+    </rng>
   </devices>
 </domain>
