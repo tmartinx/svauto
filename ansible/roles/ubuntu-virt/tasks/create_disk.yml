@@ -14,18 +14,18 @@
 # limitations under the License.
   
 
-- name: create_disk - set_fact disk_destination  "{{ disk.name }}" ({{ vm.name }})
+- name: create_disk - Set fact disk_destination  "{{ disk.name }}" ({{ vm.name }})
   set_fact:
     disk_destination: "{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}"
 
-- name: create_disk - {{ disk.name }} format qcow2 ({{ vm.name }})
+- name: create_disk - Create {{ disk.name }} format qcow2 ({{ vm.name }})
   shell: "qemu-img create -f {{ disk.driver.type }} {{ disk_destination }} {{ disk.size }}G"
   args:
     creates: "{{ disk_destination }}"
 
-- name: create_disk -  set file permissions for "{{ disk.name }}" ({{ vm.name }})
+- name: create_disk - et file permissions for "{{ disk.name }}" ({{ vm.name }})
   file:
     path: "{{ disk_destination }}"
     owner: libvirt-qemu
     group: kvm
-    mode: 0600
+    mode: 0640
