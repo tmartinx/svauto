@@ -14,5 +14,9 @@
 # limitations under the License.
 
 
-- name: vms - Including Stack
-  include: "stack-{{ stack_name }}.yml"
+- name: vms - Spinning all the Virtual Machines
+  include: spin_vm.yml
+  with_items:
+  - "{{ vms }}"
+  loop_control:
+    loop_var: vm

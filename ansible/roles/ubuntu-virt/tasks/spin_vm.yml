@@ -12,17 +12,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-  
+
 
 # Check if all variables required to create the VM are defined
-- name: spin_vm - include vm_pre_flight_check.yml ({{ vm.name }})
+- name: spin_vm - Include vm_pre_flight_check.yml ({{ vm.name }})
   include: vm_pre_flight_check.yml
 
-- name: spin_vm - Gathering Facts about VMs
+- name: spin_vm - Gather Facts about VMs
   include: "vm_facts.yml"
 
 
-- name: spin_vm - include create_disk.yml
+- name: spin_vm - Include create_disk.yml
   include: create_disk.yml
   with_items: "{{ vm.devices.disks }}"
   loop_control:
@@ -30,14 +30,20 @@
   when:
   - vm_exists == False
 
+- name: spin_vm - Copy VM's private NVRAM
+  synchronize:
+    src: "/usr/share/OVMF/OVMF_VARS.fd"
+    dest: "/var/lib/libvirt/qemu/nvram/{{ vm.name }}_VARS.fd"
+  rsync_opts:
+    - "--ignore-existing"
 
-- name: spin_vm - defining ({{ vm.name }})
+- name: spin_vm - Define ({{ vm.name }})
   virt:
     name: "{{ vm.name }}"
     command: define
     xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
   when: vm_exists == False
 
-- name: spin_vm - autostarting ({{ vm.name }})
+- name: spin_vm - Set ({{ vm.name }}) to AutoStart
   shell: virsh autostart "{{ vm.name }}"
   when: vm_exists == False
