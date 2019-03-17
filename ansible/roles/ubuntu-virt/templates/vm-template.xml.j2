@@ -4,7 +4,7 @@
   <memory unit='KiB'>{{ vm.memory * 1024 }}</memory>
   <currentMemory unit='KiB'>{{ vm.memory * 1024 }}</currentMemory>
 
-{% if openvswitch_mode == 'dpdk' %}
+{% if (openvswitch_mode is defined and openvswitch_mode == 'dpdk') %}
   <memoryBacking>
     <hugepages/>
   </memoryBacking>
@@ -34,13 +34,13 @@
   <cpu mode='host-model' check='partial'>
     <model fallback='allow'/>
 
-{% if openvswitch_mode == 'dpdk' %}
+{% if (openvswitch_mode is defined and openvswitch_mode == 'dpdk') %}
     <numa>
       <cell id='0' cpus='0-3' memory='{{ vm.memory * 1024 }}' unit='KiB' memAccess='shared'/>
     </numa>
 {% endif %}
 
-{% if openvswitch_mode == 'regular' %}
+{% if (openvswitch_mode is defined and openvswitch_mode == 'regular') %}
     <model fallback='allow'/>
 {% endif %}
 
@@ -117,7 +117,7 @@
      </interface>
 {% endfor %}
 
-{% if openvswitch_mode == 'regular' %}
+{% if (openvswitch_mode is defined and openvswitch_mode == 'regular') %}
     <interface type='bridge'>
       <source bridge='dummybr4'/>
       <model type='virtio'/>
@@ -132,7 +132,7 @@
     </interface>
 {% endif %}
 
-{% if openvswitch_mode == 'dpdk' %}
+{% if (openvswitch_mode is defined and openvswitch_mode == 'dpdk') %}
     <interface type='vhostuser'>
       <source type='unix' path='/var/run/openvswitch/vuosa-1-subscribers-1' mode='client'/>
       <model type='virtio'/>
