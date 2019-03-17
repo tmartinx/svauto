@@ -33,5 +33,9 @@
 
 
 # Common across distributions
+- name: timesync - Setting timezone to America/Toronto
+  timezone:
+    name: America/Toronto
+
 - name: mlocate - updating root file system list
   command: 'updatedb'
