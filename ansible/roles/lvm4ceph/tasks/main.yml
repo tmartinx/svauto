@@ -1,0 +1,10 @@
+---
+
+- name: main - Copy lvm4ceph.sh script
+  copy:
+    src: lvm4ceph.sh
+    dest: /tmp/lvm4ceph.sh
+    mode: 0755
+
+# - name: run lvm4ceph.sh --lvm-devices
+#   command: sh /tmp/lvm4ceph.sh --lvm-devices
