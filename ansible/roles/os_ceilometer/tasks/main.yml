@@ -16,7 +16,7 @@
 # https://docs.openstack.org/ceilometer/queens/install/install-base-ubuntu.html
 
 - include: openstack-ceilometer-init.yml
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 
 - name: Installing Ceilometer

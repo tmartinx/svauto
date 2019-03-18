@@ -49,13 +49,13 @@
 - name: ubuntu - apt installing Open vSwitch OVN Central
   apt: name=ovn-central state=latest
   notify: restart-openvswitch
-  when: ovn_central == 'yes'
+  when: ovn_central
 
 
 - name: ubuntu - apt installing Open vSwitch OVN Host
   apt: name=ovn-host state=latest
   notify: restart-openvswitch
-  when: ovn_host == 'yes'
+  when: ovn_host
 
 
 - meta: flush_handlers

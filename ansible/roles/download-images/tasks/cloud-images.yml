@@ -18,7 +18,7 @@
     dest: /srv/CLOUD/ubuntu-18.04-server-cloudimg-amd64.img
     mode: 0640
   ignore_errors: yes
-  when: download_ubuntu == "yes"
+  when: download_ubuntu
 
 - name: downloading ubuntu-16.04-server-cloudimg-amd64-disk1.img
   get_url:
@@ -26,7 +26,7 @@
     dest: /srv/CLOUD/Downloads/ubuntu-16.04-server-cloudimg-amd64-disk1.img
     mode: 0640
   ignore_errors: yes
-  when: download_ubuntu == "yes"
+  when: download_ubuntu
 
 - name: downloading debian-9-openstack-amd64.qcow2
   get_url:
@@ -34,7 +34,7 @@
     dest: /srv/CLOUD/Downloads/debian-9-openstack-amd64.qcow2
     mode: 0640
   ignore_errors: yes
-  when: download_debian == "yes"
+  when: download_debian
 
 - name: downloading CentOS-7-x86_64-GenericCloud.qcow2c
   get_url:
@@ -42,7 +42,7 @@
     dest: /srv/CLOUD/Downloads/CentOS-7-x86_64-GenericCloud.qcow2c
     mode: 0640
   ignore_errors: yes 
-  when: download_centos == "yes"
+  when: download_centos
 
 - name: downloading CentOS-6-x86_64-GenericCloud.qcow2c
   get_url:
@@ -50,7 +50,7 @@
     dest: /srv/CLOUD/Downloads/CentOS-6-x86_64-GenericCloud.qcow2c
     mode: 0640
   ignore_errors: yes
-  when: download_centos == "yes"
+  when: download_centos
 
 - name: downloading Fedora-Cloud-Base-29-1.2.x86_64.qcow2
   get_url:
@@ -58,7 +58,7 @@
     dest: /srv/CLOUD/Downloads/Fedora-Cloud-Base-29-1.2.x86_64.qcow2
     mode: 0640
   ignore_errors: yes
-  when: download_fedora == "yes"
+  when: download_fedora
 
 - name: downloading cirros-0.4.0-x86_64-disk.img
   get_url:

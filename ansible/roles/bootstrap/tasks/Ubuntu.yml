@@ -14,7 +14,7 @@
 
 - name: ubuntu - apt full-upgrade
   apt: upgrade=dist update_cache=yes
-  when: base_os_upgrade == 'yes'
+  when: base_os_upgrade
 
 
 - name: ubuntu - apt installing minimum tools
@@ -58,7 +58,7 @@
     - subnetcalc
     - nbd-client
     - bind9utils
-  when: network_tools == 'yes'
+  when: network_tools
 
 
 - name: ubuntu - apt installing extra packages
@@ -112,12 +112,12 @@
     - python-openvswitch
     - ubuntu-cloud-keyring
     - software-properties-common
-  when: extra_packages == 'yes' and (mode == 'server' or mode == 'desktop')
+  when: extra_packages and (mode == 'server' or mode == 'desktop')
 
 
 - name: ubuntu - apt installing Chrony
   apt: name=chrony state=latest update_cache=yes
-  when: chrony_enabled == 'yes' and mode != 'container'
+  when: chrony_enabled and mode != 'container'
 
 
 - name: ubuntu - apt installing Server tools

@@ -41,7 +41,7 @@
             owner=root
             group=root
             mode=0644
-  when: enable_apache_vhost == 'yes'
+  when: enable_apache_vhost
   notify: reload-apache2
 
 
@@ -51,7 +51,7 @@
             owner=root
             group=root
             mode=0644
-  when: enable_apache_vhost == 'yes'
+  when: enable_apache_vhost
   notify: reload-apache2
 
 
@@ -61,7 +61,7 @@
         owner=root
         group=root
         state=link
-  when: enable_apache_vhost == 'yes'
+  when: enable_apache_vhost
 
 
 - name: ubuntu - Apache activating SSL Virtual Host
@@ -70,7 +70,7 @@
         owner=root
         group=root
         state=link
-  when: enable_apache_vhost == 'yes'
+  when: enable_apache_vhost
 
 
 - name: ubuntu - Apache HTTP Reverse Proxy
@@ -79,7 +79,7 @@
             owner=root
             group=root
             mode=0644
-  when: apache_reverse_proxy == 'yes'
+  when: apache_reverse_proxy
   notify: reload-apache2
 
 
@@ -89,7 +89,7 @@
         owner=root
         group=root
         state=link
-  when: apache_reverse_proxy == 'yes'
+  when: apache_reverse_proxy
 
 
 - meta: flush_handlers

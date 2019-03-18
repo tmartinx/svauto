@@ -17,7 +17,7 @@
 # Ubuntu's DPDK Setup
 #
 
-enable_hugepages: "no"
+enable_hugepages: false
 
 dpdk_nr_1g_pages: "0"
 dpdk_nr_2m_pages: "512"

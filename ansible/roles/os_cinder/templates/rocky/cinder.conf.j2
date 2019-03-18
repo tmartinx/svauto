@@ -20,14 +20,14 @@ auth_strategy = keystone
 transport_url = rabbit://{{ rabbit_userid }}:{{ rabbit_password }}@{{ os_admin_addr }}
 
 
-{% if os_cinder_vol == 'yes' %}
+{% if os_cinder_vol %}
 enabled_backends = lvm
 
 glance_api_servers = {{ endpoint_public_uri }}{{ image_endpoint_public }}:9292
 {% endif %}
 
 
-{% if os_cinder_backup == 'yes' %}
+{% if os_cinder_backup %}
 backup_driver = cinder.backup.drivers.swift
 backup_swift_url = SWIFT_URL # TODO: Install Swift before
 {% endif %}
@@ -62,7 +62,7 @@ memcached_servers = {{ os_admin_addr }}:11211
 auth_type = password
 
 
-{% if os_cinder_vol == 'yes' %}
+{% if os_cinder_vol %}
 [lvm]
 
 volume_driver = cinder.volume.drivers.lvm.LVMVolumeDriver

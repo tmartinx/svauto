@@ -17,12 +17,12 @@
 
 - name: Installing Neutron Linux Bridge Agent
   apt: name=neutron-linuxbridge-agent state=latest
-  when: os_neutron_lbr_enabled == 'yes'
+  when: os_neutron_lbr_enabled
   notify: restart-neutron-lbr
 
 - name: Installing Neutron Open vSwitch Agent
   apt: name=neutron-openvswitch-agent state=latest
-  when: os_neutron_ovs_enabled == 'yes'
+  when: os_neutron_ovs_enabled
   notify: restart-neutron-ovs
 
 
@@ -33,7 +33,7 @@
             group=neutron
             mode=0640
             backup=yes
-  when: item.os_project == "neutron" and (os_neutron_lbr_enabled == 'yes' or os_neutron_ovs_enabled == 'yes')
+  when: item.os_project == "neutron" and (os_neutron_lbr_enabled or os_neutron_ovs_enabled)
   with_items: '{{mysql_databases}}'
 
 
@@ -44,7 +44,7 @@
             group=neutron
             mode=0640
             backup=yes
-  when: os_neutron_lbr_enabled == 'yes'
+  when: os_neutron_lbr_enabled
   notify: restart-neutron-lbr
 
 
@@ -55,7 +55,7 @@
             group=neutron
             mode=0640
             backup=yes
-  when: os_neutron_ovs_enabled == 'yes'
+  when: os_neutron_ovs_enabled
   notify: restart-neutron-ovs
 
 
@@ -66,5 +66,5 @@
         group=root
         mode=0644
         backup=yes
-  when: os_neutron_lbr_enabled == 'yes'
+  when: os_neutron_lbr_enabled
   notify: reload-sysctl

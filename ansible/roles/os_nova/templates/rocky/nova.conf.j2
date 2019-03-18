@@ -10077,7 +10077,7 @@ keymap = en-us
 #   The ``nova-spicehtml5proxy`` service must be listening on a host that is
 #   accessible from the HTML5 client.
 #  (host address value)
-{% if os_nova_ctrl == 'yes' %}
+{% if os_nova_ctrl %}
 html5proxy_host = ::
 {% endif %}
 

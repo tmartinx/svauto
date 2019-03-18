@@ -14,7 +14,7 @@ NR_2M_PAGES={{dpdk_nr_2m_pages}}
 #
 # Default is 0
 # To e.g. let it reserve 2G via 2x 1G Hugepages set:
-{% if (enable_hugepages == 'yes' and processor_count_1g_hugepages >= 1) %}
+{% if (enable_hugepages and processor_count_1g_hugepages >= 1) %}
 NR_1G_PAGES={{dpdk_nr_1g_pages}}
 {% else %}
 #NR_1G_PAGES=

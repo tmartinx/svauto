@@ -31,7 +31,7 @@ auth_strategy = keystone
 core_plugin = ml2
 
 # The service plugins Neutron will use (list value)
-{% if os_neutron_ovn_enabled == 'yes' %}
+{% if os_neutron_ovn_enabled %}
 service_plugins = networking_ovn.l3.l3_ovn.OVNL3RouterPlugin
 {% else %}
 service_plugins = router
@@ -1966,7 +1966,7 @@ lock_path = /var/lib/neutron/tmp
 # cipher list format. (string value)
 #ciphers = <None>
 
-{% if os_neutron_ovn_enabled == 'yes' %}
+{% if os_neutron_ovn_enabled %}
 [qos]
 notification_drivers = ovn-qos
 {% endif %}

@@ -32,11 +32,11 @@
 
 
 - include: openstack-nova-init.yml
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 
 - include: openstack-nova-placement-init.yml
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 
 - name: Installing Nova Services
@@ -81,7 +81,7 @@
 
 - name: Create the cell1 cell
   shell: su -s /bin/sh -c "nova-manage cell_v2 create_cell --name=cell1 --verbose" nova
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 - name: Populate the Nova database
   shell: su -s /bin/sh -c "nova-manage db sync" nova

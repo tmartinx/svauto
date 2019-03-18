@@ -19,35 +19,35 @@
   os_nova_flavor:
     state=absent
     name=m1.tiny
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 - name: ubuntu - nova deleting default m1.small
   environment: "{{admin_openrc_env}}"
   os_nova_flavor:
     state=absent
     name=m1.small
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 - name: ubuntu - nova deleting default m1.medium
   environment: "{{admin_openrc_env}}"
   os_nova_flavor:
     state=absent
     name=m1.medium
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 - name: ubuntu - nova deleting default m1.large
   environment: "{{admin_openrc_env}}"
   os_nova_flavor:
     state=absent
     name=m1.large
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 - name: ubuntu - nova deleting default m1.xlarge
   environment: "{{admin_openrc_env}}"
   os_nova_flavor:
     state=absent
     name=m1.xlarge
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 
 # Creating new default flavors for OpenStack

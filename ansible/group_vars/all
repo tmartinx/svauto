@@ -21,19 +21,19 @@
 #
 
 # System user, usualy, your local Desktop user, or a remote "cloud" user.
-regular_system_user: "ubuntu"
+regular_system_user: ubuntu
 
 # Release ver: ca, dev, prod
 release: dev
 
 # Is Packer build?
-is_packer: "no"
+is_packer: false
 
 # Deployment mode:
-deployment_mode: "no"
+deployment_mode: false
 
 # openvswitch: Open vSwitch with DPDK?
-openvswitch_mode: "null"
+openvswitch_mode: null
 
 
 #
@@ -45,17 +45,17 @@ ftp_username: customer.custom.com
 ftp_password: lerolero
 
 # Yum Reposiory host server address:
-custom_yum_host: "null"
+custom_yum_host: null
 
 # Is Linux Container (LXD / Docker):
-is_container: "no"
+is_container: false
 
 # Products and versions
-nfv_version: "null"
-nfv_protocols_version: "null"
-eng_version: "null"
-dba_version: "null"
-dba_protocols_version: "null"
+nfv_version: null
+nfv_protocols_version: null
+eng_version: null
+dba_version: null
+dba_protocols_version: null
 
 
 #
@@ -63,7 +63,7 @@ dba_protocols_version: "null"
 #
 
 # Server to configure (supported: svnfv, sveng, svdba):
-setup_server: "null"
+setup_server: null
 
 #
 # Local VM Macs

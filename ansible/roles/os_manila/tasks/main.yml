@@ -17,12 +17,12 @@
 
 - name: ubuntu - Including Manila Controller Node
   include: os_manila_ctrl.yml
-  when: os_manila_ctrl == 'yes'
+  when: os_manila_ctrl
 
 
 - name: ubuntu - Including Manila Share Node
   include: os_manila_share.yml
-  when: os_manila_share == 'yes'
+  when: os_manila_share
 
 
 - meta: flush_handlers

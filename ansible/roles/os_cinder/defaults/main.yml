@@ -15,10 +15,10 @@
 mysql_databases:
   - { os_project: "cinder", db_name: "cinder", db_host: "%", db_user: "cinderUser", db_pass: "cinderPass" }
 
-os_aio: "no"
+os_aio: false
 
-os_cinder_ctrl: "no"
-os_cinder_vol: "no"
-os_cinder_backup: "no"
+os_cinder_ctrl: false
+os_cinder_vol: false
+os_cinder_backup: false
 
 bootstrap_host_loopback_cinder_size: "10"

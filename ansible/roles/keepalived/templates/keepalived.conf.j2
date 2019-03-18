@@ -1,12 +1,12 @@
  ! Configuration File for keepalived
 
 global_defs {
-{% if (keepalived_check_script_enabled is defined and keepalived_check_script_enabled == 'yes') %}
+{% if (keepalived_check_script_enabled is defined and keepalived_check_script_enabled) %}
     enable_script_security
 {% endif %}
 }
 
-{% if (keepalived_check_script_enabled is defined and keepalived_check_script_enabled == 'yes') %}
+{% if (keepalived_check_script_enabled is defined and keepalived_check_script_enabled) %}
 vrrp_script chk_service {
     user root
 
@@ -44,7 +44,7 @@ vrrp_instance VI_1 {
         {{ keepalived_shared_ip }} dev {{ keepalived_shared_iface }} label {{ keepalived_shared_iface }}:0
     }
 
-{% if (keepalived_check_script_enabled is defined and keepalived_check_script_enabled == 'yes') %}
+{% if (keepalived_check_script_enabled is defined and keepalived_check_script_enabled) %}
     track_script {
         chk_service
     }

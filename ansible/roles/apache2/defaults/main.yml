@@ -14,5 +14,5 @@
 
 
 # Enable the Apache Virtual Host
-enable_apache_vhost: "no"
-apache_reverse_proxy: "no"
+enable_apache_vhost: false
+apache_reverse_proxy: false

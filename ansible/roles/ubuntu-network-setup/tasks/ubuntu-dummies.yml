@@ -28,7 +28,7 @@
         owner=root
         group=root
         mode=0644
-  when: os_neutron_lbr_enabled == 'yes'
+  when: os_neutron_lbr_enabled
 
 - name: ubuntu - copy dummy1 systemd-networkd
   copy: src=ubuntu18/11-dummy1.netdev
@@ -121,7 +121,7 @@
         owner=root
         group=root
         mode=0644
-  when: os_neutron_lbr_enabled == 'yes'
+  when: os_neutron_lbr_enabled
 
 - name: ubuntu - copy dummy1 config file for LBR
   copy: src=ubuntu-common/interface_dummy1
@@ -196,7 +196,7 @@
 
 - name: ubuntu - restarting up dummy0
   shell: 'ifdown dummy0 ; ifup dummy0'
-  when: os_neutron_lbr_enabled == 'yes'
+  when: os_neutron_lbr_enabled
   ignore_errors: yes
 
 - name: ubuntu - restarting up dummy1

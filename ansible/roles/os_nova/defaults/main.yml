@@ -27,10 +27,10 @@ nova_placement_db_name: "placement"
 nova_placement_db_user: "placementUser"
 nova_placement_db_pass: "placementPass"
 
-os_aio: "no"
+os_aio: false
 
-os_nova_ctrl: "no"
-os_nova_cmpt: "no"
+os_nova_ctrl: false
+os_nova_cmpt: false
 
 linuxnet_interface_driver: "nova.network.linux_net.LinuxBridgeInterfaceDriver"
 

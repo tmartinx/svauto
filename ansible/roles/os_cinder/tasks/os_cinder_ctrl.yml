@@ -31,7 +31,7 @@
 
 
 - include: openstack-cinder-init.yml
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 
 - name: Installing Cinder Server

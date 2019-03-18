@@ -77,10 +77,10 @@
 
 - name: Including Keystone Init 
   include: openstack-keystone-init-{{ os_release }}.yml
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 
 - name: Checking whether to configure ldap
   include: keystone-ldap.yml
-  when: ldap_enabled is defined and ldap_enabled == 'yes'
+  when: ldap_enabled is defined and ldap_enabled
   tags: keystone_conf

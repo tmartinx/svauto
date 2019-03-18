@@ -17,11 +17,11 @@
 
 - name: centos - selinux to permissive state
   selinux: policy=targeted state=permissive
-  when: is_container != 'yes'
+  when: not is_container
 
 - name: centos - selinux disabled
   selinux: state=disabled
-  when: is_container != 'yes'
+  when: not is_container
 
 
 - name: centos - copy Custom Main Yum repository config file
@@ -30,7 +30,7 @@
             owner=root
             group=root
             mode=0644
-  when: custom_main_yum_repo == 'yes'
+  when: custom_main_yum_repo
 
 
 - name: centos - copy sudoers config file for members of group "wheel"
@@ -126,4 +126,4 @@
 
 - name: centos - yum upgrading CentOS itself
   yum: name=* state=latest
-  when: base_os_upgrade == 'yes'
+  when: base_os_upgrade

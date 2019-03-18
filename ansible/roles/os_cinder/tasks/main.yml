@@ -14,17 +14,17 @@
 
 - name: ubuntu - Including Cinder Controller Tasks
   include: os_cinder_ctrl.yml
-  when: os_cinder_ctrl == 'yes'
+  when: os_cinder_ctrl
 
 
 - name: ubuntu - Including Cinder Volume Tasks
   include: os_cinder_vol.yml
-  when: os_cinder_vol == 'yes'
+  when: os_cinder_vol
 
 
 - name: ubuntu - Including Cinder Backup Tasks
   include: os_cinder_backup.yml
-  when: os_cinder_backup == 'yes'
+  when: os_cinder_backup
 
 
 - meta: flush_handlers

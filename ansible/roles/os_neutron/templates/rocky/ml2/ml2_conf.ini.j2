@@ -142,7 +142,7 @@ tenant_network_types = flat,vlan,vxlan,geneve
 
 # An ordered list of networking mechanism driver entrypoints to be loaded from
 # the neutron.ml2.mechanism_drivers namespace. (list value)
-{% if os_neutron_ovn_enabled == 'yes' %}
+{% if os_neutron_ovn_enabled %}
 mechanism_drivers = ovn
 {% else %}
 mechanism_drivers = linuxbridge
@@ -266,7 +266,7 @@ vni_ranges = 1:65536
 # support requires that ipset is installed on L2 agent node. (boolean value)
 enable_ipset = true
 
-{% if os_neutron_ovn_enabled == 'yes' %}
+{% if os_neutron_ovn_enabled %}
 [ovn]
 
 ovn_nb_connection = tcp:{{ hostvars[inventory_hostname]['ansible_'+os_srvc]['ipv4']['address'] }}:6641

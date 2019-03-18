@@ -15,7 +15,7 @@
 mysql_databases:
   - { os_project: "manila", db_name: "manila", db_host: "%", db_user: "manilaUser", db_pass: "manilaPass" }
 
-os_manila_ctrl: "no"
-os_manila_share: "no"
+os_manila_ctrl: false
+os_manila_share: false
 
 bootstrap_host_loopback_manila_size: "10"

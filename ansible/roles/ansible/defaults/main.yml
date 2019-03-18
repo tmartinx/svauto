@@ -14,4 +14,4 @@
 
 
 # Install Ansible from PPA?
-ansible_ppa: "no"
+ansible_ppa: false

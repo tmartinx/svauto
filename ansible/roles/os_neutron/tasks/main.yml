@@ -26,17 +26,17 @@
 
 - name: ubuntu - Including Neutron Controller Tasks
   include: os_neutron_ctrl.yml
-  when: os_neutron_ctrl == 'yes'
+  when: os_neutron_ctrl
 
 
 - name: ubuntu - Including Neutron Network Tasks
   include: os_neutron_net.yml
-  when: os_neutron_net == 'yes'
+  when: os_neutron_net
 
 
 - name: ubuntu - Including Neutron Compute Tasks
   include: os_neutron_cmpt.yml
-  when: os_neutron_cmpt == 'yes' and os_aio != 'yes'
+  when: os_neutron_cmpt and not os_aio
 
 
 - meta: flush_handlers

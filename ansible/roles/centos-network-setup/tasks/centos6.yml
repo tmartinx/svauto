@@ -30,7 +30,7 @@
 - name: centos6 - starting up eth1
   shell: ifup eth1
   ignore_errors: yes
-  when: activate_eth1 == 'yes'
+  when: activate_eth1
 
 
 - name: centos6 - copy eth2 config file

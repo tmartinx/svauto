@@ -14,15 +14,15 @@
 
 
 # Activate eth1:
-activate_eth1: "yes"
+activate_eth1: true
 
-eth0_bootproto: "dhcp"
-eth1_bootproto: "dhcp"
+eth0_bootproto: dhcp
+eth1_bootproto: dhcp
 
-centos_eth0_ip: "null"
-centos_eth0_mask: "null"
+centos_eth0_ip: null
+centos_eth0_mask: null
 
-centos_eth1_ip: "null"
-centos_eth1_mask: "null"
+centos_eth1_ip: null
+centos_eth1_mask: null
 
-centos_eth1_onboot: "yes"
+centos_eth1_onboot: true

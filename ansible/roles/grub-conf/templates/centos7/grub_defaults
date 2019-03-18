@@ -3,7 +3,7 @@ GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
 GRUB_DEFAULT=saved
 GRUB_DISABLE_SUBMENU=true
 GRUB_TERMINAL_OUTPUT="console"
-{% if centos_old_ifnames == 'yes' %}
+{% if centos_old_ifnames %}
 GRUB_CMDLINE_LINUX="console=ttyS0,115200n8 nomodeset crashkernel=auto net.ifnames=0 biosdevname=0 rhgb quiet"
 {% else %}
 GRUB_CMDLINE_LINUX="console=ttyS0,115200n8 nomodeset crashkernel=auto rhgb quiet"

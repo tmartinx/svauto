@@ -72,7 +72,7 @@ OPENSTACK_API_VERSIONS = {
 # Set this to True if running on a multi-domain model. When this is enabled, it
 # will require the user to enter the Domain name in addition to the username
 # for login.
-{% if ldap_horizon_default_domain is defined and ldap_horizon_default_domain == 'yes' %}
+{% if ldap_horizon_default_domain is defined and ldap_horizon_default_domain %}
 OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = False
 {% else %}
 OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = True
@@ -98,7 +98,7 @@ OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = True
 # Also, you will most likely have a value in the keystone policy file like this
 #    "cloud_admin": "rule:admin_required and domain_id:<your domain id>"
 # This value must be the name of the domain whose ID is specified there.
-{% if ldap_horizon_default_domain is defined and ldap_horizon_default_domain == 'yes' and ldap_keystone_domain is defined %}
+{% if ldap_horizon_default_domain is defined and ldap_horizon_default_domain and ldap_keystone_domain is defined %}
 OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = '{{ ldap_keystone_domain }}'
 {% else %}
 OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'Default'

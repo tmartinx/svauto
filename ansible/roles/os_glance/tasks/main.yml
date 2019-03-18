@@ -31,7 +31,7 @@
 
 
 - include: openstack-glance-init.yml
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 
 - name: Installing Glance Server

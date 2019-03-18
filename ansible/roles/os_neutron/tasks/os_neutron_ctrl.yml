@@ -31,7 +31,7 @@
 
 
 - include: openstack-neutron-init.yml
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 
 - name: Installing Neutron Server
@@ -82,7 +82,7 @@
         group=neutron
         mode=0644
         backup=yes
-  when: os_open_provider_nets_to_regular_users == 'yes'
+  when: os_open_provider_nets_to_regular_users
   notify: restart-neutron-server
 
 - name: Removing custom Neutron's Policy if condition is "no"
@@ -97,7 +97,7 @@
   apt: name={{ item }} state=latest
   with_items:
     - python-networking-ovn
-  when: os_neutron_ovn_enabled == 'yes'
+  when: os_neutron_ovn_enabled
 
 
 #- name: Updating ml2_conf.ovn.ini
@@ -108,4 +108,4 @@
 #            mode=0640
 #            backup=yes
 #  notify: restart-neutron-server
-#  when: os_neutron_ovn_enabled == 'yes'
+#  when: os_neutron_ovn_enabled

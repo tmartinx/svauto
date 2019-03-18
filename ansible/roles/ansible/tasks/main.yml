@@ -15,7 +15,7 @@
 
 - name: main - Adding Ansible's PPA Repository
   apt_repository: repo='ppa:ansible/ansible'
-  when: ansible_ppa == 'yes'
+  when: ansible_ppa
 
 
 - name: main - Installing Ansible

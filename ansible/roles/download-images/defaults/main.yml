@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-download_group: "null"
+download_group: null
 
-download_ubuntu: "yes"
-download_debian: "no"
-download_fedora: "no"
-download_centos: "no"
-download_cirros: "no"
+download_ubuntu: true
+download_debian: false
+download_fedora: false
+download_centos: false
+download_cirros: false

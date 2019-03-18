@@ -43,7 +43,7 @@ ldap_keystone_domain_description: "Company Domain"
 #           openstack project create -domain company.com jdoe
 #           openstack role add --project jdoe --user jdoe --user-domain company.com user
 
-ldap_enabled: "no"
+ldap_enabled: false
 ldap_url: "ldap://<ldap ip 1>,ldap://<ldap ip 2>"
 ldap_user: ""
 ldap_password: ""

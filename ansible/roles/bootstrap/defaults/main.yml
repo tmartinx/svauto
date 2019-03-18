@@ -14,24 +14,24 @@
 
 
 # Upgrade Base OS:
-base_os_upgrade: "no"
+base_os_upgrade: false
 
 mode: "server"
 
-chrony_enabled: "no"
+chrony_enabled: false
 
-network_tools: "no"
-extra_packages: "no"
+network_tools: false
+extra_packages: false
 
 # Vagrant run?
-vagrant_run: "no"
+vagrant_run: false
 
 # bootstrap: Enable Main Yum Repository:
-custom_main_yum_repo: "no"
+custom_main_yum_repo: false
 
 # SVAuto-enabled Yum Reposiory host server address:
-svauto_yum_host: "null"
+svauto_yum_host: null
 
 # Release Code Name:
-release_code_name: "yukon"
-release_code_number: "18.10"
+release_code_name: "xingu"
+release_code_number: "19.04"

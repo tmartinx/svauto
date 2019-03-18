@@ -15,18 +15,18 @@
 
 ubuntu_primary_interface: "eth0"
 
-ubuntu_enable_ip_masquerade: "no"
+ubuntu_enable_ip_masquerade: false
 
-ubuntu_primary_interface_via_ifupdown: "no"
+ubuntu_primary_interface_via_ifupdown: false
 
 ubuntu_network_mode: "dhcp"
 
 ubuntu_static_ip_mask: "192.168.1.2/24"
 ubuntu_static_ip_gateway: "192.168.1.1"
 
-ubuntu_name_server_1: "null"
-ubuntu_name_server_2: "null"
+ubuntu_name_server_1: null
+ubuntu_name_server_2: null
 
-ubuntu_setup_dummy_nics: "no"
+ubuntu_setup_dummy_nics: false
 
-os_neutron_lbr_enabled: "no"
+os_neutron_lbr_enabled: false

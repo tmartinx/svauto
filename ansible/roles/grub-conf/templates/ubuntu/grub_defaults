@@ -7,7 +7,7 @@ GRUB_DEFAULT=0
 GRUB_TIMEOUT_STYLE=hidden
 GRUB_TIMEOUT=10
 GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
-{% if (enable_hugepages == 'yes' and processor_count_1g_hugepages >= 1) %}
+{% if (enable_hugepages and processor_count_1g_hugepages >= 1) %}
 GRUB_CMDLINE_LINUX_DEFAULT="console=ttyS0,115200n8 quiet splash iommu=pt intel_iommu=on default_hugepagesz=1G hugepagesz=1G hugepages={{ grub_nr_1g_pages }}"
 {% else %}
 GRUB_CMDLINE_LINUX_DEFAULT="console=ttyS0,115200n8 quiet splash iommu=pt intel_iommu=on"

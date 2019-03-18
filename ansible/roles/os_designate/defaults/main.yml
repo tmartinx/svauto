@@ -15,6 +15,6 @@
 mysql_databases:
   - { os_project: "designate", db_name: "designate", db_host: "%", db_user: "designateUser", db_pass: "designatePass" }
 
-designate_enable: "yes"
+designate_enable: true
 designate_ns_record: "region.yourdomain.com."
 designate_nameserver: "10.0.0.1"

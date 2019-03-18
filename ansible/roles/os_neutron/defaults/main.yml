@@ -16,28 +16,28 @@
 mysql_databases:
   - { os_project: "neutron", db_name: "neutron", db_host: "%", db_user: "neutronUser", db_pass: "neutronPass" }
 
-os_aio: "no"
+os_aio: false
 
-os_neutron_ctrl: "no"
-os_neutron_net: "no"
-os_neutron_cmpt: "no"
+os_neutron_ctrl: false
+os_neutron_net: false
+os_neutron_cmpt: false
 
 os_external: "dummy0"
 os_data: "dummy1"
 
-os_neutron_lbr_enabled: "no"
+os_neutron_lbr_enabled: false
 
 ovs_integration_bridge: "br-int"
-os_neutron_ovs_enabled: "no"
-os_neutron_ovs_dpdk_enabled: "no"
+os_neutron_ovs_enabled: false
+os_neutron_ovs_dpdk_enabled: false
 
-os_neutron_ovn_enabled: "no"
+os_neutron_ovn_enabled: false
 
-os_neutron_sriov_enabled: "no"
+os_neutron_sriov_enabled: false
 
 neutron_interface_driver: "linuxbridge"
 
-firewall_driver: "null"
+firewall_driver: null
 
 metadata_secret: "UltraMeta13"
 
@@ -59,7 +59,7 @@ os_provider_net_2_lbr_interface: "dummy7"
 os_provider_net_2_ovs_interface: "dummy5"
 os_provider_net_2_ovs_bridge_interface: "dummybr1"
 
-os_open_provider_nets_to_regular_users: "no"
+os_open_provider_nets_to_regular_users: false
 
 # Neutron quotas:
 # neutron_quota_floatingip: "-1"

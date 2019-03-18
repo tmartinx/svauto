@@ -72,11 +72,11 @@
 # OpenFlow Ninja Rules
 - name: ubuntu - Open vSwitch - Custom OpenFlow Rule
   shell: ovs-ofctl add-flow dpdkbr0 "in_port=1,dl_vlan=2500 actions=mod_vlan_vid:2600,2"
-  when: openvswitch_openflow_rules == 'yes'
+  when: openvswitch_openflow_rules
 
 - name: ubuntu - Open vSwitch - Custom OpenFlow Rule
   shell: ovs-ofctl add-flow dpdkbr1 "in_port=1,dl_vlan=2600 actions=mod_vlan_vid:2500,2"
-  when: openvswitch_openflow_rules == 'yes'
+  when: openvswitch_openflow_rules
 
 
 # Bring it up (not sure if needed)

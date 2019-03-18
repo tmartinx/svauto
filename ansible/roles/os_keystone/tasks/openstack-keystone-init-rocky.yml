@@ -27,4 +27,4 @@
 - name: Creating ldap keystone domain
   environment: "{{ admin_openrc_env }}"
   command: openstack domain create --description "{{ ldap_keystone_domain_description }}" --enable "{{ ldap_keystone_domain }}"
-  when: ldap_enabled is defined and ldap_enabled == 'yes'
+  when: ldap_enabled is defined and ldap_enabled

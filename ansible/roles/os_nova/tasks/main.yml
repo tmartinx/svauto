@@ -14,11 +14,11 @@
 
 - name: ubuntu - Including Nova Controller Tasks
   include: os_nova_ctrl.yml
-  when: os_nova_ctrl == 'yes'
+  when: os_nova_ctrl
 
 - name: ubuntu - Including Nova Compute Tasks
   include: os_nova_cmpt.yml
-  when: os_nova_cmpt == 'yes'
+  when: os_nova_cmpt
 
 
 - meta: flush_handlers

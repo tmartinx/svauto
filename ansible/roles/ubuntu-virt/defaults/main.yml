@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-setup: "null"
+setup: null
 
-mode: "null"
+mode: null
 
-pod: "null"
+pod: null
 
-enable_multiqueue: 'no'
+enable_multiqueue: false
 number_of_queues: '0'
 
 libvirt_default_network_name: "default"

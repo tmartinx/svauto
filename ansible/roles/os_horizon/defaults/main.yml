@@ -16,6 +16,6 @@
 # Horizon_help_url
 # horizon_help_url: "https://help.me"
 
-ldap_horizon_default_domain: "no"
+ldap_horizon_default_domain: false
 
 ldap_keystone_domain: "company.com"

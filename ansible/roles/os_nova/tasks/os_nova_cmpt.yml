@@ -53,4 +53,4 @@
 # Review the need for this, or maybe moving it to os_nova_ctrl and removing os_aio:
 - name: Nova Discovering Hosts
   shell: su -s /bin/sh -c "nova-manage cell_v2 discover_hosts --verbose" nova
-  when: os_aio == 'yes'
+  when: os_aio

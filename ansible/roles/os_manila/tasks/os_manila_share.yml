@@ -50,7 +50,7 @@
   command: "{{ item }}"
   with_items:
   - manila type-create default_share_type False
-  when: deployment_mode == 'yes'
+  when: deployment_mode
 
 
 - meta: flush_handlers

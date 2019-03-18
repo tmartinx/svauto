@@ -16,5 +16,5 @@
 # CPU Mask values: F=2, FF=4, FFF=6, FFFF=8
 ovs_dpdk_cpu_cores: "FFFF"
 
-ovn_central: "no"
-ovn_host: "no"
+ovn_central: false
+ovn_host: false

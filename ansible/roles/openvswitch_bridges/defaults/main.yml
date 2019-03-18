@@ -14,10 +14,10 @@
 
 
 openvswitch_net_mode: "flat"
-openvswitch_openflow_rules: "no"
-openvswitch_stack_1_bridges: "no"
+openvswitch_openflow_rules: false
+openvswitch_stack_1_bridges: false
 
-os_neutron_ovs_enabled: "no"
+os_neutron_ovs_enabled: false
 
 os_external: "dummy0"
 

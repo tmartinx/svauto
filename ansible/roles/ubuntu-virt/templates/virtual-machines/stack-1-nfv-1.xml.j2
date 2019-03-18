@@ -110,7 +110,7 @@
     <interface type='vhostuser'>
       <source type='unix' path='/var/run/openvswitch/stack-1-nfv-1-subscribers-1' mode='client'/>
       <model type='virtio'/>
-{% if (enable_multiqueue == 'yes' and number_of_queues >= 1) %}
+{% if (enable_multiqueue and number_of_queues >= 1) %}
       <driver name='vhost' queues='{{ number_of_queues }}'/>
 {% endif %}
       <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
@@ -118,7 +118,7 @@
     <interface type='vhostuser'>
       <source type='unix' path='/var/run/openvswitch/stack-1-nfv-1-internet-1' mode='client'/>
       <model type='virtio'/>
-{% if (enable_multiqueue == 'yes' and number_of_queues >= 1) %}
+{% if (enable_multiqueue and number_of_queues >= 1) %}
       <driver name='vhost' queues='{{ number_of_queues }}'/>
 {% endif %}
       <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>

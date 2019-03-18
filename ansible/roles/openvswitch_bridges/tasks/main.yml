@@ -14,14 +14,14 @@
 
 - name: ubuntu - include OVS Bridges for Neutron
   include: ovs_bridges_neutron.yml
-  when: os_neutron_ovs_enabled == 'yes'
+  when: os_neutron_ovs_enabled
 
 
 - name: ubuntu - include OVS Bridges for regular KVM
   include: ovs_bridges_regular_kvm.yml
-  when: openvswitch_stack_1_bridges == 'yes'
+  when: openvswitch_stack_1_bridges
 
 
 - name: ubuntu - include OVS Bridges with DPDK for regular KVM
   include: ovs_bridges_dpdk.yml
-  when: openvswitch_stack_1_bridges == 'yes' and openvswitch_mode == 'dpdk'
+  when: openvswitch_stack_1_bridges and openvswitch_mode == 'dpdk'

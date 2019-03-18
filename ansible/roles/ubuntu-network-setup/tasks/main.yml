@@ -24,7 +24,7 @@
 # because of nftables.
 - name: ubuntu - module nf_conntrack blacklisted
   lineinfile: dest=/etc/modprobe.d/blacklist.conf line="blacklist nf_conntrack"
-  when: os_neutron_lbr_enabled == 'yes'
+  when: os_neutron_lbr_enabled
 
 
 # Enabling /etc/network/interfaces.d subdirectory.
@@ -49,10 +49,10 @@
             group=root
             mode=0644
             backup=yes
-  when: ubuntu_primary_interface_via_ifupdown == 'yes'
+  when: ubuntu_primary_interface_via_ifupdown
 
 
 # Including Dummy NIC setup.
 - name: ubuntu - include dummy NICs setup
   include: ubuntu-dummies.yml
-  when: ubuntu_setup_dummy_nics == 'yes'
+  when: ubuntu_setup_dummy_nics

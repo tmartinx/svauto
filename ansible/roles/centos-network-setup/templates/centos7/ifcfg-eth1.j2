@@ -1,6 +1,6 @@
 TYPE="Ethernet"
 NM_CONTROLLED="no"
-{% if centos_eth1_onboot == 'yes' %}
+{% if centos_eth1_onboot %}
 ONBOOT="yes"
 {% else %}
 ONBOOT="no"

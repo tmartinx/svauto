@@ -14,8 +14,8 @@
 
 
 # grub: Use old Linux interface name "ethX" on CentOS:
-centos_old_ifnames: "yes"
+centos_old_ifnames: true
 
-enable_hugepages: "no"
+enable_hugepages: false
 
 grub_nr_1g_pages: "0"

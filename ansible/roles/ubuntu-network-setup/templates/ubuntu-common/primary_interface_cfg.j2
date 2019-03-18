@@ -7,6 +7,6 @@ iface {{ ubuntu_primary_interface }} inet static
 	address {{ ubuntu_static_ip_mask }}
 	gateway {{ ubuntu_static_ip_gateway }}
 {% endif %}
-{% if ubuntu_enable_ip_masquerade == 'yes' %}
+{% if ubuntu_enable_ip_masquerade %}
         up iptables -t nat -I POSTROUTING 1 -o {{ ubuntu_primary_interface }} -j MASQUERADE
 {% endif %}
