@@ -1,11 +1,24 @@
  ! Configuration File for keepalived
+
 global_defs {
+{% if (keepalived_check_script_enabled is defined and keepalived_check_script_enabled == 'yes') %}
+    enable_script_security
+{% endif %}
 }
 
-{% if (check_script_enabled is defined and check_script_enabled == 'yes') %}
-vrrp_script chk_service {           # Requires keepalived-1.1.13
-        script '/etc/keepalived/check_script.sh'     # cheaper than pidof
-        interval 2                      # check every 2 seconds
+{% if (keepalived_check_script_enabled is defined and keepalived_check_script_enabled == 'yes') %}
+vrrp_script chk_service {
+    user root
+
+    # Cheaper than pidof:
+    script "/etc/keepalived/check_script.sh"
+
+    # The "pidof" approach (to test):
+    #script "/bin/pidof {{ keepalived_check_process }}"
+
+    # Check every 2 seconds:
+    interval 2
+    timeout 1
 }
 {% endif %}
 
@@ -13,21 +26,25 @@ vrrp_instance VI_1 {
     state {{ keepalived_role }}
     interface {{ keepalived_shared_iface }}
     virtual_router_id {{ keepalived_router_id }}
-    {% if keepalived_role.lower() == "master" %}
+
+{% if keepalived_role.lower() == "master" %}
     priority {{ keepalived_priority }}
-    {% else %}
+{% else %}
     priority {{ keepalived_backup_priority }}
-    {% endif %}   
+{% endif %}
+
     advert_int 1
+
     authentication {
         auth_type PASS
         auth_pass {{ keepalived_auth_pass }}
     }
+
     virtual_ipaddress {
         {{ keepalived_shared_ip }} dev {{ keepalived_shared_iface }} label {{ keepalived_shared_iface }}:0
     }
 
-{% if (check_script_enabled is defined and check_script_enabled == 'yes') %}
+{% if (keepalived_check_script_enabled is defined and keepalived_check_script_enabled == 'yes') %}
     track_script {
         chk_service
     }
