@@ -1,0 +1,34 @@
+---
+
+# This role installs and sets up keepalived
+
+- name: main - Yum Install keepalived
+  yum: name=keepalived state=present
+  when: ansible_os_family == "RedHat"
+  tags: keepalived
+  notify: restart keepalived
+
+- name: main - Apt Install keepalived
+  apt: name=keepalived state=latest
+  when: ansible_os_family == "Debian"
+  tags: keepalived
+  notify: restart keepalived
+
+- name: main - chk_service script shell
+  template: 
+    src: check_script.sh.j2 
+    dest: /etc/keepalived/check_script.sh
+    mode: 0755
+    owner: root
+    group: root
+  tags: keepalived
+  notify: restart keepalived
+
+- name: main - Config keepalived
+  template: src=keepalived.conf.j2 dest=/etc/keepalived/keepalived.conf
+  tags: keepalived
+  notify: restart keepalived
+
+- name: main - Start keepalived
+  service: name=keepalived state=started
+  tags: keepalived
