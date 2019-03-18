@@ -10,3 +10,8 @@
     src: dhcpd.conf.j2
     dest: /etc/dhcp/dhcpd.conf
   notify: reload isc-dhcp-server
+
+- name: main - Make sure isc-dhcp-server is running
+  systemd:
+    state: started
+    name: isc-dhcp-server
