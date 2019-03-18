@@ -57,6 +57,7 @@
     - iptraf-ng
     - subnetcalc
     - nbd-client
+    - bind9utils
   when: network_tools == 'yes'
 
 
