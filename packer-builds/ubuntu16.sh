@@ -18,5 +18,5 @@
 ./svauto.sh --packer-builder --base-os=ubuntu16 --release=dev --product=ubuntu --version=16.04.5 --product-variant=sv-1 --qcow2 --ova --vm-xml --sha256sum \
 	--ansible-remote-user="root" \
 	--ansible-inventory-builder="svbox,localhost,mode=server,os_release=rocky" \
-	--ansible-playbook-builder="svbox,cloud-init,bootstrap;base_os_upgrade=yes,grub-conf,post-cleanup-image" \
+	--ansible-playbook-builder="svbox,cloud-init,bootstrap;base_os_upgrade=true,grub-conf,post-cleanup-image" \
 	--packer-max-tries=3 # --dry-run

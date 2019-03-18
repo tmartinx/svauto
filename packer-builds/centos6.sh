@@ -19,7 +19,7 @@
 ./svauto.sh --packer-builder --base-os=centos6 --release=dev --product=centos --version=6 --product-variant=sv-1 --qcow2 --ova --vm-xml --sha256sum \
 	--ansible-remote-user="root" \
 	--ansible-inventory-builder="svbox,localhost" \
-	--ansible-playbook-builder="svbox,cloud-init,bootstrap;base_os_upgrade=yes,grub-conf,vmware-tools,post-cleanup-image" \
+	--ansible-playbook-builder="svbox,cloud-init,bootstrap;base_os_upgrade=true,grub-conf,vmware-tools,post-cleanup-image" \
 	--packer-max-tries=3 # --dry-run
 
 
@@ -27,5 +27,5 @@
 #./svauto.sh --packer-builder --base-os=centos6 --release=dev --product=centos --version=6 --product-variant=sv-xen-1 --qcow2 --ova --vm-xml --sha256sum \
 #	--ansible-remote-user="root" \
 #	--ansible-inventory-builder="svbox,localhost" \
-#	--ansible-playbook-builder="svbox,centos-xen,cloud-init,bootstrap;base_os_upgrade=yes,grub-conf,vmware-tools,post-cleanup-image" \
+#	--ansible-playbook-builder="svbox,centos-xen,cloud-init,bootstrap;base_os_upgrade=true,grub-conf,vmware-tools,post-cleanup-image" \
 #	--packer-max-tries=3 # --dry-run
