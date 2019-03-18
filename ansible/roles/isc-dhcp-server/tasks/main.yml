@@ -1,0 +1,12 @@
+---
+
+- name: main - Apt install isc-dhcp-server
+  apt:
+    name: isc-dhcp-server
+    state: present 
+
+- name: main - Applying isc-dhcp-server config file
+  template: 
+    src: dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+  notify: reload isc-dhcp-server

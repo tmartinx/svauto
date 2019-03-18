@@ -1,0 +1,6 @@
+---
+# defaults file for dhcp
+
+ddns_update_style: none
+log_facility: local7
+

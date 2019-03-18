@@ -1,0 +1,6 @@
+---
+# handlers file for dns
+- name: reload isc-dhcp-server
+  systemd:
+    state: reloaded
+    name: isc-dhcp-server

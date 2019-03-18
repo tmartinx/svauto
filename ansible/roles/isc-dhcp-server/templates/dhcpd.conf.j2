@@ -1,0 +1,112 @@
+#
+# Configuration file for ISC dhcpd
+#
+# Attention: If /etc/ltsp/dhcpd.conf exists, that will be used as
+# configuration file instead of this file.
+#
+
+{% if ddns_update_style is defined %}
+ddns-update-style {{ ddns_update_style }};
+{% endif %}
+
+{% if option is defined %}
+{% if option.domain_name is defined %}
+option domain-name {{ option.domain_name }};
+{% endif %}
+
+{% if option_doman_name_servers is defined %}
+option domain-name-servers {{ option.domain_name_servers | join(", ") }};
+{% endif %}
+{% endif %}
+
+{% if default_lease_time is defined %}
+default-lease-time {{ default_lease_time }};
+{% endif %}
+
+{% if max_lease_time is defined %}
+max-lease-time {{ max_lease_time }};
+{% endif %}
+
+{% if authoritative is defined %}
+{% if authoritative == true %}
+authoritative;
+{% endif %}
+
+{% endif %}
+
+log-facility {{ log_facility }};
+
+{% if failover is defined %}
+
+{% if failover == true %}
+#############
+# Failorver #
+#############
+
+failover peer "{{ failover_peer }}" {
+  {{ dhcpd_role }};
+  address {{ failover_local_ip }};
+  port 647;
+  peer address {{ failover_peer_ip }};
+  peer port 647;
+  max-response-delay 30;
+  max-unacked-updates 10;
+  load balance max seconds 3;
+{% if dhcpd_role == 'primary' %}
+  mclt 1800;
+  split 128;
+{% endif %}
+}
+{% endif %}
+{% endif %}
+
+###########
+# Subnets #
+###########
+
+{% for subnet in subnets %}
+#
+# Subnet: {{ subnet.comment }}
+#
+
+{% if subnet.option is defined %}
+subnet {{ subnet.subnet }} netmask {{ subnet.netmask }}
+{
+{% if subnet.option.domain_name_servers is defined %}
+  option domain-name-servers {{ subnet.option.domain_name_servers | join(", ") }};
+{% endif %}
+
+{% if subnet.option.domain_name is defined %}
+  option domain-name "{{ subnet.option.domain_name }}";
+{% endif %}
+
+{% if subnet.option.routers is defined %}
+  option routers {{ subnet.option.routers }};
+{% endif %}
+
+{% if subnet.default_lease_time is defined %}
+  default-lease-time {{ subnet.default_lease_time }};
+{% endif %}
+
+  pool {
+{% if failover is defined and failover == true %}
+    failover peer "{{ failover_peer }}";
+{% endif %}
+
+{% if subnet.max_lease_time is defined %}
+    max-lease-time {{ subnet.max_lease_time }};
+{% endif %}
+
+{% if subnet.range_from is defined and subnet.range_to is defined %}
+    range {{ subnet.range_from }} {{ subnet.range_to }};
+{% endif %}
+  }
+}
+
+
+{% else %}
+subnet {{ subnet.subnet }} netmask {{ subnet.netmask }} {}
+
+
+{% endif %}
+{% endfor %}
