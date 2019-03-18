@@ -27,23 +27,19 @@ default-lease-time {{ default_lease_time }};
 max-lease-time {{ max_lease_time }};
 {% endif %}
 
-{% if authoritative is defined %}
-{% if authoritative == true %}
+{% if (authoritative is defined and authoritative == true) %}
 authoritative;
-{% endif %}
-
 {% endif %}
 
 log-facility {{ log_facility }};
 
-{% if failover is defined %}
-
-{% if failover == true %}
+{% if (failover is defined and failover == true) %}
 #############
 # Failorver #
 #############
 
 failover peer "{{ failover_peer }}" {
+
   {{ dhcpd_role }};
   address {{ failover_local_ip }};
   port 647;
@@ -52,12 +48,13 @@ failover peer "{{ failover_peer }}" {
   max-response-delay 30;
   max-unacked-updates 10;
   load balance max seconds 3;
+
 {% if dhcpd_role == 'primary' %}
   mclt 1800;
   split 128;
 {% endif %}
+
 }
-{% endif %}
 {% endif %}
 
 ###########
