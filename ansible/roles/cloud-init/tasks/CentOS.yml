@@ -12,7 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: ubuntu - apt installing Cloud Init
-  apt: pkg={{item}} state=latest
-  with_items:
-    - cloud-init
+
+- name: centos - common
+  include: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+
+
+- name: centos - copy Cloud Init "timeouts" config file
+  copy: src=centos-common/10_timeouts.cfg
+        dest=/etc/cloud/cloud.cfg.d/10_timeouts.cfg
+        owner=root
+        group=root
+        mode=0644
+
+
+- name: centos - copy Cloud Init "manage_etc_hosts" config file
+  copy: src=centos-common/15_manage_etc_hosts.cfg
+        dest=/etc/cloud/cloud.cfg.d/15_manage_etc_hosts.cfg
+        owner=root
+        group=root
+        mode=0644
