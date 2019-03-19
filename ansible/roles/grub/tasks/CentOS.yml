@@ -1,3 +1,4 @@
+---
 # Copyright 2018, TCMC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: centos6 - grub custom config
-  lineinfile: dest=/etc/grub.conf
-              insertafter='^hiddenmenu'
-              line='serial --unit=0 --speed=115200\nterminal --timeout=5 serial console'
+
+- name: centos - common
+  include: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
