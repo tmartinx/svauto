@@ -12,6 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+- name: ubuntu - include custom book
+  include: "{{ ansible_distribution_release }}.yml"
+
+- name: ubuntu - include uca book
+  include: "{{ ansible_distribution_release }}-uca-{{ os_release }}.yml"
+
+
 - name: ubuntu - apt full-upgrade
   apt: upgrade=dist update_cache=yes
   when: base_os_upgrade

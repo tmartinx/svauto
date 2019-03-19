@@ -12,23 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# CentOS Bootstrap tasks
-- name: centos - include common book
+
+# Ubuntu and CentOS common book ([Ubuntu|Centos].yml)
+- name: common - include common book
   include: "{{ ansible_distribution }}.yml"
 
 
-# Ubuntu Bootstrap tasks
-- name: ubuntu - include custom book
-  include: "{{ ansible_distribution_release }}.yml"
-
-- name: ubuntu - include uca book
-  include: "{{ ansible_distribution_release }}-uca-{{ os_release }}.yml"
-
-- name: ubuntu - include common book
-  include: "{{ ansible_distribution }}.yml"
-
-
-# Common across distributions
+# Common Settings
 - name: timesync - Setting timezone to America/Toronto
   timezone:
     name: America/Toronto
