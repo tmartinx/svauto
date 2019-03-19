@@ -34,7 +34,7 @@
   synchronize:
     src: "/usr/share/OVMF/OVMF_VARS.fd"
     dest: "/var/lib/libvirt/qemu/nvram/{{ vm.name }}_VARS.fd"
-  rsync_opts:
+    rsync_opts:
     - "--ignore-existing"
   when:
   - vm_exists == False
