@@ -17,5 +17,5 @@
 # Ubuntu 18.04 Packer Build with Ansible
 ./svauto.sh --packer-builder --base-os=ubuntu18 --release=dev --product=ubuntu --version=18.04 --product-variant=sv-1 --qcow2 --ova --vm-xml --sha256sum \
 	--ansible-inventory-builder="svbox,localhost,mode=server,os_release=rocky" \
-	--ansible-playbook-builder="svbox,cloud-init,bootstrap;base_os_upgrade=true,grub-conf,post-cleanup-image" \
+	--ansible-playbook-builder="svbox,bootstrap;base_os_upgrade=true,grub,post-cleanup-image" \
 	--packer-max-tries=3 # --dry-run
