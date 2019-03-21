@@ -42,9 +42,9 @@ failover peer "{{ failover_peer }}" {
 
   {{ dhcpd_role }};
   address {{ failover_local_ip }};
-  port 647;
+  port {{ failover_local_port }};
   peer address {{ failover_peer_ip }};
-  peer port 647;
+  peer port {{ failover_peer_port }};
   max-response-delay 30;
   max-unacked-updates 10;
   load balance max seconds 3;
