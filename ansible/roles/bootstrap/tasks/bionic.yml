@@ -12,13 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: bionic - Copying Ubuntu's default sources.list
-  copy: src=bionic/sources.list.j2
-        dest=/etc/apt/sources.list
-        owner=root
-        group=root
-        mode=0644
-
 
 - name: bionic - Installing Linux HWE
   apt:

@@ -13,11 +13,22 @@
 # limitations under the License.
 
 
+- name: ubuntu - Copy Ubuntu's default sources.list
+  template:
+    src: ubuntu-common/sources.list.j2
+    dest: /etc/apt/sources.list
+    owner: root
+    group: root
+    mode: 0644
+
+
 - name: ubuntu - include custom book
   include: "{{ ansible_distribution_release }}.yml"
+  when: ansible_distribution_release == "bionic"
 
 - name: ubuntu - include uca book
   include: "{{ ansible_distribution_release }}-uca-{{ os_release }}.yml"
+  when: ansible_distribution_release == "bionic"
 
 
 - name: ubuntu - apt full-upgrade
