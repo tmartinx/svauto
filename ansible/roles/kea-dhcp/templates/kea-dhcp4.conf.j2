@@ -1,0 +1,84 @@
+
+#
+# Configuration file for Kea DHCP
+#
+
+{
+    # DHCPv4 specific configuration starts here.
+    "Dhcp4": {
+
+{% if (authoritative is defined and authoritative == true) %}
+        "authoritative": true
+{% endif %}
+
+        "interfaces-config": {
+            "interfaces": [ "{{ interfaces }}" ],
+            "dhcp-socket-type": "raw"
+        },
+
+{% if default_lease_time is defined %}
+        "valid-lifetime": {{ default_lease_time }},
+{% endif %}
+
+        "subnet4": [
+{% for subnet in subnets %}
+
+            # Subnet: {{ subnet.comment }}
+{% if subnet.option is defined %}
+            {
+
+               "subnet": "{{ subnet.subnet }}/{{ subnet.cidr_mask }}",
+
+{% if subnet.default_lease_time is defined %}
+               "valid-lifetime": {{ subnet.default_lease_time }},
+{% endif %}
+
+               "pools": [ { "pool": "{{ subnet.range_from }}-{{ subnet.range_to }}" } ],
+
+               "option-data": [
+
+{% if subnet.option.domain_name is defined %}
+                    {
+                         "name": "domain-name",
+                         "data": "{{ subnet.option.domain_name }}"
+                    },
+{% endif %}
+
+{% if subnet.option.domain_name_servers is defined %}
+                    {
+                         "name": "domain-name-servers",
+                         "data": "{{ subnet.option.domain_name_servers | join(", ") }}"
+                    },
+{% endif %}
+
+{% if subnet.option.routers is defined %}
+                    {
+                        "name": "routers",
+                        "data": "{{ subnet.option.routers }}"
+                    }
+{% endif %}
+                ]
+{% if not loop.last %}
+            },
+{% else %}
+            }
+{% endif %}
+
+{% else %}
+            {
+               "subnet": "{{ subnet.subnet }}/{{ subnet.cidr_mask }}"
+            },
+{% endif %}
+{% endfor %}
+        ]
+    },
+
+    # Logger configuration starts here.
+    "Logging": {
+       "loggers": [{
+            "name": "*",
+            "severity": "INFO"
+        }]
+    }
+
+}

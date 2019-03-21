@@ -1,0 +1,6 @@
+---
+# defaults file for Kea DHCP
+
+ddns_update_style: none
+log_facility: local7
+
