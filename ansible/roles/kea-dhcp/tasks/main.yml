@@ -1,0 +1,17 @@
+---
+
+- name: main - Apt install kea-dhcp4-server
+  apt:
+    name: kea-dhcp4-server
+    state: present
+
+- name: main - Applying kea-dhcp4-server config file
+  template:
+    src: kea-dhcp4.conf.j2
+    dest: /etc/kea/kea-dhcp4.conf
+  notify: restart kea-dhcp4-server
+
+- name: main - Make sure kea-dhcp4-server is running
+  systemd:
+    state: started
+    name: kea-dhcp4-server
