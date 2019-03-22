@@ -13,6 +13,6 @@ action "ansible-lint" {
   needs = "filter-to-pr-open-synced"
   secrets = ["GITHUB_TOKEN"]
   env = {
-    ANSIBLE_ACTION_WORKING_DIR = "./ansible/roles"
+    ANSIBLE_ACTION_WORKING_DIR = "./ansible"
   }
 }
