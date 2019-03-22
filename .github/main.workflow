@@ -16,3 +16,13 @@ action "ansible-lint" {
     ANSIBLE_ACTION_WORKING_DIR = "./ansible"
   }
 }
+
+workflow "New workflow" {
+  on = "pull_request"
+  resolves = ["tag-filter"]
+}
+
+action "tag-filter" {
+  uses = "actions/bin/filter@master"
+  args = "tag"
+}
