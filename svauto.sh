@@ -650,17 +650,6 @@ then
 
 fi
 
-if [ -z "$ANSIBLE_REMOTE_USER" ]
-then
-
-	echo
-	echo "Warning! You must specify the --ansible-remote-user option!"
-	echo "Example: --ansible-remote-user=tcmc"
-
-	exit 1
-
-fi
-
 if [ -n "$OS_PROJECT" ]
 then
 
