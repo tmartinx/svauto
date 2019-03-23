@@ -37,7 +37,7 @@ ansible_playbook_builder()
 
 				echo ""
 				echo "- hosts: $i"
-				if [ -n $ANSIBLE_REMOTE_USER ]; then
+				if [ -n "$ANSIBLE_REMOTE_USER" ]; then
 					echo "  user: $ANSIBLE_REMOTE_USER"
 				fi
 				echo "  become: yes"
