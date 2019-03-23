@@ -66,4 +66,4 @@
     dest: /srv/CLOUD/cirros-0.4.0-x86_64-disk.img
     mode: 0640
   ignore_errors: yes
-  when: download_cirros == "yes
+  when: download_cirros
