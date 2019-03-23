@@ -42,6 +42,7 @@
     - ssh
     - curl
     - tmux
+    - pigz
     - iftop
     - lldpd
     - bwm-ng
