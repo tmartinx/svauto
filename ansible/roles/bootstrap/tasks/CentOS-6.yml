@@ -26,7 +26,7 @@
     - nc
     - man
     - ntp
-    - python33
+    - python34
     - kernel
 
 

@@ -4,11 +4,10 @@
     {
       "type": "qemu",
       "iso_urls": [
-        "/var/lib/libvirt/ISO/CentOS-6.10-x86_64-minimal.iso",
-        "http://mirror.its.sfu.ca/mirror/CentOS/6.10/isos/x86_64/CentOS-6.10-x86_64-minimal.iso"
+        "/srv/ISO/CentOS-6.10-x86_64-minimal.iso"
       ],
-      "iso_checksum": "0ca12fe5f28c2ceed4f4084b41ff8a0b",
-      "iso_checksum_type": "md5",
+      "iso_checksum": "7c0dee2a0494dabd84809b72ddb4b761f9ef92b78a506aef709b531c54d30770",
+      "iso_checksum_type": "sha256",
       "output_directory": "",
       "vm_name": "",
       "ssh_wait_timeout": "30s",
@@ -21,7 +20,7 @@
       "format": "raw",
       "headless": true,
       "accelerator": "kvm",
-      "http_directory": "packer/http",
+      "http_directory": "../packer/http",
       "http_port_min": 10082,
       "http_port_max": 10089,
       "ssh_host_port_min": 2222,
@@ -41,17 +40,8 @@
   ],
   "provisioners": [
     {
-      "type": "shell",
-      "scripts": [
-            "packer/scripts/c6-ansible.sh"
-      ]
-    },
-    {
-      "type": "ansible-local",
-      "inventory_file": "",
-      "playbook_dir": "ansible/roles",
-      "playbook_file": "",
-      "group_vars": "ansible/group_vars"
+      "type": "ansible",
+      "playbook_file": ""
     }
   ]
 }

@@ -4,8 +4,7 @@
     {
       "type": "qemu",
       "iso_urls": [
-        "/srv/ISO/ubuntu-18.04.2-server-amd64.iso",
-        "http://cdimage.ubuntu.com/ubuntu/releases/18.04/release/ubuntu-18.04.2-server-amd64.iso"
+        "/srv/ISO/ubuntu-18.04.2-server-amd64.iso"
       ],
       "iso_checksum": "a2cb36dc010d98ad9253ea5ad5a07fd6b409e3412c48f1860536970b073c98f5",
       "iso_checksum_type": "sha256",
@@ -20,7 +19,7 @@
       "format": "raw",
       "headless": "true",
       "accelerator": "kvm",
-      "http_directory": "packer/http",
+      "http_directory": "../packer/http",
       "http_port_min": 10082,
       "http_port_max": 10089,
       "ssh_host_port_min": 2222,
@@ -48,17 +47,8 @@
   ],
   "provisioners": [
     {
-      "type": "shell",
-      "scripts": [
-            "packer/scripts/ubuntu-ansible.sh"
-      ]
-    },
-    {
-      "type": "ansible-local",
-      "inventory_file": "",
-      "playbook_dir": "ansible/roles",
-      "playbook_file": "",
-      "group_vars": "ansible/group_vars"
+      "type": "ansible",
+      "playbook_file": ""
     }
   ]
 }

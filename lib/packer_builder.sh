@@ -121,19 +121,16 @@ packer_builder()
 	# Defining the dynamic Ansible Inventory and Playbook files location.
 	# It overrides the default values configured on svauto.sh.
 
-	ANSIBLE_INVENTORY_FILE="$PACKER_VM_NAME-ansible-hosts"
 	ANSIBLE_PLAYBOOK_FILE="$PACKER_VM_NAME-ansible-playbook.yaml"
 
 
-	echo "$ANSIBLE_INVENTORY_FILE_IN_MEM" > packer/$PACKER_FILES/$ANSIBLE_INVENTORY_FILE
 	echo "$ANSIBLE_PLAYBOOK_FILE_IN_MEM" > packer/$PACKER_FILES/$ANSIBLE_PLAYBOOK_FILE
 
 
 	# Updating Packer VM build template yaml file
-	sed -i -e 's/"output_directory": "",/"output_directory": "packer\/'$PACKER_OUTPUT_DIR'",/g' $PACKER_FILE
+	sed -i -e 's/"output_directory": "",/"output_directory": "\.\.\/packer\/'$PACKER_OUTPUT_DIR'",/g' $PACKER_FILE
 	sed -i -e 's/"vm_name": "",/"vm_name": "'$PACKER_VM_NAME.raw'",/g' $PACKER_FILE
-	sed -i -e 's/"inventory_file": "",/"inventory_file": "packer\/'$PACKER_FILES'\/'$ANSIBLE_INVENTORY_FILE'",/g' $PACKER_FILE
-	sed -i -e 's/"playbook_file": "",/"playbook_file": "packer\/'$PACKER_FILES'\/'$ANSIBLE_PLAYBOOK_FILE'",/g' $PACKER_FILE
+	sed -i -e 's/"playbook_file": ""/"playbook_file": "\.\.\/packer\/'$PACKER_FILES'\/'$ANSIBLE_PLAYBOOK_FILE'"/g' $PACKER_FILE
 
 
 	# SVXYZ needs a bigger image, lets do this only for it
@@ -222,10 +219,11 @@ packer_builder()
 		echo "Dry run called, not running Packer, to run it manually, you can type:"
 
 		echo
-		echo packer build packer/$PACKER_FILES/$PACKER_VM_NAME-packer.yaml
+		echo "pushd ansible ; packer build ../packer/$PACKER_FILES/$PACKER_VM_NAME-packer.yaml ; popd"
 
 	else
 
+		pushd ansible
 
 		if [ ! -z $MAX_TRIES ] && [ $MAX_TRIES -gt 1 ]
 		then
@@ -255,7 +253,7 @@ packer_builder()
 				fi
 
 
-				if packer build packer/$PACKER_FILES/$PACKER_VM_NAME-packer.yaml
+				if packer build ../packer/$PACKER_FILES/$PACKER_VM_NAME-packer.yaml
 				then
 
 					echo
@@ -309,6 +307,8 @@ packer_builder()
 			fi
 
 		fi
+
+		popd
 
 	fi
 

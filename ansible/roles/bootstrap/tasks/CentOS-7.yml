@@ -35,11 +35,6 @@
     - NetworkManager-libnm
 
 
-- name: centos7 - yum installing Chrony
-  yum: name=chrony state=latest update_cache=yes
-  when: chrony_enabled and mode not 'container'
-
- 
 - name: centos7 - dracut updating initrd of running kernel
   command: /sbin/dracut -f --regenerate-all
   when: not vagrant_run

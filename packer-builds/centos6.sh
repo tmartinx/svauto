@@ -17,13 +17,11 @@
 
 # CentOS 6
 ./svauto.sh --packer-builder --base-os=centos6 --release=dev --product=centos --version=6 --product-variant=sv-1 --qcow2 --ova --vm-xml --sha256sum \
-	--ansible-inventory-builder="svbox,localhost" \
-	--ansible-playbook-builder="svbox,cloud-init,bootstrap;base_os_upgrade=true,grub,vmware-tools,post-cleanup-image" \
+	--ansible-playbook-builder="default,cloud-init,bootstrap;base_os_upgrade=true;is_container=no,grub,vmware-tools,post-cleanup-image" \
 	--packer-max-tries=3 # --dry-run
 
 
 ## CentOS 6 with Linux 3.18 from Xen 4.6 official repo
 #./svauto.sh --packer-builder --base-os=centos6 --release=dev --product=centos --version=6 --product-variant=sv-xen-1 --qcow2 --ova --vm-xml --sha256sum \
-#	--ansible-inventory-builder="svbox,localhost" \
-#	--ansible-playbook-builder="svbox,centos-xen,cloud-init,bootstrap;base_os_upgrade=true,grub,vmware-tools,post-cleanup-image" \
+#	--ansible-playbook-builder="default,centos-xen,cloud-init,bootstrap;base_os_upgrade=true;is_container=no,grub,vmware-tools,post-cleanup-image" \
 #	--packer-max-tries=3 # --dry-run
