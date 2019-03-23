@@ -32,7 +32,6 @@ vms:
 # Example 1:
 - name: vm-1
   description: "Virtual Machine with 2 disks, 3 vNIC and PXE Boot (good for MaaS Pods)."
-  firmware: efi
   memory: 4096
   cpu: 2
   devices:
@@ -68,7 +67,6 @@ vms:
 # Example 2:
 - name: vm-2
   description: "Virtual Machine with 1 disk and 1 vNIC."
-  firmware: efi
   memory: 4096
   cpu: 2
   devices:
@@ -90,7 +88,6 @@ vms:
 # Example 3:
 - name: vm-3
   description: "Virtual Machine with 1 disk, 1 vNIC and Spice 3D (requires Virgil compiled into QEmu)."
-  firmware: efi
   memory: 4096
   cpu: 2
   devices:
@@ -108,3 +105,93 @@ vms:
         bridge: "br-bond0"
       address:
         slot: "0x03"
+
+#
+# NFV Stack
+#
+
+# Engine
+- name: stack-1-eng-1
+  title: stack-1-eng-1
+  description: "Virtual Machine with 1 disk, 2 vNICs."
+  memory: 4096
+  cpu: 2
+  devices:
+    disks:
+    - name: ba3027e1-6d6b-4f1c-a98e-d3c59a1399e8
+      size: 8
+      driver:
+        type: qcow2
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    interfaces:
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x03"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x04"
+
+# Database
+- name: stack-1-dba-1
+  title: stack-1-dba-1
+  description: "Virtual Machine with 1 disk, 2 vNICs."
+  memory: 4096
+  cpu: 2
+  devices:
+    disks:
+    - name: 00fa5b4a-6b25-4a48-ac61-e68400c015fd
+      size: 8
+      driver:
+        type: qcow2
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    interfaces:
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x03"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x04"
+
+# NFV
+- name: stack-1-nfv-1
+  title: stack-1-nfv-1
+  description: "Virtual Machine with 1 disk, 4 vNICs."
+  memory: 4096
+  cpu: 2
+  devices:
+    disks:
+    - name: a698d94f-bfd1-47dc-8702-8491aa44ef4d
+      size: 8
+      driver:
+        type: qcow2
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    interfaces:
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x03"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x04"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x05"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x06"
