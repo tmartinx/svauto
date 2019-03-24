@@ -42,8 +42,8 @@
       "vnc_port_min": "5900",
       "vnc_port_max": "5900",
       "qemuargs": [
-	["-m", "1024M"],
-	["-smp", "1"],
+	["-m", "2048M"],
+	["-smp", "2"],
 	["-netdev", "user,id=user.0,hostfwd=tcp::{{ .SSHHostPort }}-:6736,hostfwd=tcp::7373-:7373"],
 	["-device", "e1000,netdev=user.0"],
 	["-netdev", "user,id=user.1"],
