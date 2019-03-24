@@ -36,6 +36,7 @@
       "ssh_wait_timeout": "120s",
       "output_directory": "packer/pfsense2-tmpl",
       "headless": "true",
+      "disk_interface": "virtio",
       "net_device": "e1000",
       "vnc_bind_address": "127.0.0.1",
       "vnc_port_min": "5900",
