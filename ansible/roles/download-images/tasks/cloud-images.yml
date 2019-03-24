@@ -16,7 +16,7 @@
   get_url:
     url: http://uec-images.ubuntu.com/releases/18.04/release/ubuntu-18.04-server-cloudimg-amd64.img
     dest: /srv/CLOUD/ubuntu-18.04-server-cloudimg-amd64.img
-    mode: 0640
+    mode: 0644
   ignore_errors: yes
   when: download_ubuntu
 
@@ -24,7 +24,7 @@
   get_url:
     url: http://uec-images.ubuntu.com/releases/16.04/release/ubuntu-16.04-server-cloudimg-amd64-disk1.img
     dest: /srv/CLOUD/ubuntu-16.04-server-cloudimg-amd64-disk1.img
-    mode: 0640
+    mode: 0644
   ignore_errors: yes
   when: download_ubuntu
 
@@ -32,7 +32,7 @@
   get_url:
     url: http://cdimage.debian.org/cdimage/openstack/current-9/debian-9-openstack-amd64.qcow2
     dest: /srv/CLOUD/debian-9-openstack-amd64.qcow2
-    mode: 0640
+    mode: 0644
   ignore_errors: yes
   when: download_debian
 
@@ -40,7 +40,7 @@
   get_url:
     url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2c
     dest: /srv/CLOUD/CentOS-7-x86_64-GenericCloud.qcow2c
-    mode: 0640
+    mode: 0644
   ignore_errors: yes 
   when: download_centos
 
@@ -48,7 +48,7 @@
   get_url:
     url: http://cloud.centos.org/centos/6/images/CentOS-6-x86_64-GenericCloud.qcow2c
     dest: /srv/CLOUD/CentOS-6-x86_64-GenericCloud.qcow2c
-    mode: 0640
+    mode: 0644
   ignore_errors: yes
   when: download_centos
 
@@ -56,7 +56,7 @@
   get_url:
     url: https://mirror.csclub.uwaterloo.ca/fedora/linux/releases/29/Cloud/x86_64/images/Fedora-Cloud-Base-29-1.2.x86_64.qcow2
     dest: /srv/CLOUD/Fedora-Cloud-Base-29-1.2.x86_64.qcow2
-    mode: 0640
+    mode: 0644
   ignore_errors: yes
   when: download_fedora
 
@@ -64,6 +64,6 @@
   get_url:
     url: http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
     dest: /srv/CLOUD/cirros-0.4.0-x86_64-disk.img
-    mode: 0640
+    mode: 0644
   ignore_errors: yes
   when: download_cirros

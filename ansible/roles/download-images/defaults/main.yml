@@ -19,3 +19,4 @@ download_debian: false
 download_fedora: false
 download_centos: false
 download_cirros: false
+download_pfsense: false

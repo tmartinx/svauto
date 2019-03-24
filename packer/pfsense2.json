@@ -1,0 +1,59 @@
+{
+  "builders": [
+    {
+      "http_directory": "packer/http",
+      "http_port_min": "8100",
+      "boot_wait": "35s",
+      "boot_command": [
+	"<wait><enter>",
+	"<wait><enter>",
+	"<wait><enter>",
+	"<wait><down>",
+	"<wait><enter>",
+	"<wait><left>",
+	"<wait><enter>",
+	"<wait><enter>",
+	"<wait><enter>",
+	"<wait><enter>",
+	"<wait><enter>",
+	"<wait10><wait10><enter>",
+	"<wait><enter>",
+	"<wait10><wait10><wait10><wait10><wait10><wait10><wait10>",
+	"8<wait><enter>",
+	"curl http://{{ .HTTPIP }}:{{ .HTTPPort }}/pfsense2-config.xml >/conf/config.xml<wait><enter>",
+	"reboot<wait><enter>"
+      ],
+      "type": "qemu",
+      "iso_url": "/srv/ISO/pfSense-CE-2.4.2-RELEASE-amd64.iso",
+      "iso_checksum_type": "sha256",
+      "iso_checksum": "3fa30cac9b8519e89a176ca8845a5a9536af0e11226f2ec9bcaf85ebcab40416",
+      "shutdown_command": "shutdown -p now",
+      "disk_size": "4096",
+      "format": "raw",
+      "vm_name": "pfSense-CE-2.4.2_{{ isotime \"20060102_030405\"}}.raw",
+      "ssh_username": "root",
+      "ssh_password": "pfsense",
+      "ssh_wait_timeout": "120s",
+      "output_directory": "packer/pfsense2-tmpl",
+      "headless": "true",
+      "net_device": "e1000",
+      "vnc_bind_address": "127.0.0.1",
+      "vnc_port_min": "5900",
+      "vnc_port_max": "5900",
+      "qemuargs": [
+	["-m", "1024M"],
+	["-smp", "1"],
+	["-netdev", "user,id=user.0,hostfwd=tcp::{{ .SSHHostPort }}-:6736,hostfwd=tcp::7373-:7373"],
+	["-device", "e1000,netdev=user.0"],
+	["-netdev", "user,id=user.1"],
+	["-device", "e1000,netdev=user.1"]
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "packer/scripts/pfsense2-provision.sh"
+    }
+  ]
+}

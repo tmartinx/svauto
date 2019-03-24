@@ -16,33 +16,44 @@
   get_url:
     url: http://cdimage.ubuntu.com/ubuntu/releases/18.04/release/ubuntu-18.04.2-server-amd64.iso
     dest: /srv/ISO/ubuntu-18.04.2-server-amd64.iso
-    mode: 0640
+    mode: 0644
   when: download_ubuntu
 
 - name: downloading ubuntu-18.04.2-desktop-amd64.iso
   get_url:
     url: http://mirror.csclub.uwaterloo.ca/ubuntu-releases/18.04.2/ubuntu-18.04.2-desktop-amd64.iso
     dest: /srv/ISO/ubuntu-18.04.2-desktop-amd64.iso
-    mode: 0640
+    mode: 0644
   when: download_ubuntu
 
 - name: downloading ubuntu-16.04.6-server-amd64.iso
   get_url:
     url: http://mirror.csclub.uwaterloo.ca/ubuntu-releases/16.04.6/ubuntu-16.04.6-server-amd64.iso
     dest: /srv/ISO/ubuntu-16.04.6-server-amd64.iso
-    mode: 0640
+    mode: 0644
   when: download_ubuntu
 
 - name: downloading CentOS-7-x86_64-Minimal-1810.iso
   get_url:
     url: http://mirror.its.sfu.ca/mirror/CentOS/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso
     dest: /srv/ISO/CentOS-7-x86_64-Minimal-1810.iso
-    mode: 0640
+    mode: 0644
   when: download_centos
 
 - name: downloading CentOS-6.10-x86_64-minimal.iso
   get_url:
     url: http://mirror.its.sfu.ca/mirror/CentOS/6.10/isos/x86_64/CentOS-6.10-x86_64-minimal.iso
     dest: /srv/ISO/CentOS-6.10-x86_64-minimal.iso
-    mode: 0640
+    mode: 0644
   when: download_centos
+
+- name: downloading pfSense-CE-2.4.2-RELEASE-amd64.iso.gz
+  get_url:
+    url: http://mirror.transip.net/pfsense/downloads/pfSense-CE-2.4.2-RELEASE-amd64.iso.gz
+    dest: /srv/ISO/pfSense-CE-2.4.2-RELEASE-amd64.iso.gz
+    mode: 0644
+  when: download_pfsense
+
+- name: uncompress pfSense-CE-2.4.2-RELEASE-amd64.iso.gz
+  command: pigz -d /srv/ISO/pfSense-CE-2.4.2-RELEASE-amd64.iso.gz
+  when: download_pfsense

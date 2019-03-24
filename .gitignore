@@ -10,6 +10,7 @@ build-date.txt
 packer/build*
 packer/ubuntu*-tmpl
 packer/centos*-tmpl
+packer/pfsense2-tmpl
 packer_cache
 public_dir
 yum_repos
