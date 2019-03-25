@@ -5,7 +5,10 @@ ethernets:
 
   {{ ethernet.name }}:
      addresses: [ {{ ethernet.addresses | join(", ") }} ]
+
+{% if ethernet.gateway4 is defined %}
      gateway4: {{ ethernet.gateway4 }}
+{% endif %}
 
 {% if ethernet.nameservers is defined %}
      nameservers:

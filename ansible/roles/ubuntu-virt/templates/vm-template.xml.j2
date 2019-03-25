@@ -80,6 +80,7 @@
 
 {% endfor %}
 
+{% if vm.devices.cdroms is defined %}
 {% for cdrom in vm.devices.cdroms %}
 
     <disk type='file' device='cdrom'>
@@ -91,6 +92,7 @@
     </disk>
 
 {% endfor %}
+{% endif %}
 
     <controller type='usb' index='0' model='ich9-ehci1'>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x7'/>

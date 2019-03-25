@@ -25,7 +25,7 @@
 #
 
 
-- name: create cloud-init user-data and meta-data
+- name: create cloud-init user-data, meta-data and network-config ({{ vm.name }})
   template:
     src: '{{ cloud_init.src }}'
     dest: '{{ iso_tmp_destination }}/{{ cloud_init.dest }}'

@@ -37,6 +37,7 @@
     loop_var: cdrom
   when:
   - vm_exists == False
+  - vm.devices.cdroms is defined
 
 
 - name: spin_vm - Copy VM's private NVRAM ({{ vm.name }}_VARS.fd)
@@ -76,4 +77,4 @@
   shell: virsh start "{{ vm.name }}"
   when:
   - vm_exists == false
-  - vm.start
+  - vm.start is defined and vm.start
