@@ -32,12 +32,13 @@
   with_items:
     - { src: config-drive/user-data.j2, dest: 'user-data' }
     - { src: config-drive/meta-data.j2, dest: 'meta-data' }
+    - { src: config-drive/network-config.j2, dest: 'network-config' }
   loop_control:
     loop_var: cloud_init
 
 
 - name: create_cdrom_config_drive - creating Metadata CD-ROM ISO Image (Config Drive) for {{ vm.name }}
-  shell: genisoimage -v -output "{{ iso_destination }}" -volid cidata -joliet -rock "{{ iso_tmp_destination }}/user-data" "{{ iso_tmp_destination }}"/meta-data
+  shell: genisoimage -v -output "{{ iso_destination }}" -volid cidata -joliet -rock "{{ iso_tmp_destination }}/user-data" "{{ iso_tmp_destination }}"/meta-data "{{ iso_tmp_destination }}"/network-config
 
 
 - name: create_cdrom_config_drive - Set file permissions for {{ iso_destination }} ({{ vm.name }})
