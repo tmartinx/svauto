@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: "disk_clone.yml"
-  when: disk.source is defined
+- include: "clone_qcow2c.yml"
+  when: disk.driver.compressed is defined
 
-- include: "disk_empty.yml"
-  when: disk.source is not defined
+- include: "clone_qcow2.yml"
+  when: disk.driver.compressed is not defined

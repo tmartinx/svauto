@@ -65,7 +65,7 @@
 
     <disk type='file' device='disk'>
       <driver name='qemu' type='{{ disk.driver.type }}'/>
-      <source file='{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}'/>
+      <source file='{{ disk_destination }}'/>
       <target dev='{{ disk.target }}' bus='scsi'/>
 
 {% if disk.boot is defined %}
@@ -76,6 +76,18 @@
 
       <address type='drive' controller='0' bus='0' target='0' unit='{{ disk.unit }}'/>
       <serial>{{ disk.name }}</serial>
+    </disk>
+
+{% endfor %}
+
+{% for cdrom in vm.devices.cdroms %}
+
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='{{ iso_destination }}'/>
+      <target dev='hda' bus='ide'/>
+      <readonly/>
+      <address type='drive' controller='0' bus='0' target='0' unit='{{ cdrom.unit }}'/>
     </disk>
 
 {% endfor %}
@@ -104,8 +116,17 @@
     </controller>
 
 {% for interface in vm.devices.interfaces %}
+
+{% if interface.source.bridge is defined %}
      <interface type='bridge'>
       <source bridge='{{ interface.source.bridge }}'/>
+{% endif %}
+
+{% if interface.source.network is defined %}
+     <interface type='network'>
+      <source network='{{ interface.source.network }}'/>
+{% endif %}
+
        <model type='virtio'/>
 
 {% if interface.boot is defined %}

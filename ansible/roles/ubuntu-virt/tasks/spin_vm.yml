@@ -30,6 +30,15 @@
   when:
   - vm_exists == False
 
+- name: spin_vm - Include create_cdrom.yml
+  include: create_cdrom.yml
+  with_items: "{{ vm.devices.cdroms }}"
+  loop_control:
+    loop_var: cdrom
+  when:
+  - vm_exists == False
+
+
 - name: spin_vm - Copy VM's private NVRAM ({{ vm.name }}_VARS.fd)
   synchronize:
     src: "/usr/share/OVMF/OVMF_VARS.fd"
@@ -62,3 +71,9 @@
 - name: spin_vm - Set ({{ vm.name }}) to AutoStart
   shell: virsh autostart "{{ vm.name }}"
   when: vm_exists == False
+
+- name: spin_vm - Start ({{ vm.name }})
+  shell: virsh start "{{ vm.name }}"
+  when:
+  - vm_exists == false
+  - vm.start

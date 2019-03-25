@@ -1,3 +1,4 @@
+---
 # Copyright 2018, TCMC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,11 +14,6 @@
 # limitations under the License.
 
 
-#
-# Metadata CD-ROM Generator
-#
-
+admin_pass: "tcmc"
 random_seed: "null"
 ssh_pub_key: "{{ lookup('file', '/home/' + regular_system_user + '/.ssh/id_rsa.pub') }}"
-vm_hostname: "null"
-vm_fqdn: "{{ vm_hostname }}.tcmc.rocks"
