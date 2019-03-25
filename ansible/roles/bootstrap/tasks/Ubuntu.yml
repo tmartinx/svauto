@@ -137,7 +137,7 @@
 
 - name: ubuntu - apt installing ZRAM Config
   apt: name=zram-config state=latest update_cache=yes
-  when: mode != 'container'
+  when: (zram is defined and zram) and mode != 'container'
 
 
 - name: ubuntu - apt installing Server tools
