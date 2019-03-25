@@ -22,3 +22,9 @@
 
 - name: ubuntu - dpkg autoremoving remainings of uninstalled packages
   shell: purge_uninstalled_packages=$(dpkg -l | grep ^rc | awk $'{print $2}' | xargs) ; if [ ! -z "$purge_uninstalled_packages" ] ; then dpkg -P $purge_uninstalled_packages ; fi
+
+
+- name: ubuntu - remove temporary Netplan config /etc/netplan/01-netcfg.yaml
+  file:
+    path: "/etc/netplan/01-netcfg.yaml"
+    state: absent
