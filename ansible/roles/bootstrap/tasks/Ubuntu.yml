@@ -135,9 +135,9 @@
   when: extra_packages and (mode == 'server' or mode == 'desktop')
 
 
-- name: ubuntu - apt installing Chrony
-  apt: name=chrony state=latest update_cache=yes
-  when: chrony_enabled and mode != 'container'
+- name: ubuntu - apt installing ZRAM Config
+  apt: name=zram-config state=latest update_cache=yes
+  when: mode != 'container'
 
 
 - name: ubuntu - apt installing Server tools
