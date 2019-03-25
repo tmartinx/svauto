@@ -1,1 +1,1 @@
-{"admin_pass": "{{ admin_pass }}", "random_seed": "{{ random_seed.stdout }}", "uuid": "", "availability_zone": "svauto", "keys": [{"data": "{{ ssh_pub_key }}", "type": "ssh", "name": "default"}], "hostname": "{{ vm_fqdn }}", "launch_index": 0, "devices": [], "public_keys": {"default": "{{ ssh_pub_key }}"}, "project_id": "", "name": "{{ vm.name }} "}
+{}
