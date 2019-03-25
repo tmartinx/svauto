@@ -1,5 +1,16 @@
 version: 2
 ethernets:
-  ens3:
-     dhcp4: true
-     dhcp6: false
+
+{% for ethernet in vm.devices.ethernets %}
+
+  {{ ethernet.name }}:
+     addresses: [ {{ ethernet.addresses | join(", ") }} ]
+     gateway4: {{ ethernet.gateway4 }}
+
+{% if ethernet.nameservers is defined %}
+     nameservers:
+         search: [ {{ ethernet.nameservers.search | join(", ") }} ]
+         addresses: [ {{ ethernet.nameservers.addresses | join(", ") }} ]
+{% endif %}
+
+{% endfor %}
