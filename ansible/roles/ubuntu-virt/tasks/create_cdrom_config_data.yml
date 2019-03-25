@@ -14,55 +14,30 @@
 # limitations under the License.
 
 
-- name: create_cdrom_config_drive - generating random seed
-  shell: openssl rand 500 -base64 | xargs | sed -e 's/\ //g'
-  register: random_seed
-
-
 - name: create_cdrom_config_drive - creating temporary subdirecory
   file:
     path: "{{ iso_tmp_destination }}"
     state: directory
-
-- name: create_cdrom_config_drive - creating temporary subdirecory
-  file:
-    path: "{{ iso_tmp_destination }}/openstack/latest"
-    state: directory
-
-
-#
-# Meta Data
-#
-
-# Subdir openstack/latest
-- name: create_cdrom_config_drive - meta_data.json to temporary subdir
-  template:
-     src: config-drive/meta_data.json.j2
-     dest: "{{ iso_tmp_destination }}/openstack/latest/meta_data.json"
-     owner: root
-     group: root
-     mode: 0644
-
-
-#
-# User Data
-#
-
-- name: create_cdrom_config_drive - user_data to temporary subdir
-  template:
-     src: config-drive/user_data.j2
-     dest: "{{ iso_tmp_destination }}/openstack/latest/user_data"
-     owner: root
-     group: root
-     mode: 0644
 
 
 #
 # Config Drive ISO Creation
 #
 
+
+- name: create cloud-init user-data and meta-data
+  template:
+    src: '{{ cloud_init.src }}'
+    dest: '{{ iso_tmp_destination }}/{{ cloud_init.dest }}'
+  with_items:
+    - { src: config-drive/user-data.j2, dest: 'user-data' }
+    - { src: config-drive/meta-data.j2, dest: 'meta-data' }
+  loop_control:
+    loop_var: cloud_init
+
+
 - name: create_cdrom_config_drive - creating Metadata CD-ROM ISO Image (Config Drive) for {{ vm.name }}
-  shell: genisoimage -v -J -r -V config-2 -o "{{ iso_destination }}" "{{ iso_tmp_destination }}"
+  shell: genisoimage -v -output "{{ iso_destination }}" -volid cidata -joliet -rock "{{ iso_tmp_destination }}/user-data" "{{ iso_tmp_destination }}"/meta-data
 
 
 - name: create_cdrom_config_drive - Set file permissions for {{ iso_destination }} ({{ vm.name }})
