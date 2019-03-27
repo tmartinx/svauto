@@ -1,10 +1,20 @@
 version: 2
+
+{% if vm.devices.ethernets is defined %}
+
 ethernets:
 
 {% for ethernet in vm.devices.ethernets %}
 
   {{ ethernet.name }}:
+
+{% if ethernet.mtu is defined %}
+     mtu: {{ ethernet.mtu }}
+{% endif %}
+
+{% if ethernet.addresses is defined %}
      addresses: [ {{ ethernet.addresses | join(", ") }} ]
+{% endif %}
 
 {% if ethernet.gateway4 is defined %}
      gateway4: {{ ethernet.gateway4 }}
@@ -17,3 +27,132 @@ ethernets:
 {% endif %}
 
 {% endfor %}
+
+{% endif %}
+
+
+{% if vm.devices.vlans is defined %}
+
+vlans:
+
+{% for vlan in vm.devices.vlans %}
+
+  {{ vlan.name }}:
+
+     id: {{ vlan.id }}
+     link: {{ vlan.link }}
+
+{% if vlan.mtu is defined %}
+     mtu: {{ vlan.mtu }}
+{% endif %}
+
+{% if vlan.addresses is defined %}
+     addresses: [ {{ vlan.addresses | join(", ") }} ]
+{% endif %}
+
+{% if vlan.gateway4 is defined %}
+     gateway4: {{ vlan.gateway4 }}
+{% endif %}
+
+{% if vlan.nameservers is defined %}
+     nameservers:
+         search: [ {{ vlan.nameservers.search | join(", ") }} ]
+         addresses: [ {{ vlan.nameservers.addresses | join(", ") }} ]
+{% endif %}
+
+{% endfor %}
+
+{% endif %}
+
+
+{% if vm.devices.wifis is defined %}
+
+wifis:
+
+{% for wifi in vm.devices.wifis %}
+
+  {{ wifi.name }}:
+
+{% if wifi.mtu is defined %}
+     mtu: {{ wifi.mtu }}
+{% endif %}
+
+{% if wifi.addresses is defined %}
+     addresses: [ {{ wifi.addresses | join(", ") }} ]
+{% endif %}
+
+{% if wifi.gateway4 is defined %}
+     gateway4: {{ wifi.gateway4 }}
+{% endif %}
+
+{% if wifi.nameservers is defined %}
+     nameservers:
+         search: [ {{ wifi.nameservers.search | join(", ") }} ]
+         addresses: [ {{ wifi.nameservers.addresses | join(", ") }} ]
+{% endif %}
+
+{% endfor %}
+
+{% endif %}
+
+
+{% if vm.devices.bonds is defined %}
+
+bonds:
+
+{% for bond in vm.devices.bonds %}
+
+  {{ bond.name }}:
+
+{% if bond.mtu is defined %}
+     mtu: {{ bond.mtu }}
+{% endif %}
+
+{% if bond.addresses is defined %}
+     addresses: [ {{ bond.addresses | join(", ") }} ]
+{% endif %}
+
+{% if bond.gateway4 is defined %}
+     gateway4: {{ bond.gateway4 }}
+{% endif %}
+
+{% if bond.nameservers is defined %}
+     nameservers:
+         search: [ {{ bond.nameservers.search | join(", ") }} ]
+         addresses: [ {{ bond.nameservers.addresses | join(", ") }} ]
+{% endif %}
+
+{% endfor %}
+
+{% endif %}
+
+
+{% if vm.devices.bridges is defined %}
+
+bridges:
+
+{% for bridge in vm.devices.bridges %}
+
+  {{ bridge.name }}:
+
+{% if bridge.mtu is defined %}
+     mtu: {{ bridge.mtu }}
+{% endif %}
+
+{% if bridge.addresses is defined %}
+     addresses: [ {{ bridge.addresses | join(", ") }} ]
+{% endif %}
+
+{% if bridge.gateway4 is defined %}
+     gateway4: {{ bridge.gateway4 }}
+{% endif %}
+
+{% if bridge.nameservers is defined %}
+     nameservers:
+         search: [ {{ bridge.nameservers.search | join(", ") }} ]
+         addresses: [ {{ bridge.nameservers.addresses | join(", ") }} ]
+{% endif %}
+
+{% endfor %}
+
+{% endif %}
