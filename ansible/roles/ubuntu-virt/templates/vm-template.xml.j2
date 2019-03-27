@@ -65,7 +65,13 @@
 
     <disk type='file' device='disk'>
       <driver name='qemu' type='{{ disk.driver.type }}'/>
-      <source file='{{ disk_destination }}'/>
+
+{% if disk.driver.compressed is defined and disk.driver.compressed %}
+      <source file='{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}c'/>
+{% else %}
+      <source file='{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}'/>
+{% endif %}
+
       <target dev='{{ disk.target }}' bus='scsi'/>
 
 {% if disk.boot is defined %}
