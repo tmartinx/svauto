@@ -20,7 +20,7 @@
 
 - name: rack - WARNING - Getting the MaaS Secret from the Region Controller
   set_fact:
-    o_segredo_foi_revelado: "{{ hostvars[groups['maas-region-ctrl'][0]]['o_segredo_do_maas'] | default(False) }}"
+    o_segredo_foi_revelado: "{{ hostvars[groups['maas-regions'][0]]['o_segredo_do_maas'] | default(False) }}"
 
 
 - name: rack - Install MaaS Rack Controller
