@@ -172,6 +172,7 @@
     - rdesktop
     - filezilla
     - evolution
+    - mesa-utils
     - terminator
     - ssh-askpass
     - default-jre
