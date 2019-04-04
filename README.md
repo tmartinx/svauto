@@ -17,12 +17,14 @@ It uses the following Open Source projects:
 
 * Ubuntu Bionic 18.04
 * LXD 3.0
-* QEmu 2.11
+* QEmu 3.1
+* Libvirt 5.0
 * systemd 237
 * Ansible 2.5
 * Packer 1.0.4
 * VirtualBox 5.2
 * Python 2.7
+* Python 3.7
 
 On SVAuto's radar:
 
@@ -33,6 +35,7 @@ On SVAuto's radar:
 * Docker 18.06
 * Amazon EC2 AMI & API Tools
 * WireGuard
+* FRRouting
 * Ceph
 
 It contains Ansible Playbooks for Automated deployments of:
