@@ -18,27 +18,25 @@
   include: maas_login.yml
 
 
-- name: network - Creating Spaces
-  shell: |
-    maas admin spaces create name="mgmt"
-    maas admin spaces create name="infra"
-    maas admin spaces create name="internet"
-    maas admin spaces create name="cloud-public"
-    maas admin spaces create name="cloud-private"
-  ignore_errors: yes
+- name: maas_networks - Spin MaaS Spaces
+  include: spin_spaces.yml
+  with_items:
+  - "{{ maas_spaces }}"
+  loop_control:
+    loop_var: space
 
 
-- name: network - Creating VLANs
-  shell: |
-    maas admin vlans create 0 space="infra" name="ipmi-1" vid=1000
-    maas admin vlans create 0 space="infra" name="srvs-1" vid=1001
-    maas admin vlans create 0 space="infra" name="srvc-1" vid=1002
-  ignore_errors: yes
+- name: maas_networks - Spin MaaS VLANs
+  include: spin_vlans.yml
+  with_items:
+  - "{{ maas_vlans }}"
+  loop_control:
+    loop_var: vlan
 
 
-- name: network - Creating Subnets
-  shell: |
-    maas admin subnets create name="IPMI Subnet" cidr=172.16.31.0/24 gateway_ip=172.16.31.254 vid=1000 fabric=0
-    maas admin subnets create name="SRVS Subnet" cidr=172.16.32.0/24 gateway_ip=172.16.32.254 vid=1001 fabric=0
-    maas admin subnets create name="SRVC Subnet" cidr=172.16.33.0/24 gateway_ip=172.16.33.254 vid=1002 fabric=0
-  ignore_errors: yes
+- name: maas_networks - Spin MaaS Subnets
+  include: spin_subnets.yml
+  with_items:
+  - "{{ maas_subnets }}"
+  loop_control:
+    loop_var: subnet

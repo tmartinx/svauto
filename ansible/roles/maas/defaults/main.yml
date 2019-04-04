@@ -1,5 +1,8 @@
 ---
 
+# MaaS Release: stable or next
+maas_release: "stable"
+
 # Network details
 subnet_cidr: 172.16.35.0/24
 reserved_ip_start: 172.16.35.10
@@ -22,3 +25,141 @@ maas_admin_public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
 # WARNING: Copying MaaS Secret into an Ansible Var!
 #maas_secret: "{{ lookup('file', '/var/lib/maas/secret') }}"
+
+
+#
+# MaaS Networks
+#
+
+maas_fabrics:
+
+- name: "mgmt-0"
+
+
+maas_spaces:
+
+- name: "infra"
+
+- name: "ceph"
+
+- name: "cloud-public"
+
+- name: "cloud-private"
+
+- name: "internet"
+
+
+maas_vlans:
+
+- name: "ipmi"
+  id: 1000
+  space: "infra"
+  fabric: 0
+
+- name: "servers"
+  id: 1001
+  space: "infra"
+  fabric: 0
+
+- name: "services"
+  id: 1002
+  space: "infra"
+  fabric: 0
+
+- name: "maas-pxe"
+  id: 1004
+  space: "infra"
+  fabric: 1
+
+- name: "ceph-public"
+  id: 1010
+  space: "ceph"
+  fabric: 0
+
+- name: "ceph-private"
+  id: 1011
+  space: "ceph"
+  fabric: 0
+
+- name: "os-infra"
+  id: 1020
+  space: "cloud-public"
+  fabric: 0
+
+- name: "os-mgmt"
+  id: 1021
+  space: "cloud-private"
+  fabric: 0
+
+- name: "os-sdn"
+  id: 1022
+  space: "cloud-private"
+  fabric: 0
+
+- name: "os-storage"
+  id: 1023
+  space: "cloud-private"
+  fabric: 0
+
+- name: "os-float"
+  id: 1024
+  space: "cloud-public"
+  fabric: 0
+
+
+maas_subnets:
+
+- name: "IPMI"
+  cidr: "172.16.240.0/24"
+  vlan_id: 1000
+  fabric: 0
+
+- name: "Servers"
+  cidr: "172.16.241.0/24"
+  vlan_id: 1001
+  fabric: 0
+
+- name: "Services"
+  cidr: "172.16.242.0/24"
+  vlan_id: 1002
+  fabric: 0
+
+- name: "MaaS PXE"
+  cidr: "172.16.244.0/23"
+  vlan_id: 1004
+  fabric: 1
+
+- name: "Ceph Public"
+  cidr: "172.16.246.0/24"
+  vlan_id: 1010
+  fabric: 0
+
+- name: "Ceph Private"
+  cidr: "172.16.247.0/24"
+  vlan_id: 1011
+  fabric: 0
+
+- name: "OpenStack Public Infra"
+  cidr: "172.16.248.0/24"
+  vlan_id: 1020
+  fabric: 0
+
+- name: "OpenStack Management"
+  cidr: "172.16.249.0/24"
+  vlan_id: 1021
+  fabric: 0
+
+- name: "OpenStack SDN"
+  cidr: "172.16.250.0/24"
+  vlan_id: 1022
+  fabric: 0
+
+- name: "OpenStack Storage"
+  cidr: "172.16.251.0/24"
+  vlan_id: 1023
+  fabric: 0
+
+- name: "OpenStack Public Floating IPs"
+  cidr: "172.16.252.0/22"
+  vlan_id: 1024
+  fabric: 0

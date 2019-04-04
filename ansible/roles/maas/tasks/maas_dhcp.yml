@@ -16,26 +16,34 @@
 - name: dhcp - Including MaaS Login tasks
   include: maas_login.yml
 
-- name: dhcp -  get fabric id
+- name: dhcp - Get fabric id
   shell: "maas {{ maas_admin_username }} subnet read {{ subnet_cidr }} | grep fabric_id | cut -d ':' -f 2 | cut -d ',' -f 1 | sed 's/ //g'"
   register: fabric_id
   changed_when: False
 
-#- name: dhcp -  check if reserved ip ranges exists or not
+#- name: dhcp - Check if reserved ip ranges exists or not
 #  shell: "maas {{ maas_admin_username }} ipranges read | grep {{ subnet_cidr }}"
 #  changed_when: False
 #  ignore_errors: True
 #  register: ip_range_exists
 
-- name: dhcp -  create reserved ip range
+- name: dhcp - Create reserved ip range
   shell: "maas {{ maas_admin_username }} ipranges create type=dynamic start_ip={{ reserved_ip_start }} end_ip={{ reserved_ip_end }} comment='This is a reserved dynamic range'"
   ignore_errors: True
 #  when: ip_range_exists is failed
 
+
+- name: dhcp - Wait for MaaS to settle down
+  pause:
+    minutes: 2
+
+
 # Note: DHCP for PXE booting will need to be enabled on the 'untagged' VLAN.
 # https://docs.maas.io/2.5/en/manage-cli-common
+
 - name: dhcp -  provide dhcp for subnet
   shell: "maas {{ maas_admin_username }} vlan update {{ fabric_id.stdout }} 0 dhcp_on=True primary_rack=vmara-1"
   register: provide_dhcp
+  ignore_errors: True
 
 - assert: { that: "'\"dhcp_on\": true' in provide_dhcp.stdout"}
