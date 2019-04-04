@@ -132,7 +132,6 @@
     - python-httplib2
     - silversearcher-ag
     - command-not-found
-    - python-openvswitch
     - ubuntu-cloud-keyring
     - software-properties-common
   when: extra_packages and (mode == 'server' or mode == 'desktop')
