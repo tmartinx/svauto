@@ -17,7 +17,7 @@
   authorized_key:
     user: "{{ regular_system_user }}"
     state: present
-    key: "{{ hostvars[groups['maas-rack-ctrl'][0]]['maas_rack1_public_key'] | default(False) }}"
+    key: "{{ hostvars[groups['maas-racks'][0]]['maas_rack1_public_key'] | default(False) }}"
 
 
 - name: maas - Destroying the default storage pool
