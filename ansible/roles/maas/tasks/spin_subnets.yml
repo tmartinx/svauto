@@ -1,5 +1,5 @@
 ---
 
-- name: network - Create Subnet ({{ subnet.name }} - {{ subnet.cidr }})
+- name: spin_subnets - Create Subnet ({{ subnet.name }} - {{ subnet.cidr }})
   shell: maas admin subnets create name="{{ subnet.name }}" cidr={{ subnet.cidr }} vid={{ subnet.vlan_id }} fabric={{ subnet.fabric }}
   ignore_errors: yes
