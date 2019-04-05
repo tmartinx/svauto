@@ -33,11 +33,6 @@
 #  when: ip_range_exists is failed
 
 
-- name: dhcp - Wait for MaaS to settle down
-  pause:
-    minutes: 2
-
-
 # Note: DHCP for PXE booting will need to be enabled on the 'untagged' VLAN.
 # https://docs.maas.io/2.5/en/manage-cli-common
 
