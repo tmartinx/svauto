@@ -3,11 +3,6 @@
 # MaaS Release: stable or next
 maas_release: "stable"
 
-# Network details
-subnet_cidr: 172.16.35.0/24
-reserved_ip_start: 172.16.35.10
-reserved_ip_end: 172.16.35.200
-
 # Which component to deploy?
 maas_component: "none"
 
@@ -128,6 +123,11 @@ maas_subnets:
   cidr: "172.16.244.0/23"
   vlan_id: 1004
   fabric: 1
+  reserved_ip_start: "172.16.244.10"
+  reserved_ip_end: "172.16.244.200"
+  dhcp_on: true
+  dhcp_rack_primary: "vmara-1"
+  dhcp_rack_secondary: "vmara-2"
 
 - name: "Ceph Public"
   cidr: "172.16.246.0/24"
