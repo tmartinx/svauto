@@ -1,0 +1,16 @@
+---
+
+#
+# Top Level Playbook for SVAuto Machines
+#
+
+- hosts: svautos
+  become: yes
+  roles:
+  - ansible
+  - ssh_keypair
+  - ubuntu-desktop
+  - virtualbox
+  - vagrant
+  - packer
+  - vsftpd
