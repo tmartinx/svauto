@@ -1,0 +1,10 @@
+---
+
+#
+# Top Level Playbook for Kea DHCP Standalone
+#
+
+- hosts: dhcp-standalone
+  become: yes
+  roles:
+  - kea-dhcp
