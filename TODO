@@ -1,0 +1,49 @@
+
+* Make use of the ~/inventory or /etc/inventory subdirectories.
+
+* Make presets based on yaml files that can be used directly inside of the
+  "inventory subdir".
+
+* New YAML Presets for:
+
+  This imply that SVAuto will have new "Preset Scripts"! That are based on
+  pre-defined YAML files.
+
+  - 2 Servers 2 Switches scenario
+
+  - MaaS in 3 VMs, Region, Rack and a Virtual Pod (reproduce problemas as well)
+
+    Provide an awesome network topology, in a way that the deployed Machines
+    can't reach the Region controller, so, we can make sure that all the traffic
+    is passing through the Rack controller.
+
+  - OpenStack from Ubuntu (following manual installation docs)
+
+  - Ceph Ansible
+
+  - OpenStack Ansible
+
+  - OpenStack Ansible + Ceph
+
+
+* LXD Support on ubuntu-virt role
+
+* Way better support for Cloud Init
+
+  Currently, SVAuto uses Cloud Init in many places!
+
+  - Inside of ubuntu-virt role, when creating ISO images for KVM Guests
+
+  - Inside of LXD role, when launching containers
+
+  - Tried to use Cloud Init via MaaS but failed...
+
+  - Packer build images with Cloud Init, which is failing on first boot of
+    Ubuntu 18.04
+
+  - Via Heat templates when launching stacks on OpenStack
+
+  Soooo many places...
+
+  The idea is to centralize all the Cloud Init knoledge and functions in a more
+  central place and call it when needed.
