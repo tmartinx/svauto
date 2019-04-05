@@ -1,0 +1,58 @@
+---
+
+#
+# MaaS Region and Rack Controllers
+#
+
+- hosts: svautos
+  become: yes
+  roles:
+  - ssh_keypair
+
+- hosts: maas-regions
+  become: yes
+  roles:
+  - { role: maas, setup: 'region' }
+  - { role: maas, setup: 'secret' }
+
+- hosts: maas-racks
+  become: yes
+  roles:
+  - { role: maas, setup: 'rack' }
+
+- hosts: maas-regions
+  become: yes
+  roles:
+  - { role: maas, setup: 'networks' }
+  - { role: maas, setup: 'dhcp' }
+
+- hosts: maas-racks
+  become: yes
+  roles:
+  - { role: maas, setup: 'rack_keypair' }
+
+
+#
+# TODO:
+#
+##
+## WAIT NOTICE: Before proceeding, there is a need to wait for the:
+##
+## - images to sync on MaaS
+## - machine running Ubuntu with KVM Host to be a MaaS Pod to come up
+## - finish tests and review...
+##
+#
+#- hosts: maas-pods
+#  become: yes
+#  roles:
+#  - { role: ubuntu-virt, setup: 'maas' }
+#
+##
+## WAIT NOTICE: There is a need to wait for the images to sync on MaaS before proceeding.
+##
+#
+#- hosts: maas-regions
+#  become: yes
+#  roles:
+#  - { role: maas, setup: 'pods' }
