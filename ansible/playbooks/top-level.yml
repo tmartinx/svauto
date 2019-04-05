@@ -1,0 +1,34 @@
+---
+
+#
+# Top Level Playbook for Bare Infrastructure
+#
+
+- hosts: all
+  become: yes
+  roles:
+  - bootstrap
+  - grub
+  - time
+
+
+- hosts: metal
+  become: yes
+  roles:
+  - ansible
+  - ssh_keypair
+  - virtualbox
+  - vagrant
+  - packer
+  - vsftpd
+
+
+- hosts: osds
+  roles:
+  - lvm4ceph
+
+
+- hosts: all
+  become: yes
+  roles:
+  - post-cleanup
