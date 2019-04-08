@@ -175,6 +175,7 @@
     - terminator
     - ssh-askpass
     - default-jre
+    - samba-common
     - wireshark-qt
     - evolution-ews
     - tigervnc-viewer
