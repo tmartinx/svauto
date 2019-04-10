@@ -13,6 +13,14 @@
 # limitations under the License.
 
 
+- name: ubuntu - copy sudoers config file for members of group "sudo"
+  copy: src=ubuntu-common/sudo-group
+        dest=/etc/sudoers.d/sudo-group
+        owner=root
+        group=root
+        mode=0644
+
+
 - name: ubuntu - Copy Ubuntu's default sources.list
   template:
     src: ubuntu-common/sources.list.j2
@@ -228,14 +236,6 @@
 - name: ubuntu - group add regular system user to know Desktop groups
   user: name={{ regular_system_user }} groups=adm,cdrom,sudo,dip,plugdev,lpadmin append=yes
   when: mode == 'desktop'
-
-
-- name: ubuntu - copy sudoers config file for members of group "sudo"
-  copy: src=ubuntu-common/sudo-group
-        dest=/etc/sudoers.d/sudo-group
-        owner=root
-        group=root
-        mode=0644
 
 
 - name: ubuntu - install QEmu Guest Agent
