@@ -15,3 +15,9 @@
   with_items: "{{ users }}"
   loop_control:
     loop_var: 'user'
+
+- name: for each user include add_user_key.yml
+  include: add_user_key.yml
+  with_items: "{{ users }}"
+  loop_control:
+    loop_var: 'user'
