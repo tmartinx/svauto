@@ -1,0 +1,31 @@
+- name: set_fact user_ssh_directory
+  set_fact:
+    user_ssh_directory: "{{ '/home/' + user.username + '/.ssh/'}}"
+
+- name: set_fact user_ssh_autorized_keys_file
+  set_fact:
+    user_ssh_autorized_keys_file: "{{ user_ssh_directory + 'authorized_keys'}}"
+
+- name: ensure .ssh directory exists
+  file:
+    path: "{{ user_ssh_directory }}"
+    state: directory
+    mode: 0700
+
+- name: check ssh autorized keys file stat
+  stat:
+    path: "{{ user_ssh_autorized_keys_file }}"
+  register: stat_result
+
+- name: ensure ssh autorized keys file exists
+  file:
+    path: "{{ user_ssh_autorized_keys_file }}"
+    state: touch
+    mode: 0600
+  when: stat_result.stat.exists == False
+
+- name: set user authorized key
+  authorized_key:
+    user: "{{ user.username }}"
+    state: present
+    key: "{{ user.key }}"
