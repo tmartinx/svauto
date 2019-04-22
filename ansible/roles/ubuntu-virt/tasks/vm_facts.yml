@@ -31,6 +31,11 @@
   - debug:
       msg: "Error checking {{ vm.name }} status!"
 
+- name: fail when libvir module is not importable
+  fail:
+    msg: "Package libvirt-python not found."
+  when: "vm_status_msg.msg == 'The `libvirt` module is not importable. Check the requirements.'"
+
 # Create static virtual machine not found message
 - name: create vm_not_found fact ({{ vm.name }})
   set_fact:
