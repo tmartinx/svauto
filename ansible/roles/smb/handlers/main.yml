@@ -1,0 +1,7 @@
+---
+# handlers file for smb
+
+- name: reload smbd
+  systemd:
+    name: smbd
+    state: reloaded
