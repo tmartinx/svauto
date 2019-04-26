@@ -1,0 +1,13 @@
+---
+# tasks file for mount
+
+- name: mount and add to fstab
+  mount:
+    path: "{{ mount.path }}"
+    src: "{{ mount.src }}"
+    fstype: "{{ mount.type }}"
+    opts: "{{ mount.opts }}"
+    state: mounted
+  with_items: "{{ mounts }}"
+  loop_control:
+    loop_var: mount
