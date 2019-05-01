@@ -1,0 +1,23 @@
+---
+# tasks file for webmin
+
+- name: ensure webmin repository is in apt list
+  apt_repository:
+    repo: deb http://download.webmin.com/download/repository sarge contrib
+    state: present
+  notify: update repositories
+
+- name: ensure that webmin Apt signing key is present
+  apt_key:
+    url: http://www.webmin.com/jcameron-key.asc
+    state: present
+
+- name: install webmin
+  apt:
+    name: webmin
+    state: present
+
+- name: make sure that webmin service is running
+  systemd:
+    state: started
+    name: webmin
