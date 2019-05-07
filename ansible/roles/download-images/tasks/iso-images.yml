@@ -47,6 +47,14 @@
     mode: 0644
   when: download_centos
 
+- name: downloading Fedora-Server-netinst-x86_64-30-1.2.iso
+  get_url:
+    url: https://mirror.csclub.uwaterloo.ca/fedora/linux/releases/30/Server/x86_64/iso/Fedora-Server-netinst-x86_64-30-1.2.iso
+    dest: /srv/ISO/Fedora-Server-netinst-x86_64-30-1.2.iso
+    mode: 0644
+  ignore_errors: yes
+  when: download_fedora
+
 - name: download pfSense-CE-2.4.4-RELEASE-p1-amd64.iso.gz
   get_url:
     url: https://nyifiles.pfsense.org/mirror/downloads/pfSense-CE-2.4.4-RELEASE-p1-amd64.iso.gz

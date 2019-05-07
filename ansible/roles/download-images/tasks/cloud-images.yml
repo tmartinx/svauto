@@ -52,10 +52,10 @@
   ignore_errors: yes
   when: download_centos
 
-- name: downloading Fedora-Cloud-Base-29-1.2.x86_64.qcow2
+- name: downloading Fedora-Cloud-Base-30-1.2.x86_64.qcow2
   get_url:
-    url: https://mirror.csclub.uwaterloo.ca/fedora/linux/releases/29/Cloud/x86_64/images/Fedora-Cloud-Base-29-1.2.x86_64.qcow2
-    dest: /srv/CLOUD/Fedora-Cloud-Base-29-1.2.x86_64.qcow2
+    url: https://mirror.csclub.uwaterloo.ca/fedora/linux/releases/30/Cloud/x86_64/images/Fedora-Cloud-Base-30-1.2.x86_64.qcow2
+    dest: /srv/CLOUD/Fedora-Cloud-Base-30-1.2.x86_64.qcow2
     mode: 0644
   ignore_errors: yes
   when: download_fedora
