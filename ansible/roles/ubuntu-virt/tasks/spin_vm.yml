@@ -78,3 +78,4 @@
   when:
   - vm_exists == false
   - vm.start is defined and vm.start
+  ignore_errors: true
