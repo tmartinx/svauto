@@ -12,7 +12,7 @@
   - time
 
 
-- hosts: metal
+- hosts: metais
   become: yes
   roles:
   - ansible
