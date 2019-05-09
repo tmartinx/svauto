@@ -1,0 +1,5 @@
+---
+
+- name: spin_pods - Create Pod ({{ pod.name }} - {{ pod.addr }})
+  shell: maas admin pods create type=virsh power_address=qemu+ssh://{{ pod.login }}@{{ pod.addr }}/system cpu_over_commit_ratio={{ pod.cpu_ratio }} memory_over_commit_ratio={{ pod.ram_ratio }} default_storage_pool={{ pod.storage_pool }}
+  ignore_errors: yes

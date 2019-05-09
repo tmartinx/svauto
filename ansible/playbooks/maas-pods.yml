@@ -1,0 +1,11 @@
+---
+
+#
+# Virtualization Playbook for MaaS
+#
+
+- hosts: maas-pods
+  become: yes
+  roles:
+  - { role: ubuntu-virt, setup: 'host' }
+  - { role: ubuntu-virt, setup: 'vms' }

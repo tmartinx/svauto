@@ -1,0 +1,11 @@
+---
+
+#
+# Top Level Playbook for SCI DHCP Servers (with Failover)
+#
+
+- hosts: dhcps
+  become: yes
+  roles:
+  - keepalived
+  - isc-dhcp-server

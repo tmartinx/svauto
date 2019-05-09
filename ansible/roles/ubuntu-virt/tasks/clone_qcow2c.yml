@@ -23,14 +23,19 @@
     path: "{{ disk_destination }}"
   register: disk_existance
 
-# If we can assume that the source is already a Compressed QCoW2, then, we could
-# use "cp", instead of "qemu-img"! It is way faster.
-#
-#  shell: "cp {{ disk.source }} {{ disk_destination }}"
-#
-- name: clone_qcow2c - Clone {{ disk.source }} to {{ disk_destination }} Format Compressed QCoW2 ({{ vm.name }})
+
+- name: clone_qcow2c - Clone with cp {{ disk.source }} to {{ disk_destination }} Format Compressed QCoW2 ({{ vm.name }})
+  shell: "cp {{ disk.source }} {{ disk_destination }}"
+  when:
+  - not disk_existance.stat.exists
+  - disk.driver.clone_cp is defined and disk.driver.clone_cp
+
+- name: clone_qcow2c - Clone with qemu-img {{ disk.source }} to {{ disk_destination }} Format Compressed QCoW2 ({{ vm.name }})
   shell: "qemu-img convert -c -f {{ disk.driver.type }} -O {{ disk.driver.type }} {{ disk.source }} {{ disk_destination }}"
-  when: not disk_existance.stat.exists
+  when:
+  - not disk_existance.stat.exists
+  - disk.driver.clone_cp is undefined and not disk.driver.clone_cp
+
 
 - name: clone_qcow2c - Set {{ disk_destination }} size to {{ disk.size }}G
   shell: "qemu-img resize {{ disk_destination }} {{ disk.size }}G"

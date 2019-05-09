@@ -13,9 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: empty_qcow2c - Set fact disk_tmp_destination {{ disk.name }}.{{ disk.driver.type }} ({{ vm.name }})
+  set_fact:
+    disk_tmp_destination: "{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}"
+
 - name: empty_qcow2c - Set fact disk_destination {{ disk.name }}.{{ disk.driver.type }}c ({{ vm.name }})
   set_fact:
-    disk_destination: "{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}"
+    disk_destination: "{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}c"
 
 
 - name: empty_qcow2c - Check if {{ disk_destination }} already exists
@@ -24,22 +28,22 @@
   register: disk_existance
 
 
-- name: empty_qcow2c - Create {{ disk_destination }}c Compressed QCoW2 ({{ vm.name }})
+- name: empty_qcow2c - Create {{ disk_destination }} Compressed QCoW2 ({{ vm.name }})
   shell: |
-    qemu-img create -f "{{ disk.driver.type }}" "{{ disk_destination }}" "{{ disk.size }}G"
-    qemu-img convert -c -f "{{ disk.driver.type }}" -O "{{ disk.driver.type }}" "{{ disk_destination }}" "{{ disk_destination }}c"
+    qemu-img create -f "{{ disk.driver.type }}" "{{ disk_tmp_destination }}" "{{ disk.size }}G"
+    qemu-img convert -c -f "{{ disk.driver.type }}" -O "{{ disk.driver.type }}" "{{ disk_tmp_destination }}" "{{ disk_destination }}"
   when: not disk_existance.stat.exists
 
-- name: empty_qcow2c - Remove old file
+- name: empty_qcow2c - Remove tmp image
   file:
-    path: "{{ disk_destination }}"
+    path: "{{ disk_tmp_destination }}"
     state: absent
   when: not disk_existance.stat.exists
 
 
-- name: empty_qcow2c - Set file permissions for {{ disk_destination }}c ({{ vm.name }})
+- name: empty_qcow2c - Set file permissions for {{ disk_destination }} ({{ vm.name }})
   file:
-    path: "{{ disk_destination }}c"
+    path: "{{ disk_destination }}"
     owner: libvirt-qemu
     group: kvm
     mode: 0640

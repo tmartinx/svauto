@@ -1,0 +1,5 @@
+---
+
+- name: spin_spaces - Create Space ({{ space.name }})
+  shell: maas admin spaces create name={{ space.name }}
+  ignore_errors: yes

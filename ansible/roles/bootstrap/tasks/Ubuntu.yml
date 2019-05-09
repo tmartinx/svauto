@@ -13,6 +13,14 @@
 # limitations under the License.
 
 
+- name: ubuntu - copy sudoers config file for members of group "sudo"
+  copy: src=ubuntu-common/sudo-group
+        dest=/etc/sudoers.d/sudo-group
+        owner=root
+        group=root
+        mode=0644
+
+
 - name: ubuntu - Copy Ubuntu's default sources.list
   template:
     src: ubuntu-common/sources.list.j2
@@ -22,12 +30,15 @@
     mode: 0644
 
 
+- name: ubuntu - apt Installing Cloud Archive Keyring
+  apt:
+    name: ubuntu-cloud-keyring
+    state: latest
+    update_cache: yes
+
+
 - name: ubuntu - include custom book
   include: "{{ ansible_distribution_release }}.yml"
-  when: ansible_distribution_release == "bionic"
-
-- name: ubuntu - include uca book
-  include: "{{ ansible_distribution_release }}-uca-{{ os_release }}.yml"
   when: ansible_distribution_release == "bionic"
 
 
@@ -129,7 +140,6 @@
     - python-httplib2
     - silversearcher-ag
     - command-not-found
-    - python-openvswitch
     - ubuntu-cloud-keyring
     - software-properties-common
   when: extra_packages and (mode == 'server' or mode == 'desktop')
@@ -169,9 +179,11 @@
     - rdesktop
     - filezilla
     - evolution
+    - mesa-utils
     - terminator
     - ssh-askpass
     - default-jre
+    - samba-common
     - wireshark-qt
     - evolution-ews
     - tigervnc-viewer
@@ -224,14 +236,6 @@
 - name: ubuntu - group add regular system user to know Desktop groups
   user: name={{ regular_system_user }} groups=adm,cdrom,sudo,dip,plugdev,lpadmin append=yes
   when: mode == 'desktop'
-
-
-- name: ubuntu - copy sudoers config file for members of group "sudo"
-  copy: src=ubuntu-common/sudo-group
-        dest=/etc/sudoers.d/sudo-group
-        owner=root
-        group=root
-        mode=0644
 
 
 - name: ubuntu - install QEmu Guest Agent

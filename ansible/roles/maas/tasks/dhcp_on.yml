@@ -1,0 +1,35 @@
+---
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: dhcp_on - Get Fabric ID
+  shell: "maas {{ maas_admin_username }} subnet read {{ subnet.cidr }} | grep fabric_id | cut -d ':' -f 2 | cut -d ',' -f 1 | sed 's/ //g'"
+  register: fabric_id
+  changed_when: False
+
+
+- name: dhcp_on - Create reserved IP range
+  shell: "maas {{ maas_admin_username }} ipranges create type=dynamic start_ip={{ subnet.reserved_ip_start }} end_ip={{ subnet.reserved_ip_end }} comment='This is a reserved dynamic range'"
+  ignore_errors: True
+
+
+# Note: DHCP for PXE booting will need to be enabled on the 'untagged' VLAN.
+# https://docs.maas.io/2.5/en/manage-cli-common
+
+- name: dhcp_on - Enable DHCP for subnet
+  shell: "maas {{ maas_admin_username }} vlan update {{ fabric_id.stdout }} 0 dhcp_on=True primary_rack={{ subnet.dhcp_rack_primary }}"
+  register: provide_dhcp
+  ignore_errors: True
+
+- assert: { that: "'\"dhcp_on\": true' in provide_dhcp.stdout"}

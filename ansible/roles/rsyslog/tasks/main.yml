@@ -1,0 +1,12 @@
+---
+# tasks file for rsyslog
+- name: ensure rsyslog is installed
+  apt:
+    name: rsyslog
+    state: present
+
+- name: render rsyslog package
+  template:
+    src: rsyslog.conf.j2
+    dest: /etc/rsyslog.conf
+  notify: restart rsyslog

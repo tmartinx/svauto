@@ -1,0 +1,5 @@
+---
+
+- name: spin_vlans - Create VLAN ({{ vlan.name }})
+  shell: maas admin vlans create {{ vlan.fabric }} space={{ vlan.space }} name={{ vlan.name }} vid={{ vlan.id }}
+  ignore_errors: yes

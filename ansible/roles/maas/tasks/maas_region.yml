@@ -16,6 +16,11 @@
 
 - name: main - Add MaaS' Stable PPA Repository
   apt_repository: repo='ppa:maas/stable'
+  when: maas_release == "stable"
+
+- name: main - Add MaaS' Next PPA Repository
+  apt_repository: repo='ppa:maas/next'
+  when: maas_release == "next"
 
 
 - name: region - Install MaaS Region Controller and MaaS CLI
@@ -49,9 +54,11 @@
 
 - name: region - Create MAAS admin user
   command: "maas createadmin --username={{ maas_admin_username }} --password={{ maas_admin_passwd }} --email={{ maas_admin_email }}"
+  ignore_errors: true
 
 - name: region - Including MaaS Login tasks
   include: maas_login.yml
 
 - name: region - Upload public key for MAAS admin
   command: maas admin sshkeys create "key={{ maas_admin_public_key }}"
+  ignore_errors: true
