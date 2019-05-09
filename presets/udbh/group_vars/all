@@ -1,0 +1,30 @@
+---
+
+#
+# Global Vars Applied to all groups / hosts
+#
+
+ntp_daemon_type: timesyncd
+
+regular_system_user: ubuntu
+
+base_os_upgrade: true
+
+mode: desktop
+
+os_release: stein
+
+
+#
+# Ubuntu Virt
+#
+
+setup: null
+
+enable_multiqueue: false
+number_of_queues: 0
+
+libvirt_default_network_name: default
+libvirt_default_pool_name: default
+
+libvirt_pool_1: /var/lib/libvirt/images
