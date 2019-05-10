@@ -163,6 +163,17 @@
   when: mode == 'desktop'
 
 
+# The desktop_environments var is an array, like:
+#
+# desktop_environments: [ 'ubuntu-desktop', 'ubuntu-mate-desktop' ]
+#
+# So, it will install two DEs, regular Ubuntu and MATE on the same Machine.
+#
+- name: ubuntu - apt installing Desktop Environments
+  apt: name={{ desktop_environments }} state=latest update_cache=yes
+  when: mode == 'desktop' and desktop_environments is defined
+
+
 - name: ubuntu - apt installing Desktop tools
   apt: name={{item}} state=latest update_cache=yes
   with_items:
