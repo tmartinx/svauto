@@ -144,6 +144,11 @@
 {% endif %}
 
        <address type='pci' domain='0x0000' bus='0x00' slot='{{ interface.address.slot }}' function='0x0'/>
+
+{% if (interface.queues is defined and interface.queues >= 1) %}
+      <driver name='vhost' queues='{{ interface.queues }}'/>
+{% endif %}
+
      </interface>
 {% endfor %}
 
@@ -167,8 +172,8 @@
       <source type='unix' path='/var/run/openvswitch/vuosa-1-subscribers-1' mode='client'/>
       <model type='virtio'/>
 
-{% if (enable_multiqueue and number_of_queues >= 1) %}
-      <driver name='vhost' queues='{{ number_of_queues }}'/>
+{% if (interface.queues is defined and interface.queues >= 1) %}
+      <driver name='vhost' queues='{{ interface.queues }}'/>
 {% endif %}
 
       <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
@@ -177,8 +182,8 @@
       <source type='unix' path='/var/run/openvswitch/vuosa-1-internet-1' mode='client'/>
       <model type='virtio'/>
 
-{% if (enable_multiqueue and number_of_queues >= 1) %}
-      <driver name='vhost' queues='{{ number_of_queues }}'/>
+{% if (interface.queues is defined and interface.queues >= 1) %}
+      <driver name='vhost' queues='{{ interface.queues }}'/>
 {% endif %}
 
       <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>

@@ -20,9 +20,6 @@ mode: null
 
 pod: null
 
-enable_multiqueue: false
-number_of_queues: '0'
-
 libvirt_default_network_name: "default"
 libvirt_default_pool_name: "default"
 
@@ -68,7 +65,7 @@ vms:
 
 # Example 2:
 - name: vm-2
-  description: "Virtual Machine with 1 disk and 1 vNIC."
+  description: "Virtual Machine with 1 disk and 1 vNIC with VirtIO-Net Multiqueue."
   memory: 4096
   cpu: 2
   devices:
@@ -86,6 +83,7 @@ vms:
         bridge: "br-bond0"
       address:
         slot: "0x03"
+      queues: 2
 
 # Example 3:
 - name: vm-3
