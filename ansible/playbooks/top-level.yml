@@ -17,15 +17,7 @@
   roles:
   - ansible
   - ssh_keypair
-  - virtualbox
-  - vagrant
   - packer
-  - vsftpd
-
-
-- hosts: osds
-  roles:
-  - lvm4ceph
 
 
 - hosts: all
