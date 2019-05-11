@@ -7,8 +7,7 @@
 - hosts: metais
   become: yes
   roles:
-  - { role: download-images, download_group: 'iso' }
-  - { role: download-images, download_group: 'cloud' }
+  - download-images
   - { role: ubuntu-virt, setup: 'host' }
   - { role: ubuntu-virt, setup: 'vnets', when: vnets is defined }
   - { role: ubuntu-virt, setup: 'vms', when: vms is defined }
