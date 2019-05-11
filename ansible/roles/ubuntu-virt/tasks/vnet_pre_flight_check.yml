@@ -13,21 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Creating /srv/iso subdirectory
-  file: path=/srv/iso owner=root state=directory
 
-
-- name: Creating /srv/cloud subdirectory
-  file: path=/srv/cloud owner=root state=directory
-
-
-- name: Creating /srv/svauto subdirectory
-  file: path=/srv/svauto owner=root state=directory
-
-
-- name: main - Download the requested O.S. Images
-  include: download-image.yml
-  with_items:
-  - "{{ downloads }}"
-  loop_control:
-    loop_var: download
+- name: fail when VNet name is not defined
+  fail:
+    msg: "VNet name is not defined"
+  when: vnet.name is undefined

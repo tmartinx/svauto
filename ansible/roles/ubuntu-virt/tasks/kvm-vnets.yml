@@ -13,21 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Creating /srv/iso subdirectory
-  file: path=/srv/iso owner=root state=directory
 
-
-- name: Creating /srv/cloud subdirectory
-  file: path=/srv/cloud owner=root state=directory
-
-
-- name: Creating /srv/svauto subdirectory
-  file: path=/srv/svauto owner=root state=directory
-
-
-- name: main - Download the requested O.S. Images
-  include: download-image.yml
+- name: vnets - Spinning all the Virtual Machines
+  include: spin_vnet.yml
   with_items:
-  - "{{ downloads }}"
+  - "{{ vnets }}"
   loop_control:
-    loop_var: download
+    loop_var: vnet

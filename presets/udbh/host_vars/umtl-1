@@ -1,0 +1,285 @@
+---
+
+#
+# General Vars
+#
+
+network_tools: true
+
+extra_packages: true
+
+
+#
+# Virtual Network Definitions
+#
+
+vnets:
+
+- name: virbr1
+  start: true
+
+- name: virbr2
+  start: true
+
+- name: mgmt0
+  start: true
+  subnet: 10.100.64.1
+  netmask: 255.255.252.0
+  nat: true
+
+
+#
+# Instances Definitions
+#
+
+vms:
+
+#
+# Instances for Basic Infrastructure
+#
+
+- name: nft-1
+  title: nft-1.aio-1
+  description: "Ubuntu Border Firewall with nftables - 1"
+  start: true
+  memory: 2048
+  cpu: 2
+  devices:
+    disks:
+    - name: 8d02b167-e28c-4dca-9edf-e8c4f36804cb
+      source: /srv/CLOUD/ubuntu-18.04-server-cloudimg-amd64.img
+      size: 8
+      driver:
+        type: qcow2
+        compressed: true
+        clone_cp: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    cdroms:
+    - name: 7579bcde-52f8-43cb-b9a7-12e31ef5ed81
+      unit: 0
+    interfaces:
+    - source:
+        network: "default"
+      address:
+        slot: "0x03"
+    - source:
+        network: "virbr1"
+      address:
+        slot: "0x04"
+    - source:
+        network: "mgmt0"
+      address:
+        slot: "0x05"
+    ethernets:
+    - name: ens3
+      mtu: 1500
+      addresses:
+      - 192.168.122.251/24
+      gateway4: 192.168.122.1
+      nameservers:
+           addresses:
+           - 8.8.8.8
+           - 1.1.1.1
+           - 8.8.4.4
+           search:
+           - tcmc.com
+    - name: ens4
+      mtu: 1500
+      addresses:
+      - 192.168.123.1/24
+    - name: ens5
+      mtu: 1500
+      addresses:
+      - 10.100.67.251/22
+
+
+- name: pfs2s-1
+  title: pfs2s-1.aio-1
+  description: "PFSense S2S VPN - 1"
+  memory: 2048
+  cpu: 2
+  devices:
+    disks:
+    - name: e3f7f1b0-6573-4534-b72b-527a85889f7a
+      size: 8
+      driver:
+        type: qcow2
+        compressed: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    interfaces:
+    - source:
+        network: "default"
+      address:
+        slot: "0x03"
+    - source:
+        network: "virbr1"
+      address:
+        slot: "0x04"
+    - source:
+        network: "mgmt0"
+      address:
+        slot: "0x05"
+
+
+- name: svauto-1
+  title: svauto-1.aio-1
+  description: "Remote Ubuntu Desktop, Ansible, SVAuto, Virt-Manager and IPMI/iLo Access - 1"
+  start: true
+  memory: 4096
+  cpu: 4
+  devices:
+    disks:
+    - name: 24832174-e17e-416b-b5c1-fec5248b9d7f
+      source: /srv/CLOUD/ubuntu-18.04-server-cloudimg-amd64.img
+      size: 32
+      driver:
+        type: qcow2
+        compressed: true
+        clone_cp: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    cdroms:
+    - name: 90af1786-e578-4b99-a3b9-6d1c81651924
+      unit: 0
+    interfaces:
+    - source:
+        network: "virbr1"
+      address:
+        slot: "0x03"
+    - source:
+        network: "mgmt0"
+      address:
+        slot: "0x04"
+    ethernets:
+    - name: ens3
+      mtu: 1500
+      addresses:
+      - 192.168.123.21/24
+      nameservers:
+           addresses:
+           - 8.8.8.8
+           - 1.1.1.1
+           - 8.8.4.4
+           search:
+           - tcmc.com
+    - name: ens4
+      mtu: 1500
+      addresses:
+      - 10.100.64.21/22
+      gateway4: 10.100.64.1
+
+
+- name: dhcp-1
+  title: dhcp-1.aio-1
+  description: "DHCP 1"
+  start: true
+  memory: 2048
+  cpu: 2
+  devices:
+    disks:
+    - name: 235b5255-a475-4474-960a-caa13e8edc0f
+      source: /srv/CLOUD/ubuntu-18.04-server-cloudimg-amd64.img
+      size: 8
+      driver:
+        type: qcow2
+        compressed: true
+        clone_cp: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    cdroms:
+    - name: b86ad727-ff02-40ed-906c-9b49729a7256
+      unit: 0
+    interfaces:
+    - source:
+        network: "virbr1"
+      address:
+        slot: "0x03"
+    - source:
+        network: "virbr2"
+      address:
+        slot: "0x04"
+    - source:
+        network: "mgmt0"
+      address:
+        slot: "0x05"
+    ethernets:
+    - name: ens3
+      mtu: 1500
+      addresses:
+      - 192.168.123.61/24
+      nameservers:
+           addresses:
+           - 8.8.8.8
+           - 1.1.1.1
+           - 8.8.4.4
+           search:
+           - tcmc.com
+    - name: ens4
+      mtu: 1500
+      addresses:
+      - 192.168.124.251/24
+    - name: ens5
+      mtu: 1500
+      addresses:
+      - 10.100.64.61/22
+      gateway4: 10.100.64.1
+
+
+- name: dns-1
+  title: dns-1.aio-1
+  description: "DNS 1"
+  start: true
+  memory: 2048
+  cpu: 2
+  devices:
+    disks:
+    - name: 4541bf14-1e77-436a-b074-08e86d4fcacf
+      source: /srv/CLOUD/ubuntu-18.04-server-cloudimg-amd64.img
+      size: 8
+      driver:
+        type: qcow2
+        compressed: true
+        clone_cp: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    cdroms:
+    - name: 213a6df9-6e9c-482d-b62f-93515b64d513
+      unit: 0
+    interfaces:
+    - source:
+        network: "virbr1"
+      address:
+        slot: "0x03"
+    - source:
+        network: "mgmt0"
+      address:
+        slot: "0x04"
+    ethernets:
+    - name: ens3
+      mtu: 1500
+      addresses:
+      - 192.168.123.51/24
+      nameservers:
+           addresses:
+           - 8.8.8.8
+           - 1.1.1.1
+           - 8.8.4.4
+           search:
+           - tcmc.com
+    - name: ens4
+      mtu: 1500
+      addresses:
+      - 10.100.64.51/22
+      gateway4: 10.100.64.1

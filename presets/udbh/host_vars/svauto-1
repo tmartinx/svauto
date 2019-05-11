@@ -1,0 +1,11 @@
+---
+
+#
+# General Vars
+#
+
+mode: desktop
+
+network_tools: true
+
+extra_packages: true

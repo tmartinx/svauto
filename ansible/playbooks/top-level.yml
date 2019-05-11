@@ -12,20 +12,12 @@
   - time
 
 
-- hosts: metal
+- hosts: metais
   become: yes
   roles:
   - ansible
   - ssh_keypair
-  - virtualbox
-  - vagrant
   - packer
-  - vsftpd
-
-
-- hosts: osds
-  roles:
-  - lvm4ceph
 
 
 - hosts: all
