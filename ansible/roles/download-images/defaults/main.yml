@@ -19,6 +19,13 @@ downloads:
 # Cloud Images, ready-to-go QCoW images with cloud-init support
 #
 
+- name: ubuntu-19.04-server-cloudimg-amd64.img
+  distro: ubuntu
+  url: http://uec-images.ubuntu.com/releases/19.04/release/ubuntu-19.04-server-cloudimg-amd64.img
+  dest: /srv/cloud/ubuntu-19.04-server-cloudimg-amd64.img
+  image_type: cloud
+  getit: true
+
 - name: ubuntu-18.04-server-cloudimg-amd64.img
   distro: ubuntu
   url: http://uec-images.ubuntu.com/releases/18.04/release/ubuntu-18.04-server-cloudimg-amd64.img
@@ -79,6 +86,13 @@ downloads:
 #
 # iso Images
 #
+
+- name: ubuntu-19.04-server-amd64.iso
+  distro: ubuntu
+  url: http://cdimage.ubuntu.com/ubuntu/releases/19.04/release/ubuntu-19.04-server-amd64.iso
+  dest: /srv/iso/ubuntu-19.04-server-amd64.iso
+  image_type: iso
+  getit: true
 
 - name: ubuntu-18.04.2-server-amd64.iso
   distro: ubuntu
