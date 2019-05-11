@@ -156,3 +156,17 @@ downloads:
   dest: /srv/iso/pfSense-CE-2.4.4-RELEASE-p1-amd64.iso.gz
   image_type: iso
   getit: true
+
+- name: virtio-win.iso (stable)
+  distro: virtio-win
+  url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
+  dest: /srv/iso/virtio-win-stable.iso
+  image_type: iso
+  getit: true
+
+- name: virtio-win.iso (latest)
+  distro: virtio-win
+  url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win.iso
+  dest: /srv/iso/virtio-win-latest.iso
+  image_type: iso
+  getit: true
