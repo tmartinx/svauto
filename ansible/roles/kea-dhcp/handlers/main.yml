@@ -2,7 +2,7 @@
 
 # Handlers file for Kea DHCP
 
-- name: reload kea-dhcp4-server
+- name: restart kea-dhcp4-server
   systemd:
-    state: reloaded
+    state: restarted
     name: kea-dhcp4-server
