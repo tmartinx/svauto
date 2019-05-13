@@ -39,9 +39,15 @@
   when: drbd0_exists.stdout == "1"
 
 
+# https://docs.linbit.com/docs/users-guide-8.4/#s-initial-full-sync
+#
+# This step must be performed on only one node, only on initial resource
+# configuration, and only on the node you selected as the synchronization
+# source. To perform this step, issue this command:
 - name: main - drbdadm primary in remote shell
   shell: drbdadm primary --force drbd0 >> /root/drbd-primary.log
   when: drbd0_exists.stdout == "1"
+# and drbd_node1_hostname == muvr-1
 
 
 # Awesome but, let's test it more...
