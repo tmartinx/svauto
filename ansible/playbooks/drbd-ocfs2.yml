@@ -1,0 +1,12 @@
+---
+
+#
+# Top Level Playbook for Shared Storage between two servers
+#
+
+- hosts: metais
+  become: yes
+  roles:
+#  - portfix
+  - drbd
+  - ocfs2
