@@ -1,0 +1,44 @@
+---
+
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+- name: main - apt install OCFS2
+  apt: pkg=ocfs2-tools state=latest
+
+
+- name: main - configure OCFS2 Cluster
+  template: src=cluster.conf.j2 dest=/etc/ocfs2/cluster.conf
+  register: ocfs2_config
+
+
+- name: main - restart O2CB
+  systemd: name=o2cb state=restarted
+
+
+- name: main - restart OCFS2
+  systemd: name=ocfs2 state=restarted
+
+
+#- name: main - drbdadm create-md in remote shell
+#  shell: mkfs.ocfs2 -N 8 -L "{{ ocfs2_cluster_name }}" /dev/drbd0 >> /root/ocfs2-mkfs.log
+
+# Add systemd-mount service thing? Instead of this mount via /etc/fstab ... ?
+#- name: Mount up device by NAME
+#  mount:
+#    path: "/var/lib/libvirt/shared"
+#    src: /dev/drbd0
+#    fstype: ocfs2
+#    state: present

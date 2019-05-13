@@ -1,0 +1,17 @@
+cluster:
+        node_count = 2
+        name = {{ ocfs2_cluster_name }}
+
+node:
+        number = 1
+        cluster = {{ ocfs2_cluster_name }}
+        ip_port = 7777
+        ip_address = {{ ocfs2_replication_ip_local }}
+        name = {{ ocfs2_node1_hostname }}
+
+node:
+        number = 2
+        cluster = {{ ocfs2_cluster_name }}
+        ip_port = 7777
+        ip_address = {{ ocfs2_replication_ip_peer }}
+        name = {{ ocfs2_node2_hostname }}
