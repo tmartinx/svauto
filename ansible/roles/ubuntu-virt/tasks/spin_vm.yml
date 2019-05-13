@@ -1,4 +1,5 @@
 ---
+
 # Copyright 2018, TCMC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +23,31 @@
   include: "vm_facts.yml"
 
 
+- name: spin_vm - Set fact vm_subdir ({{ vm.name }})
+  set_fact:
+    vm_subdir: "/var/lib/libvirt/{{ vm.libvirt_pool }}/instances/{{ vm.name }}"
+
+- name: spin_vm - Create Subdirectory ({{ vm.name }})
+  file:
+   path: "{{ vm_subdir }}"
+   owner: libvirt-qemu
+   group: kvm
+   mode: 0755
+   state: directory
+
+- name: spin_vm - Set fact vm_tmp_subdir ({{ vm.name }})
+  set_fact:
+    vm_tmp_subdir: "/var/lib/libvirt/{{ vm.libvirt_pool }}/tmp/{{ vm.name }}"
+
+- name: spin_vm - Create TMP Subdirectory ({{ vm.name }})
+  file:
+   path: "{{ vm_tmp_subdir }}"
+   owner: libvirt-qemu
+   group: kvm
+   mode: 0755
+   state: directory
+
+
 - name: spin_vm - Include create_disk.yml
   include: create_disk.yml
   with_items: "{{ vm.devices.disks }}"
@@ -43,7 +69,7 @@
 - name: spin_vm - Copy VM's private NVRAM ({{ vm.name }}_VARS.fd)
   synchronize:
     src: "/usr/share/OVMF/OVMF_VARS.fd"
-    dest: "/var/lib/libvirt/qemu/nvram/{{ vm.name }}_VARS.fd"
+    dest: "{{ vm_subdir }}/nvram-{{ vm.name }}_VARS.fd"
     rsync_opts:
     - "--ignore-existing"
   when:
@@ -51,9 +77,9 @@
   - vm.firmware is defined
   - vm.firmware == 'efi'
 
-- name: create_disk - Set file permissions for "{{ vm.name }}_VARS.fd"
+- name: spin_vm - Set file permissions for "{{ vm.name }}_VARS.fd"
   file:
-    path: "/var/lib/libvirt/qemu/nvram/{{ vm.name }}_VARS.fd"
+    path: "{{ vm_subdir }}/nvram-{{ vm.name }}_VARS.fd"
     owner: libvirt-qemu
     group: kvm
     mode: 0640
@@ -61,6 +87,7 @@
   - vm_exists == False
   - vm.firmware is defined
   - vm.firmware == 'efi'
+
 
 - name: spin_vm - Define ({{ vm.name }})
   virt:

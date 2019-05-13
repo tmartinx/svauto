@@ -1,4 +1,5 @@
 ---
+
 # Copyright 2018, TCMC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,4 +53,4 @@
 - name: create_cdrom_config_drive - Clean artifact subdir
   file:
     state: absent
-    path: "{{ iso_tmp_destination }}/"
+    path: "{{ iso_tmp_destination }}"

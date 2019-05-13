@@ -15,7 +15,7 @@
 
 - name: empty_qcow2 - Set fact disk_destination  {{ disk.name }}.{{ disk.driver.type }} ({{ vm.name }})
   set_fact:
-    disk_destination: "{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}"
+    disk_destination: "{{ vm_subdir }}/{{ disk.name }}.{{ disk.driver.type }}"
 
 
 - name: empty_qcow2 - Check if {{ disk_destination }} already exists

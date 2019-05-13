@@ -14,10 +14,10 @@
 # limitations under the License.
   
 
-- name: fail when VM libvirt_pool_1 is not defined
+- name: fail when VM libvirt_pool is not defined
   fail:
-    msg: "VM libvirt_pool_1 is not defined"
-  when: libvirt_pool_1 is undefined
+    msg: "VM libvirt_pool is not defined"
+  when: vm.libvirt_pool is undefined
 
 - name: fail when VM name is not defined
   fail:

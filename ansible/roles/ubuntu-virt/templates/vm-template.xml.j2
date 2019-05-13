@@ -21,7 +21,7 @@
 {% if vm.firmware is defined %}
 {% if vm.firmware == 'efi' %}
     <loader readonly='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE.fd</loader>
-    <nvram>/var/lib/libvirt/qemu/nvram/{{ vm.name }}_VARS.fd</nvram>
+    <nvram>{{ vm_subdir }}/nvram-{{ vm.name }}_VARS.fd</nvram>
 {% endif %}
 {% endif %}
 
@@ -67,9 +67,9 @@
       <driver name='qemu' type='{{ disk.driver.type }}'/>
 
 {% if disk.driver.compressed is defined and disk.driver.compressed %}
-      <source file='{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}c'/>
+      <source file='/{{ vm_subdir }}/{{ disk.name }}.{{ disk.driver.type }}c'/>
 {% else %}
-      <source file='{{ libvirt_pool_1 }}/{{ disk.name }}.{{ disk.driver.type }}'/>
+      <source file='/{{ vm_subdir }}/{{ disk.name }}.{{ disk.driver.type }}'/>
 {% endif %}
 
       <target dev='{{ disk.target }}' bus='scsi'/>
