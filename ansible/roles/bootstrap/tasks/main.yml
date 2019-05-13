@@ -19,7 +19,7 @@
 
 
 # Common Settings
-- name: timesync - Setting timezone to America/Toronto
+- name: timesync - Setting timezone to {{ local_timezone }}
   timezone:
     name: '{{ local_timezone }}'
   when: local_timezone is defined
