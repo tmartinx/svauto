@@ -16,9 +16,13 @@
   apt: name={{item}} state=latest
   with_items:
     - nftables
+    - iptables-nftables-compat
 
 - name: ubuntu - blacklist iptables
   copy: src=blacklist_iptables_conf dest=/etc/modprobe.d/blacklist-iptables.conf
 
 - name: ubuntu - copy nftables rules (very basic and static)
   template: src=nftables_conf.j2 dest=/etc/nftables.conf
+
+- name: ubuntu - copy old iptables example script
+  copy: src=iptables_old_script.sh dest=/root/iptables_old_script.sh mode=0755
