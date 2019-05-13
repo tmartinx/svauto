@@ -1,0 +1,67 @@
+---
+
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+- name: main - apt installing DRBD
+  apt: pkg=drbd-utils state=latest
+
+
+- name: main - check if drbd0 already present
+  command: bash -c "drbdadm sh-dev all | grep -q drbd0; echo $?"
+  register: drbd0_exists
+
+
+- name: main - configure DRBD resource
+  template: src=drbd0.res.j2 dest=/etc/drbd.d/drbd0.res
+  register: drbd0_config
+
+
+- name: main - drbdadm create-md in remote shell
+  shell: drbdadm create-md drbd0 --force >> /root/drbd-create.log
+  when: drbd0_exists.stdout == "1"
+
+
+- name: main - drbdadm up in remote shell
+  shell: drbdadm up drbd0 >> /root/drbd-up.log
+  when: drbd0_exists.stdout == "1"
+
+
+- name: main - drbdadm primary in remote shell
+  shell: drbdadm primary --force drbd0 >> /root/drbd-primary.log
+  when: drbd0_exists.stdout == "1"
+
+
+# Awesome but, let's test it more...
+#- name: main - skip DRBD initial sync
+#  run_once: true
+#  shell: bash -c 'while [ $(drbdadm cstate drbd0) != "Connected" ]; do sleep 1s; done; drbdadm new-current-uuid drbd0 --clear-bitmap' >> /root/drbd-init.log
+#  when: drbd0_exists.stdout == "1"
+
+
+- name: main - restart DRBD
+  systemd: name=drbd state=restarted
+  when: drbd0_exists.stdout == "1"
+
+
+- name: main - wait for DRBD to connect
+  shell: bash -c 'while [ $(drbdadm cstate r0) != "Connected" ]; do sleep 1s; done;' >> /root/drbd-wait.log
+  when: drbd0_exists.stdout == "1"
+
+
+# Adjust if configuration changed as catch all
+- name: main - drbdadm adjust in remote shell
+  shell: drbdadm adjust drbd0 >> /root/drbd-adjust.log
+  when: drbd0_config.changed
