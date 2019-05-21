@@ -43,4 +43,4 @@
   template:
     src: smb.conf.j2
     dest: /etc/samba/smb.conf
-  notify: reload smbd
+  notify: reload samba
