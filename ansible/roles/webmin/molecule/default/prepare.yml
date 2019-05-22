@@ -1,0 +1,36 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: remove /etc/apt/apt.conf.d/docker-gzip-indexes
+      file:
+        state: absent
+        path: /etc/apt/apt.conf.d/docker-gzip-indexes
+
+    - name: purge apt-show-versions
+      apt:
+        name: apt-show-versions
+        state: absent
+        purge: true
+        update_cache: true
+
+    - name: purge /var/lib/apt/lists/*lz4
+      file:
+        path: /var/lib/apt/lists/*lz4
+        state: absent
+
+    - name: set gzipIndexes to false
+      apt:
+        dpkg_options: "Acquire::GzipIndexes=false update"
+
+    - name: update cache
+      apt:
+        update_cache: true
+
+    - name: re-install apt-show-versions
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - apt-show-versions

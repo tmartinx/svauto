@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  author: it-network
+  description: This role install webmin
+  company: Shopify
+  license: GPLv2
+
+  min_ansible_version: 1.2
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 18.04
+  galaxy_tags: []
+dependencies: []

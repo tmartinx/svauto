@@ -1,0 +1,46 @@
+---
+# tasks file for smb
+
+- name: fail when samba_share are not defined
+  fail:
+    msg: "| samba_share variable is not defined. Please use the following format:
+      samba_share:
+    - name: broadcast
+      path: /mnt/cephfs/broadcast
+      valid_users: @broadcast
+      writeable: yes"
+  when: samba_share is undefined
+
+- name: include install_samba.yml
+  include: install_samba.yml
+
+- name: include create_groups.yml
+  include: create_groups.yml
+  with_items: "{{ samba_share }}"
+  loop_control:
+    loop_var: share
+
+- name: fail if share path doesn't exist
+  stat:
+    path: "{{ share.path }}"
+  register: r
+  failed_when: 'r.stat.exists == false'
+  with_items: "{{ samba_share }}"
+  loop_control:
+    loop_var: share
+
+- name: ensure shares paths have the proper group permission
+  file:
+    path: "{{ share.path }}"
+    state: directory
+    mode: u=rwx,g=rwx,o=,g+s
+    group: "{{ share.valid_users | regex_replace('@','') }}"
+  with_items: "{{ samba_share }}"
+  loop_control:
+    loop_var: share
+
+- name: render samba template
+  template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+  notify: reload samba

@@ -1,0 +1,13 @@
+{{ ansible_managed }}
+[global]
+workgroup = {{ workgroup }}
+log file = /var/log/samba/%m
+log level = 1
+
+{% for share in samba_share %}
+[{{ share.name }}]
+    path = {{ share.path }}
+    valid users = {{ share.valid_users }}
+    writeable = {{ share.writeable }}
+
+{% endfor %}
