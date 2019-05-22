@@ -16,8 +16,8 @@
 
 
 - name: main - apt install conntrack tools
-  apt: pkg={{ item }}state=latest
-  with_itens:
+  apt: pkg={{ item }} state=latest
+  with_items:
   - conntrack
   - conntrackd
 
