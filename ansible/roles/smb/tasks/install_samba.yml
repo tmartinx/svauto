@@ -1,0 +1,4 @@
+- name: install samba
+  apt:
+    name: samba
+    state: present

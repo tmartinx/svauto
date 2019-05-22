@@ -1,0 +1,5 @@
+- name: ensure group "{{ share.valid_users }}" exists
+  group:
+    name: "{{ share.valid_users | regex_replace('@','') }}"
+    state: present
+  when: 'share.valid_users | regex_search("^@")'

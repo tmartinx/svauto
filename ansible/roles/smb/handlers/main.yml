@@ -1,0 +1,14 @@
+---
+# handlers file for smb
+
+- name: reload smbd
+  systemd:
+    name: smbd
+    state: reloaded
+  listen: reload samba
+
+- name: reload nmbd
+  systemd:
+    name: nmbd
+    state: reloaded
+  listen: reload samba
