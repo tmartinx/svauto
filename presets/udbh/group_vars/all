@@ -20,11 +20,3 @@ os_release: stein
 #
 
 setup: null
-
-enable_multiqueue: false
-number_of_queues: 0
-
-libvirt_default_network_name: default
-libvirt_default_pool_name: default
-
-libvirt_pool_1: /var/lib/libvirt/images
