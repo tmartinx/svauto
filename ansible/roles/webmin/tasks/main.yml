@@ -1,0 +1,25 @@
+---
+# tasks file for webmin
+- name: install required packages
+  apt:
+    name: "{{ packages }}"
+    state: present
+
+- name: ensure that webmin Apt signing key is present
+  apt_key:
+    url: http://www.webmin.com/jcameron-key.asc
+    state: present
+
+- name: ensure webmin repository is in apt list
+  apt_repository:
+    repo: deb http://download.webmin.com/download/repository sarge contrib
+    state: present
+  notify: update repositories
+
+- name: force all notified handlers
+  meta: flush_handlers
+
+- name: install webmin
+  apt:
+    name: webmin
+    state: present

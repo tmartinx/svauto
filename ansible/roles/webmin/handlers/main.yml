@@ -1,0 +1,6 @@
+---
+# handlers file for webmin
+
+- name: update repositories
+  apt:
+    update_cache: true
