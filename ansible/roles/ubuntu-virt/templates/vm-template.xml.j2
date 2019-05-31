@@ -135,7 +135,7 @@
       <source network='{{ interface.source.network }}'/>
 {% endif %}
 
-       <model type='virtio'/>
+       <model type='{{ interface.model.type }}'/>
 
 {% if interface.boot is defined %}
 {% if interface.boot.order is defined %}
