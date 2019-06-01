@@ -28,9 +28,10 @@ ethernets:
 
 {% if ethernet.routes is defined %}
      routes:
-     - to: {{ ethernet.routes.to }}
-       via: {{ ethernet.routes.via }}
-{% endif %}
+{% for routing in ethernet.routes %}
+     - to: {{ routing.to }}
+       via: {{ routing.via }}
+{% endfor %}
 
 {% endfor %}
 
@@ -68,8 +69,11 @@ vlans:
 
 {% if vlan.routes is defined %}
      routes:
-     - to: {{ vlan.routes.to }}
-       via: {{ vlan.routes.via }}
+{% for routing in vlan.routes %}
+     - to: {{ routing.to }}
+       via: {{ routing.via }}
+{% endfor %}
+
 {% endif %}
 
 {% endfor %}
@@ -105,9 +109,10 @@ wifis:
 
 {% if wifi.routes is defined %}
      routes:
-     - to: {{ wifi.routes.to }}
-       via: {{ wifi.routes.via }}
-{% endif %}
+{% for routing in wifi.routes %}
+     - to: {{ routing.to }}
+       via: {{ routing.via }}
+{% endfor %}
 
 {% endfor %}
 
@@ -142,9 +147,10 @@ bonds:
 
 {% if bond.routes is defined %}
      routes:
-     - to: {{ bond.routes.to }}
-       via: {{ bond.routes.via }}
-{% endif %}
+{% for routing in bond.routes %}
+     - to: {{ routing.to }}
+       via: {{ routing.via }}
+{% endfor %}
 
 {% endfor %}
 
@@ -179,9 +185,10 @@ bridges:
 
 {% if bridge.routes is defined %}
      routes:
-     - to: {{ bridge.routes.to }}
-       via: {{ bridge.routes.via }}
-{% endif %}
+{% for routing in bridge.routes %}
+     - to: {{ routing.to }}
+       via: {{ routing.via }}
+{% endfor %}
 
 {% endfor %}
 
