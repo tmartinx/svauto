@@ -14,7 +14,7 @@
 # limitations under the License.
 
 
-- name: fail when VM setup is not defined
+- name: fail when Instance setup is not defined
   fail:
     msg: "'setup' variable is not defined. Possible values are: {{ setup_possible_values }} "
   when: 'setup is none'

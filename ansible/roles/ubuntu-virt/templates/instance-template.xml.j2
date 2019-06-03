@@ -1,9 +1,9 @@
 <domain type='kvm'>
-  <name>{{ vm.name }}</name>
-  <title>{{ vm.title }} </title>
-  <description>{{ vm.description }}</description>
-  <memory unit='KiB'>{{ vm.memory * 1024 }}</memory>
-  <currentMemory unit='KiB'>{{ vm.memory * 1024 }}</currentMemory>
+  <name>{{ instance.name }}</name>
+  <title>{{ instance.title }} </title>
+  <description>{{ instance.description }}</description>
+  <memory unit='KiB'>{{ instance.memory * 1024 }}</memory>
+  <currentMemory unit='KiB'>{{ instance.memory * 1024 }}</currentMemory>
 
 {% if (openvswitch_mode is defined and openvswitch_mode == 'dpdk') %}
   <memoryBacking>
@@ -14,14 +14,14 @@
   </numatune>
 {% endif %}
 
-  <vcpu placement='static'>{{ vm.cpu }}</vcpu>
+  <vcpu placement='static'>{{ instance.cpu }}</vcpu>
   <os>
     <type arch='x86_64'>hvm</type>
 
-{% if vm.firmware is defined %}
-{% if vm.firmware == 'efi' %}
+{% if instance.firmware is defined %}
+{% if instance.firmware == 'efi' %}
     <loader readonly='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE.fd</loader>
-    <nvram>{{ vm_subdir }}/nvram-{{ vm.name }}_VARS.fd</nvram>
+    <nvram>{{ instance_subdir }}/nvram-{{ instance.name }}_VARS.fd</nvram>
 {% endif %}
 {% endif %}
 
@@ -37,7 +37,7 @@
 
 {% if (openvswitch_mode is defined and openvswitch_mode == 'dpdk') %}
     <numa>
-      <cell id='0' cpus='0-3' memory='{{ vm.memory * 1024 }}' unit='KiB' memAccess='shared'/>
+      <cell id='0' cpus='0-3' memory='{{ instance.memory * 1024 }}' unit='KiB' memAccess='shared'/>
     </numa>
 {% endif %}
 
@@ -61,15 +61,15 @@
   <devices>
     <emulator>/usr/bin/kvm-spice</emulator>
 
-{% for disk in vm.devices.disks %}
+{% for disk in instance.devices.disks %}
 
     <disk type='file' device='disk'>
       <driver name='qemu' type='{{ disk.driver.type }}'/>
 
 {% if disk.driver.compressed is defined and disk.driver.compressed %}
-      <source file='/{{ vm_subdir }}/{{ disk.name }}.{{ disk.driver.type }}c'/>
+      <source file='/{{ instance_subdir }}/{{ disk.name }}.{{ disk.driver.type }}c'/>
 {% else %}
-      <source file='/{{ vm_subdir }}/{{ disk.name }}.{{ disk.driver.type }}'/>
+      <source file='/{{ instance_subdir }}/{{ disk.name }}.{{ disk.driver.type }}'/>
 {% endif %}
 
       <target dev='{{ disk.target }}' bus='scsi'/>
@@ -86,8 +86,8 @@
 
 {% endfor %}
 
-{% if vm.devices.cdroms is defined %}
-{% for cdrom in vm.devices.cdroms %}
+{% if instance.devices.cdroms is defined %}
+{% for cdrom in instance.devices.cdroms %}
 
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
@@ -123,7 +123,7 @@
       <address type='pci' domain='0x0000' bus='0x00' slot='0x0e' function='0x0'/>
     </controller>
 
-{% for interface in vm.devices.interfaces %}
+{% for interface in instance.devices.interfaces %}
 
 {% if interface.source.bridge is defined %}
      <interface type='bridge'>
@@ -191,13 +191,13 @@
 {% endif %}
 
     <serial type='pty'>
-      <log file='/var/log/libvirt/qemu/{{ vm.name }}-serial0.log' append='off'/>
+      <log file='/var/log/libvirt/qemu/{{ instance.name }}-serial0.log' append='off'/>
       <target type='isa-serial' port='0'>
         <model name='isa-serial'/>
       </target>
     </serial>
     <console type='pty'>
-      <log file='/var/log/libvirt/qemu/{{ vm.name }}-serial0.log' append='off'/>
+      <log file='/var/log/libvirt/qemu/{{ instance.name }}-serial0.log' append='off'/>
       <target type='serial' port='0'/>
     </console>
     <channel type='unix'>
@@ -216,8 +216,8 @@
     <graphics type='spice' autoport='yes'>
       <listen type='address'/>
 
-{% if vm.spice is defined %}
-{% if vm.spice.fastlocal %}
+{% if instance.spice is defined %}
+{% if instance.spice.fastlocal %}
       <image compression='off'/>
       <streaming mode='off'/>
 {% endif %}
@@ -230,8 +230,8 @@
     <video>
       <model type='virtio' heads='1' primary='yes'>
 
-{% if vm.spice is defined %}
-{% if vm.spice %}
+{% if instance.spice is defined %}
+{% if instance.spice %}
         <acceleration accel3d='yes'/>
 {% endif %}
 {% else %}

@@ -16,4 +16,4 @@
 
 - include: kvm-host.yml
 - include: kvm-maas.yml
-- include: kvm-vms.yml
+- include: kvm-instances.yml

@@ -14,19 +14,19 @@
 # limitations under the License.
 
 
-- name: vms - Spin Local Instances
-  include: spin_vm.yml
+- name: instances - Spin Local Instances
+  include: spin_instance.yml
   with_items:
-  - "{{ vms }}"
+  - "{{ instances }}"
   loop_control:
-    loop_var: vm
-  when: vms is defined
+    loop_var: instance
+  when: instances is defined
 
 
-- name: vms - Spin Shared Instances
-  include: spin_vm.yml
+- name: instances - Spin Shared Instances
+  include: spin_instance.yml
   with_items:
-  - "{{ vms_shared }}"
+  - "{{ instances_shared }}"
   loop_control:
-    loop_var: vm
-  when: vms_shared is defined
+    loop_var: instance
+  when: instances_shared is defined

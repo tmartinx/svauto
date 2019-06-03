@@ -14,13 +14,13 @@
 # limitations under the License.
 
 
-- name: create_cdrom - Set fact iso_destination {{ cdrom.name }}.iso ({{ vm.name }})
+- name: create_cdrom - Set fact iso_destination {{ cdrom.name }}.iso ({{ instance.name }})
   set_fact:
-    iso_destination: "{{ vm_subdir }}/{{ cdrom.name }}.iso"
+    iso_destination: "{{ instance_subdir }}/{{ cdrom.name }}.iso"
 
-- name: create_cdrom - Set temporary fact iso_tmp_destination to {{ vm_tmp_subdir }}/{{ cdrom.name }}-config-drive ({{ vm.name }})
+- name: create_cdrom - Set temporary fact iso_tmp_destination to {{ instance_tmp_subdir }}/{{ cdrom.name }}-config-drive ({{ instance.name }})
   set_fact:
-    iso_tmp_destination: "{{ vm_tmp_subdir }}/{{ cdrom.name }}-config-drive"
+    iso_tmp_destination: "{{ instance_tmp_subdir }}/{{ cdrom.name }}-config-drive"
 
 - name: create_cdrom - Check if {{ iso_destination }} already exists
   stat:

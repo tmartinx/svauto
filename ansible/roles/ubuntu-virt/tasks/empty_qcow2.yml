@@ -13,9 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: empty_qcow2 - Set fact disk_destination  {{ disk.name }}.{{ disk.driver.type }} ({{ vm.name }})
+- name: empty_qcow2 - Set fact disk_destination  {{ disk.name }}.{{ disk.driver.type }} ({{ instance.name }})
   set_fact:
-    disk_destination: "{{ vm_subdir }}/{{ disk.name }}.{{ disk.driver.type }}"
+    disk_destination: "{{ instance_subdir }}/{{ disk.name }}.{{ disk.driver.type }}"
 
 
 - name: empty_qcow2 - Check if {{ disk_destination }} already exists
@@ -24,7 +24,7 @@
   register: disk_existance
 
 
-- name: empty_qcow2 - Create {{ disk_destination }} format qcow2 ({{ vm.name }})
+- name: empty_qcow2 - Create {{ disk_destination }} format qcow2 ({{ instance.name }})
   shell: |
     if [ -f "{{ disk_destination }}" ]
     then
@@ -36,7 +36,7 @@
     exit 0
   when: not disk_existance.stat.exists
 
-- name: empty_qcow2 - Set file permissions for {{ disk_destination }} ({{ vm.name }})
+- name: empty_qcow2 - Set file permissions for {{ disk_destination }} ({{ instance.name }})
   file:
     path: "{{ disk_destination }}"
     owner: libvirt-qemu

@@ -1,0 +1,40 @@
+---
+# Copyright 2018, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+  
+
+- name: fail when Instance libvirt_pool is not defined
+  fail:
+    msg: "Instance libvirt_pool is not defined"
+  when: instance.libvirt_pool is undefined
+
+- name: fail when Instance name is not defined
+  fail:
+    msg: "Instance name is not defined"
+  when: instance.name is undefined
+
+- name: fail when Instance memory is not defined
+  fail:
+    msg: "Instance memory is not defined"
+  when: instance.memory is undefined
+
+- name: fail when Instance cpu is not defined
+  fail:
+    msg: "Instance cpu is not defined"
+  when: instance.cpu is undefined
+
+- name: fail when Instance disks is not defined
+  fail:
+    msg: "Instance disks is not defined"
+  when: instance.devices.disks is undefined

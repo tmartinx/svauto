@@ -1,10 +1,10 @@
 version: 2
 
-{% if vm.devices.ethernets is defined %}
+{% if instance.devices.ethernets is defined %}
 
 ethernets:
 
-{% for ethernet in vm.devices.ethernets %}
+{% for ethernet in instance.devices.ethernets %}
 
   {{ ethernet.name }}:
 
@@ -40,11 +40,11 @@ ethernets:
 {% endif %}
 
 
-{% if vm.devices.vlans is defined %}
+{% if instance.devices.vlans is defined %}
 
 vlans:
 
-{% for vlan in vm.devices.vlans %}
+{% for vlan in instance.devices.vlans %}
 
   {{ vlan.name }}:
 
@@ -83,11 +83,11 @@ vlans:
 {% endif %}
 
 
-{% if vm.devices.wifis is defined %}
+{% if instance.devices.wifis is defined %}
 
 wifis:
 
-{% for wifi in vm.devices.wifis %}
+{% for wifi in instance.devices.wifis %}
 
   {{ wifi.name }}:
 
@@ -123,11 +123,11 @@ wifis:
 {% endif %}
 
 
-{% if vm.devices.bonds is defined %}
+{% if instance.devices.bonds is defined %}
 
 bonds:
 
-{% for bond in vm.devices.bonds %}
+{% for bond in instance.devices.bonds %}
 
   {{ bond.name }}:
 
@@ -163,11 +163,11 @@ bonds:
 {% endif %}
 
 
-{% if vm.devices.bridges is defined %}
+{% if instance.devices.bridges is defined %}
 
 bridges:
 
-{% for bridge in vm.devices.bridges %}
+{% for bridge in instance.devices.bridges %}
 
   {{ bridge.name }}:
 

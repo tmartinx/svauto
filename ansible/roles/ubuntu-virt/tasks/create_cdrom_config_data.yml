@@ -26,7 +26,7 @@
 #
 
 
-- name: create cloud-init user-data, meta-data and network-config ({{ vm.name }})
+- name: create cloud-init user-data, meta-data and network-config ({{ instance.name }})
   template:
     src: '{{ cloud_init.src }}'
     dest: '{{ iso_tmp_destination }}/{{ cloud_init.dest }}'
@@ -38,11 +38,11 @@
     loop_var: cloud_init
 
 
-- name: create_cdrom_config_drive - creating Metadata CD-ROM ISO Image (Config Drive) for {{ vm.name }}
+- name: create_cdrom_config_drive - creating Metadata CD-ROM ISO Image (Config Drive) for {{ instance.name }}
   shell: genisoimage -v -output "{{ iso_destination }}" -volid cidata -joliet -rock "{{ iso_tmp_destination }}/user-data" "{{ iso_tmp_destination }}"/meta-data "{{ iso_tmp_destination }}"/network-config
 
 
-- name: create_cdrom_config_drive - Set file permissions for {{ iso_destination }} ({{ vm.name }})
+- name: create_cdrom_config_drive - Set file permissions for {{ iso_destination }} ({{ instance.name }})
   file:
     path: "{{ iso_destination }}"
     owner: libvirt-qemu

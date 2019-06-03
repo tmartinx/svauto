@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-setup_possible_values: ["maas", "vms", "hosts", "everything"]
+setup_possible_values: ["maas", "instances", "hosts", "everything"]
 
 setup: null
 
@@ -20,8 +20,8 @@ mode: null
 
 pod: null
 
-## VMs definitions
-vms:
+## Instance's definitions
+instances:
 
 # Example 1:
 - name: vm-1
