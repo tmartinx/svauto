@@ -33,6 +33,8 @@ ethernets:
        via: {{ routing.via }}
 {% endfor %}
 
+{% endif %}
+
 {% endfor %}
 
 {% endif %}
@@ -114,6 +116,8 @@ wifis:
        via: {{ routing.via }}
 {% endfor %}
 
+{% endif %}
+
 {% endfor %}
 
 {% endif %}
@@ -152,6 +156,8 @@ bonds:
        via: {{ routing.via }}
 {% endfor %}
 
+{% endif %}
+
 {% endfor %}
 
 {% endif %}
@@ -189,6 +195,8 @@ bridges:
      - to: {{ routing.to }}
        via: {{ routing.via }}
 {% endfor %}
+
+{% endif %}
 
 {% endfor %}
 
