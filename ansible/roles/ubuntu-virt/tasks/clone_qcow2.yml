@@ -25,7 +25,15 @@
 
 
 - name: clone_qcow2 - Clone {{ disk.source }} to {{ disk_destination }} Format QCoW2 ({{ vm.name }})
-  shell: "qemu-img convert -f {{ disk.driver.type }} -O {{ disk.driver.type }} {{ disk.source }} {{ disk_destination }}"
+  shell: |
+    if [ -f "{{ disk_destination }}" ]
+    then
+       echo "WARNING! File {{ disk_destination }} already exists!"
+       echo "ABORTING!"
+       exit 1
+    fi
+    qemu-img convert -f {{ disk.driver.type }} -O {{ disk.driver.type }} {{ disk.source }} {{ disk_destination }}
+    exit
   when: not disk_existance.stat.exists
 
 - name: clone_qcow2 - Set {{ disk_destination }} size to {{ disk.size }}G

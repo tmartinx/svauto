@@ -25,7 +25,15 @@
 
 
 - name: empty_qcow2 - Create {{ disk_destination }} format qcow2 ({{ vm.name }})
-  shell: "qemu-img create -f {{ disk.driver.type }} {{ disk_destination }} {{ disk.size }}G"
+  shell: |
+    if [ -f "{{ disk_destination }}" ]
+    then
+       echo "WARNING! File {{ disk_destination }} already exists!"
+       echo "ABORTING!"
+       exit 1
+    fi
+    qemu-img create -f {{ disk.driver.type }} {{ disk_destination }} {{ disk.size }}G
+    exit 0
   when: not disk_existance.stat.exists
 
 - name: empty_qcow2 - Set file permissions for {{ disk_destination }} ({{ vm.name }})

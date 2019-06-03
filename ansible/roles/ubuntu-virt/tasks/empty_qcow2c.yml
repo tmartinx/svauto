@@ -30,8 +30,15 @@
 
 - name: empty_qcow2c - Create {{ disk_destination }} Compressed QCoW2 ({{ vm.name }})
   shell: |
+    if [ -f "{{ disk_destination }}" ]
+    then
+       echo "WARNING! File {{ disk_destination }} already exists!"
+       echo "ABORTING!"
+       exit 1
+    fi
     qemu-img create -f "{{ disk.driver.type }}" "{{ disk_tmp_destination }}" "{{ disk.size }}G"
     qemu-img convert -c -f "{{ disk.driver.type }}" -O "{{ disk.driver.type }}" "{{ disk_tmp_destination }}" "{{ disk_destination }}"
+    exit 0
   when: not disk_existance.stat.exists
 
 - name: empty_qcow2c - Remove tmp image

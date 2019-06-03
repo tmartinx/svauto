@@ -25,13 +25,29 @@
 
 
 - name: clone_qcow2c - Clone with cp {{ disk.source }} to {{ disk_destination }} Format Compressed QCoW2 ({{ vm.name }})
-  shell: "cp {{ disk.source }} {{ disk_destination }}"
+  shell: |
+    if [ -f "{{ disk_destination }}" ]
+    then
+       echo "WARNING! File {{ disk_destination }} already exists!"
+       echo "ABORTING!"
+       exit 1
+    fi
+    cp -n {{ disk.source }} {{ disk_destination }}
+    exit
   when:
   - not disk_existance.stat.exists
   - disk.driver.clone_cp is defined and disk.driver.clone_cp
 
 - name: clone_qcow2c - Clone with qemu-img {{ disk.source }} to {{ disk_destination }} Format Compressed QCoW2 ({{ vm.name }})
-  shell: "qemu-img convert -c -f {{ disk.driver.type }} -O {{ disk.driver.type }} {{ disk.source }} {{ disk_destination }}"
+  shell: |
+    if [ -f "{{ disk_destination }}" ]
+    then
+       echo "WARNING! File {{ disk_destination }} already exists!"
+       echo "ABORTING!"
+       exit 1
+    fi
+    qemu-img convert -c -f {{ disk.driver.type }} -O {{ disk.driver.type }} {{ disk.source }} {{ disk_destination }}
+    exit 0
   when:
   - not disk_existance.stat.exists
   - disk.driver.clone_cp is undefined and not disk.driver.clone_cp
