@@ -131,7 +131,11 @@
       <source network='{{ interface.source.network }}'/>
 {% endif %}
 
+{% if interface.model is defined %}
        <model type='{{ interface.model.type }}'/>
+{% else %}
+       <model type='virtio'/>
+{% endif %}
 
 {% if (interface.boot is defined and interface.boot.order is defined) %}
        <boot order='{{ interface.boot.order }}'/>
