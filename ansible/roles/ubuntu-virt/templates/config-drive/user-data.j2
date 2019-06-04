@@ -12,3 +12,9 @@ ssh_authorized_keys:
 - {{ ssh_pub_key }}
 packages:
   - python
+{% if instance.devices.runcmd is defined %}
+runcmd:
+{% for cmd in instance.devices.runcmd %}
+  - {{ cmd }}
+{% endfor %}
+{% endif %}
