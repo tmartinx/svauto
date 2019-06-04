@@ -1,0 +1,13 @@
+---
+
+#
+# General Vars
+#
+
+mode: desktop
+
+desktop_environments: [ 'ubuntu-desktop' ]
+
+network_tools: true
+
+extra_packages: true

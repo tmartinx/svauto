@@ -1,0 +1,20 @@
+---
+
+#
+# Global Vars Applied to all groups / hosts
+#
+
+ntp_daemon_type: timesyncd
+
+regular_system_user: ubuntu
+
+base_os_upgrade: true
+
+os_release: stein
+
+
+#
+# Ubuntu Virt
+#
+
+setup: null

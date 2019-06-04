@@ -1,0 +1,94 @@
+---
+
+#
+# General Vars
+#
+
+network_tools: true
+
+ntp_daemon_type: chronyd
+
+
+#
+# Keepalived Group Settings
+#
+
+keepalived_auth_pass: "123pass"
+keepalived_router_id: "52"
+keepalived_shared_ip: "192.168.122.67"
+keepalived_check_script_enabled: true
+keepalived_check_process: "dhcpd"
+
+
+#
+# DHCP Group Settings
+#
+
+interfaces: "*"
+
+authoritative: true
+
+ddns_update_style: none
+
+failover: false
+failover_peer: "dhcp-ha"
+
+default_lease_time: 604800
+max_lease_time: 604800
+
+log_facility: "local7"
+
+#option:
+#  domain_name: "lunar-1.net.tcmc.com"
+#  domain-name-servers:
+#  - 1.1.1.1
+#  - 8.8.8.8
+#  - 9.9.9.9
+
+subnets:
+
+- subnet: 172.31.224.0
+  netmask: 255.255.255.0
+  cidr_mask: 24
+  comment: "IPMI"
+
+- subnet: 172.31.225.0
+  netmask: 255.255.255.0
+  cidr_mask: 24
+  comment: "Infra Servers"
+
+- subnet: 172.31.226.0
+  netmask: 255.255.255.0
+  cidr_mask: 24
+  comment: "Infra Services"
+
+- subnet: 172.31.227.0
+  netmask: 255.255.255.0
+  cidr_mask: 24
+  comment: "iSCSI"
+
+- subnet: 172.31.228.0
+  netmask: 255.255.252.0
+  cidr_mask: 22
+  comment: "MaaS PXE"
+
+- subnet: 10.100.0.0
+  netmask: 255.255.128.0
+  cidr_mask: 18
+  range_from: 10.100.0.100
+  range_to: 10.100.63.254
+  comment: "Office"
+  option:
+    domain_name_servers:
+    - 8.8.4.4
+    - 1.1.1.1
+    - 8.8.8.8
+    domain_name: "aio-1.net.tcmc.com"
+    routers: 10.100.0.1
+  default_lease_time: 7889400
+  max_lease_time: 7889400
+
+- subnet: 10.100.64.0
+  netmask: 255.255.252.0
+  cidr_mask: 22
+  comment: "MGMT"

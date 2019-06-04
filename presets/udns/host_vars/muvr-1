@@ -1,0 +1,491 @@
+---
+
+#
+# General Vars
+#
+
+mode: desktop
+
+desktop_environments: [ 'ubuntu-desktop' ]
+
+network_tools: true
+
+extra_packages: true
+
+
+#
+# Virtual Network Definitions
+#
+
+#vnets:
+#
+#- name: virbr1
+#  start: true
+#
+#- name: virbr2
+#  start: true
+#
+#- name: mgmt0
+#  start: true
+#  subnet: 10.100.64.1
+#  netmask: 255.255.252.0
+#  nat: true
+
+
+#
+# Instance's Definitions
+#
+
+instances:
+
+#
+# Instances for Infrastructure based on multiple routers
+#
+
+- name: vurtr-1
+  title: vurtr-1.lunar-1
+  description: "Ubuntu Border Firewall with nftables - 1"
+  libvirt_pool: local
+  memory: 2048
+  cpu: 2
+  devices:
+    disks:
+    - name: 8d02b167-e28c-4dca-9edf-e8c4f36804cb
+      source: /srv/cloud/ubuntu-18.04-server-cloudimg-amd64.img
+      size: 8
+      driver:
+        type: qcow2
+        compressed: true
+        clone_cp: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    cdroms:
+    - name: 7579bcde-52f8-43cb-b9a7-12e31ef5ed81
+      unit: 0
+    interfaces:
+    - source:
+        network: "default"
+      address:
+        slot: "0x03"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x04"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x05"
+  config_drive:
+    network_config:
+      ethernets:
+      - name: ens3
+        mtu: 1500
+        addresses:
+        - 192.168.122.251/24
+        gateway4: 192.168.122.1
+        nameservers:
+          addresses:
+          - 8.8.8.8
+          - 1.1.1.1
+          - 9.9.9.9
+          search:
+          - tcmc.com
+      - name: ens4
+        mtu: 1500
+      vlans:
+      - name: ens4.3066
+        id: 3066
+        link: ens4
+        addresses:
+        - 172.16.100.3/29
+        - 172.16.100.1/29
+        routes:
+        - to: 10.100.0.0/16
+          via: 172.16.100.2
+    user_data:
+      packages:
+      - python
+      runcmd:
+      - sed -i -e 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
+      - sysctl -p
+      - iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE
+
+
+- name: vucore-1
+  title: vucore-1.lunar-1
+  description: "Virtual Ubuntu L3 Core - 1"
+  libvirt_pool: local
+  memory: 2048
+  cpu: 2
+  devices:
+    disks:
+    - name: f4df551f-dab1-4caa-a51c-cda434d7fdd5
+      source: /srv/cloud/ubuntu-18.04-server-cloudimg-amd64.img
+      size: 8
+      driver:
+        type: qcow2
+        compressed: true
+        clone_cp: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    cdroms:
+    - name: 8de17ed4-58b3-4be0-92ac-a31827347ca2
+      unit: 0
+    interfaces:
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x03"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x04"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x05"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x06"
+  config_drive:
+    network_config:
+      ethernets:
+      - name: ens3
+        mtu: 1500
+      - name: ens4
+        mtu: 1500
+      - name: ens5
+        mtu: 1500
+      - name: ens6
+        mtu: 1500
+      vlans:
+      - name: ens3.3066
+        id: 3066
+        link: ens3
+        addresses:
+        - 172.16.100.3/29
+        gateway4: 172.16.100.1
+        nameservers:
+          addresses:
+          - 8.8.8.8
+          - 1.1.1.1
+          - 9.9.9.9
+          search:
+          - tcmc.com
+      - name: ens4.3067
+        id: 3067
+        link: ens4
+        addresses:
+        - 172.16.100.10/29
+        routes:
+        - to: 10.100.0.0/16
+          via: 172.16.100.9
+      - name: ens5.100
+        id: 100
+        link: ens5
+        addresses:
+        - 10.100.128.1/17
+      - name: ens6.110
+        id: 110
+        link: ens6
+        addresses:
+        - 10.100.55.1/24
+      - name: ens6.160
+        id: 160
+        link: ens6
+        addresses:
+        - 10.100.96.1/21
+    user_data:
+      packages:
+      - python
+      runcmd:
+      - sed -i -e 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
+      - sysctl -p
+
+
+- name: vus2s-1
+  title: vus2s-1.lunar-1
+  description: "Virtual Ubuntu S2S VPN - 1"
+  libvirt_pool: local
+  memory: 2048
+  cpu: 2
+  devices:
+    disks:
+    - name: facf04a1-d413-4856-a621-9a7f020d6787
+      source: /srv/cloud/ubuntu-18.04-server-cloudimg-amd64.img
+      size: 8
+      driver:
+        type: qcow2
+        compressed: true
+        clone_cp: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    cdroms:
+    - name: 0e3869ba-4302-4b34-ae50-1e001748e808
+      unit: 0
+    interfaces:
+    - source:
+        network: "default"
+      address:
+        slot: "0x03"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x04"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x05"
+    - source:
+        bridge: "br-usbnet0"
+      address:
+        slot: "0x06"
+  config_drive:
+    network_config:
+      ethernets:
+      - name: ens3
+        mtu: 1500
+        addresses:
+        - 192.168.122.252/24
+        gateway4: 192.168.122.1
+        nameservers:
+          addresses:
+          - 8.8.8.8
+          - 1.1.1.1
+          - 9.9.9.9
+          search:
+          - tcmc.com
+      - name: ens4
+        mtu: 1500
+      - name: ens5
+        mtu: 1500
+      - name: ens6
+        mtu: 1500
+        addresses:
+        - 10.100.56.70/22
+        - 10.100.56.205/22
+      vlans:
+      - name: ens4.3067
+        id: 3067
+        link: ens4
+        addresses:
+        - 172.16.100.11/29
+        - 172.16.100.9/29
+        routes:
+        - to: 10.100.0.0/16
+          via: 172.16.100.10
+        - to: 172.16.100.0/29
+          via: 172.16.100.10
+    user_data:
+      packages:
+      - python
+      runcmd:
+      - sed -i -e 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
+      - sysctl -p
+
+
+- name: vpfs2s-1
+  title: vpfs2s-1.lunar-1
+  description: "Virtual PFSense S2S VPN - 1"
+  libvirt_pool: local
+  memory: 2048
+  cpu: 2
+  devices:
+    disks:
+    - name: e3f7f1b0-6573-4534-b72b-527a85889f7a
+      size: 8
+      driver:
+        type: qcow2
+        compressed: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    interfaces:
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x03"
+      model:
+        type: "e1000"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x04"
+      model:
+        type: "e1000"
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x05"
+      model:
+        type: "e1000"
+    - source:
+        bridge: "br-usbnet0"
+      address:
+        slot: "0x06"
+      model:
+        type: "e1000"
+
+
+- name: svauto-1
+  title: svauto-1.lunar-1
+  description: "Remote Ubuntu Desktop, Ansible, SVAuto, Virt-Manager and IPMI/iLo Access - 1"
+  libvirt_pool: local
+  memory: 4096
+  cpu: 4
+  devices:
+    disks:
+    - name: 24832174-e17e-416b-b5c1-fec5248b9d7f
+      source: /srv/cloud/ubuntu-18.04-server-cloudimg-amd64.img
+      size: 32
+      driver:
+        type: qcow2
+        compressed: true
+        clone_cp: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    cdroms:
+    - name: 90af1786-e578-4b99-a3b9-6d1c81651924
+      unit: 0
+    interfaces:
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x03"
+  config_drive:
+    network_config:
+      ethernets:
+      - name: ens3
+        mtu: 1500
+      vlans:
+      - name: ens3.110
+        id: 110
+        link: ens3
+        addresses:
+        - 10.100.55.21/24
+        gateway4: 10.100.55.1
+        nameservers:
+          addresses:
+          - 8.8.8.8
+          - 1.1.1.1
+          - 9.9.9.9
+          search:
+          - tcmc.com
+    user_data:
+      packages:
+      - git
+      - python
+      - ansible
+
+
+- name: dhcp-1
+  title: dhcp-1.lunar-1
+  description: "ISC DHCP Master"
+  libvirt_pool: local
+  memory: 2048
+  cpu: 2
+  devices:
+    disks:
+    - name: 235b5255-a475-4474-960a-caa13e8edc0f
+      source: /srv/cloud/ubuntu-18.04-server-cloudimg-amd64.img
+      size: 8
+      driver:
+        type: qcow2
+        compressed: true
+        clone_cp: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    cdroms:
+    - name: b86ad727-ff02-40ed-906c-9b49729a7256
+      unit: 0
+    interfaces:
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x03"
+  config_drive:
+    network_config:
+      ethernets:
+      - name: ens3
+        mtu: 1500
+      vlans:
+      - name: ens3.110
+        id: 110
+        link: ens3
+        addresses:
+        - 10.100.55.61/24
+        - 10.100.55.67/22
+        gateway4: 10.100.55.1
+        nameservers:
+          addresses:
+          - 8.8.8.8
+          - 1.1.1.1
+          - 9.9.9.9
+          search:
+          - tcmc.com
+    user_data:
+      packages:
+      - python
+
+
+- name: dns-1
+  title: dns-1.lunar-1
+  description: "DNS 1"
+  libvirt_pool: local
+  memory: 2048
+  cpu: 2
+  devices:
+    disks:
+    - name: 4541bf14-1e77-436a-b074-08e86d4fcacf
+      source: /srv/cloud/ubuntu-18.04-server-cloudimg-amd64.img
+      size: 8
+      driver:
+        type: qcow2
+        compressed: true
+        clone_cp: true
+      target: sda
+      unit: 0
+      boot:
+        order: 1
+    cdroms:
+    - name: 213a6df9-6e9c-482d-b62f-93515b64d513
+      unit: 0
+    interfaces:
+    - source:
+        bridge: "br-bond0"
+      address:
+        slot: "0x03"
+  config_drive:
+    network_config:
+      ethernets:
+      - name: ens3
+        mtu: 1500
+      vlans:
+      - name: ens3.110
+        id: 110
+        link: ens3
+        addresses:
+        - 10.100.55.51/24
+        gateway4: 10.100.55.1
+        nameservers:
+          addresses:
+          - 8.8.8.8
+          - 1.1.1.1
+          - 9.9.9.9
+          search:
+          - tcmc.com
+    user_data:
+      packages:
+      - python
