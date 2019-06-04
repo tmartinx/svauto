@@ -1,10 +1,10 @@
 version: 2
 
-{% if instance.devices.ethernets is defined %}
+{% if instance.config_drive.network_config.ethernets is defined %}
 
 ethernets:
 
-{% for ethernet in instance.devices.ethernets %}
+{% for ethernet in instance.config_drive.network_config.ethernets %}
 
   {{ ethernet.name }}:
 
@@ -40,11 +40,11 @@ ethernets:
 {% endif %}
 
 
-{% if instance.devices.vlans is defined %}
+{% if instance.config_drive.network_config.vlans is defined %}
 
 vlans:
 
-{% for vlan in instance.devices.vlans %}
+{% for vlan in instance.config_drive.network_config.vlans %}
 
   {{ vlan.name }}:
 
@@ -83,11 +83,11 @@ vlans:
 {% endif %}
 
 
-{% if instance.devices.wifis is defined %}
+{% if instance.config_drive.network_config.wifis is defined %}
 
 wifis:
 
-{% for wifi in instance.devices.wifis %}
+{% for wifi in instance.config_drive.network_config.wifis %}
 
   {{ wifi.name }}:
 
@@ -123,11 +123,11 @@ wifis:
 {% endif %}
 
 
-{% if instance.devices.bonds is defined %}
+{% if instance.config_drive.network_config.bonds is defined %}
 
 bonds:
 
-{% for bond in instance.devices.bonds %}
+{% for bond in instance.config_drive.network_config.bonds %}
 
   {{ bond.name }}:
 
@@ -163,11 +163,11 @@ bonds:
 {% endif %}
 
 
-{% if instance.devices.bridges is defined %}
+{% if instance.config_drive.network_config.bridges is defined %}
 
 bridges:
 
-{% for bridge in instance.devices.bridges %}
+{% for bridge in instance.config_drive.network_config.bridges %}
 
   {{ bridge.name }}:
 

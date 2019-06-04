@@ -11,16 +11,16 @@ ssh_pwauth: True
 ssh_authorized_keys:
 - {{ ssh_pub_key }}
 
-{% if instance.devices.packages is defined %}
+{% if instance.config_drive.user_data.packages is defined %}
 packages:
-{% for package in instance.devices.packages %}
+{% for package in instance.config_drive.user_data.packages %}
   - {{ package }}
 {% endfor %}
 {% endif %}
 
-{% if instance.devices.runcmd is defined %}
+{% if instance.config_drive.user_data.runcmd is defined %}
 runcmd:
-{% for cmd in instance.devices.runcmd %}
+{% for cmd in instance.config_drive.user_data.runcmd %}
   - {{ cmd }}
 {% endfor %}
 {% endif %}
