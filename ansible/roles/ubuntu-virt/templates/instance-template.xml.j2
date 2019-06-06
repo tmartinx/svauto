@@ -151,6 +151,10 @@
       <driver name='vhost' queues='{{ interface.queues }}'/>
 {% endif %}
 
+{% if interface.openvswitch is defined %}
+       <virtualport type='openvswitch'/>
+{% endif %}
+
      </interface>
 {% endfor %}
 
