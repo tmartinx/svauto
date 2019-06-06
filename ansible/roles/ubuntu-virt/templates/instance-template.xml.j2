@@ -33,6 +33,10 @@
   <cpu mode='host-model' check='partial'>
     <model fallback='allow'/>
 
+{% if instance.cpu_topology is defined %}
+    <topology sockets='{{ instance.cpu_topology.sockets }}' cores='{{ instance.cpu_topology.cores }}' threads='{{ instance.cpu_topology.threads }}'/>
+{% endif %}
+
 {% if (openvswitch_mode is defined and openvswitch_mode == 'dpdk') %}
     <numa>
       <cell id='0' cpus='0-3' memory='{{ instance.memory * 1024 }}' unit='KiB' memAccess='shared'/>
