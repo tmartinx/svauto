@@ -1,0 +1,80 @@
+ ! Configuration File for keepalived
+
+{% if (ka_check_script_enabled is defined and ka_check_script_enabled) %}
+global_defs {
+
+    enable_script_security
+
+}
+{% endif %}
+
+{% if (ka_check_script_enabled is defined and ka_check_script_enabled) %}
+vrrp_sync_group G1 {
+
+    user root
+
+    group {
+        {{ ka_instance_wan_name }}
+        {{ ka_instance_lan_name }}
+    }
+
+    notify_master "/etc/conntrackd/primary-backup.sh primary"
+    notify_backup "/etc/conntrackd/primary-backup.sh backup"
+    notify_fault "/etc/conntrackd/primary-backup.sh fault"
+
+}
+{% endif %}
+
+vrrp_instance {{ ka_instance_wan_name }} {
+
+    state {{ ka_instance_wan_role }}
+    interface {{ ka_instance_wan_interface }}
+    virtual_router_id {{ ka_instance_wan_router_id }}
+
+    priority {{ ka_priority }}
+    advert_int 1
+
+    use_vmac               # VRRP with VMAC address
+    vmac_xmit_base         # Transmit VRRP adverts over physical interface
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ ka_instance_wan_auth_pass }}
+    }
+
+    virtual_ipaddress {
+        {{ ka_instance_wan_vip }} dev {{ ka_instance_wan_interface }}
+    }
+
+# Review:
+#    nopreempt
+#    garp_master_delay 1
+
+}
+
+vrrp_instance {{ ka_instance_lan_name }} {
+
+    state {{ ka_instance_lan_role }}
+    interface {{ ka_instance_lan_interface }}
+    virtual_router_id {{ ka_instance_lan_router_id }}
+
+    priority {{ ka_priority }}
+    advert_int 1
+
+    use_vmac               # VRRP with VMAC address
+    vmac_xmit_base         # Transmit VRRP adverts over physical interface
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ ka_instance_lan_auth_pass }}
+    }
+
+    virtual_ipaddress {
+        {{ ka_instance_lan_vip }} dev {{ ka_instance_lan_interface }}
+    }
+
+# Review:
+#    nopreempt
+#    garp_master_delay 1
+
+}

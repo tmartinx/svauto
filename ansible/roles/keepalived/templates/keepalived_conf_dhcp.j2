@@ -1,10 +1,10 @@
  ! Configuration File for keepalived
 
-global_defs {
 {% if (keepalived_check_script_enabled is defined and keepalived_check_script_enabled) %}
+global_defs {
     enable_script_security
-{% endif %}
 }
+{% endif %}
 
 {% if (keepalived_check_script_enabled is defined and keepalived_check_script_enabled) %}
 vrrp_script chk_service {
@@ -25,7 +25,7 @@ vrrp_script chk_service {
 vrrp_instance VI_1 {
     state {{ keepalived_role }}
     interface {{ keepalived_shared_iface }}
-    virtual_router_id {{ keepalived_router_id }}
+    virtual_router_id {{ keepalived_instance_id }}
 
 {% if keepalived_role.lower() == "master" %}
     priority {{ keepalived_priority }}
