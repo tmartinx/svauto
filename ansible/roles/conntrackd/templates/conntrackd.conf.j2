@@ -8,10 +8,13 @@ Sync {
     UDP {
         IPv4_address {{ conntrackd_local_ip }}
         IPv4_Destination_Address {{ conntrackd_peer_ip }}
-        Port 3780
         Interface {{ conntrackd_local_interface }}
+
+        Port 3780
+
         SndSocketBuffer 1249280
         RcvSocketBuffer 1249280
+
         Checksum on
     }
 }
@@ -35,16 +38,11 @@ General {
             UDP
             ICMP
         }
+
         Address Ignore {
-            IPv4_address 127.0.0.1
-            IPv4_address 192.168.122.100
-            IPv4_address 192.168.122.91
-            IPv4_address 192.168.122.83
-            IPv4_address 10.145.55.1
-            IPv4_address 10.145.55.2
-            IPv4_address 10.145.55.3
-            IPv4_address 10.145.56.251
-            IPv4_address 10.145.56.252
+{% for ignore_ip in conntrackd_ignore_address %}
+            IPv4_address {{ ignore_ip }}
+{% endfor %}
         }
     }
 }
