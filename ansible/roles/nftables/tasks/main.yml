@@ -23,6 +23,7 @@
 
 - name: ubuntu - copy nftables rules (very basic and static)
   template: src=nftables_conf.j2 dest=/etc/nftables.conf
+  notify: restart nftables
 
 - name: ubuntu - copy old iptables example script
   copy: src=iptables_old_script.sh dest=/root/iptables_old_script.sh mode=0755
