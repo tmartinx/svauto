@@ -135,6 +135,18 @@ bonds:
      mtu: {{ bond.mtu }}
 {% endif %}
 
+     interfaces:
+
+{% for interface in bond.interfaces  %}
+     - {{ interface }}
+{% endfor %}
+
+     parameters:
+
+       mode: {{ bond.parameters.mode }}
+       primary: {{ bond.parameters.primary }}
+       mii-monitor-interval: {{ bond.parameters.mii_monitor_interval }}
+
 {% if bond.addresses is defined %}
      addresses: [ {{ bond.addresses | join(", ") }} ]
 {% endif %}
