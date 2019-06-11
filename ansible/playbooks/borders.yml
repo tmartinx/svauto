@@ -7,6 +7,6 @@
 - hosts: borders
   become: yes
   roles:
+  - nftables
   - conntrackd
   - keepalived
-  - nftables
