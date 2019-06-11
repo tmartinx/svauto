@@ -6,8 +6,8 @@ table ip nat {
         chain PREROUTING {
                 type nat hook prerouting priority 0; policy accept;
 # TODO: An awesome jinja2 to deal with port forwards:
-#                iifname "{{ linux_nftables_wan1_interface }}" ip daddr 1.2.3.2 tcp dport 2200 dnat to 192.168.0.50:ssh
-#                iifname "{{ linux_nftables_wan1_interface }}" ip daddr 1.2.3.3 dnat to 172.29.235.253
+#                iifname {{ linux_nftables_wan1_interface }} ip daddr 1.2.3.2 tcp dport 2200 dnat to 192.168.0.50:ssh
+#                iifname {{ linux_nftables_wan1_interface }} ip daddr 1.2.3.3 dnat to 172.29.235.253
         }
 
         chain INPUT {
@@ -20,35 +20,35 @@ table ip nat {
 
         chain POSTROUTING {
                 type nat hook postrouting priority 0; policy accept;
-                ip saddr "{{ linux_nftables_office_subnet }}" oifname "{{ linux_nftables_wan1_interface }}" snat "{{ linux_nftables_wan1_ip }}"
+                ip saddr {{ linux_nftables_office_subnet }} oifname {{ linux_nftables_wan1_interface }} snat {{ linux_nftables_wan1_ip }}
         }
 }
 
 table ip filter {
         chain INPUT {
                 type filter hook input priority 0; policy drop;
-                iifname "lo" accept
+                iifname lo accept
                 ct state established,related accept
-                iifname "{{ linux_nftables_wan1_interface }}" drop
-                iifname "{{ linux_nftables_lan1_interface }}" ct state new accept
-                iifname "{{ linux_nftables_lan2_interface }}" ct state new accept
+                iifname {{ linux_nftables_wan1_interface }} drop
+                iifname {{ linux_nftables_lan1_interface }} ct state new accept
+                iifname {{ linux_nftables_lan2_interface }} ct state new accept
         }
 
         chain FORWARD {
                 type filter hook forward priority 0; policy drop;
                 ct state established,related accept
-                iifname "{{ linux_nftables_wan1_interface }}" drop
-                iifname "{{ linux_nftables_lan1_interface }}" ct state new accept
-                iifname "{{ linux_nftables_lan2_interface }}" ct state new accept
+                iifname {{ linux_nftables_wan1_interface }} drop
+                iifname {{ linux_nftables_lan1_interface }} ct state new accept
+                iifname {{ linux_nftables_lan2_interface }} ct state new accept
         }
 
         chain OUTPUT {
                 type filter hook output priority 0; policy drop;
-                oifname "lo" accept
+                oifname lo accept
                 ct state established,related accept
-                oifname "{{ linux_nftables_wan1_interface }}" ct state new accept
-                oifname "{{ linux_nftables_lan1_interface }}" ct state new accept
-                oifname "{{ linux_nftables_lan2_interface }}" ct state new accept
+                oifname {{ linux_nftables_wan1_interface }} ct state new accept
+                oifname {{ linux_nftables_lan1_interface }} ct state new accept
+                oifname {{ linux_nftables_lan2_interface }} ct state new accept
         }
 }
 
