@@ -20,7 +20,7 @@ table ip nat {
 
         chain POSTROUTING {
                 type nat hook postrouting priority 0; policy accept;
-                oifname "{{ linux_nftables_wan1_interface }}" snat "{{ linux_nftables_wan1_ip }}"
+                ip saddr "{{ linux_nftables_office_subnet }}" oifname "{{ linux_nftables_wan1_interface }}" snat "{{ linux_nftables_wan1_ip }}"
         }
 }
 
