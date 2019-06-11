@@ -12,5 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: ubuntu - Installing NoMachine (Remote Desktop via SSH)
-  apt: deb=https://download.nomachine.com/download/6.6/Linux/nomachine_6.6.8_5_amd64.deb
+- name: ubuntu - Installing NoMachine (Remote Desktop)
+  apt: deb=https://download.nomachine.com/download/6.7/Linux/nomachine_6.7.6_11_amd64.deb
