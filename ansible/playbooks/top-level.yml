@@ -8,8 +8,6 @@
   become: yes
   roles:
   - bootstrap
-  - grub
-  - time
 
 
 - hosts: metais
@@ -17,7 +15,6 @@
   roles:
   - ansible
   - ssh_keypair
-  - packer
 
 
 - hosts: all
