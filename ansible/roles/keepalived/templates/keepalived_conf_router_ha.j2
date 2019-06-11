@@ -46,9 +46,8 @@ vrrp_instance {{ ka_instance_wan_name }} {
         {{ ka_instance_wan_vip }} dev {{ ka_instance_wan_interface }}
     }
 
-# Review:
-#    nopreempt
-#    garp_master_delay 1
+    nopreempt
+    garp_master_delay 1
 
 }
 
@@ -73,8 +72,7 @@ vrrp_instance {{ ka_instance_lan_name }} {
         {{ ka_instance_lan_vip }} dev {{ ka_instance_lan_interface }}
     }
 
-# Review:
-#    nopreempt
-#    garp_master_delay 1
+    nopreempt
+    garp_master_delay 1
 
 }
