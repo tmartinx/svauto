@@ -13,7 +13,8 @@
       "ssh_wait_timeout": "30s",
       "shutdown_command": "sudo systemctl poweroff",
       "qemuargs": [
-        ["-m","2048M"]
+        ["-m","2048M"],
+        ["-display", "gtk"]
       ],
       "disk_size": 7168,
       "format": "raw",

@@ -14,7 +14,8 @@
       "shutdown_command": "shutdown -P now",
       "qemuargs": [
         ["--no-reboot"],
-        ["-m","2048M"]
+        ["-m","2048M"],
+        ["-display", "gtk"]
       ],
       "disk_size": 8192,
       "format": "raw",
