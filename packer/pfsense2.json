@@ -25,7 +25,7 @@
 	"reboot<enter>"
       ],
       "type": "qemu",
-      "iso_url": "/srv/ISO/pfSense-CE-2.4.4-RELEASE-p1-amd64.iso",
+      "iso_url": "/srv/iso/pfSense-CE-2.4.4-RELEASE-p1-amd64.iso",
       "iso_checksum_type": "sha256",
       "iso_checksum": "e2ed9c0e73c5808533e31952e9abf0d2d34ed46924de896134fe7622ebc03890",
       "shutdown_command": "shutdown -p now",
