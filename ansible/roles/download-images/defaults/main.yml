@@ -40,6 +40,13 @@ downloads:
   image_type: cloud
   getit: true
 
+- name: debian-10-openstack-amd64.qcow2
+  distro: debian
+  url: http://cdimage.debian.org/cdimage/openstack/current-10/debian-10-openstack-amd64.qcow2
+  dest: /srv/cloud/debian-10-openstack-amd64.qcow2
+  image_type: cloud
+  getit: true
+
 - name: debian-9-openstack-amd64.qcow2
   distro: debian
   url: http://cdimage.debian.org/cdimage/openstack/current-9/debian-9-openstack-amd64.qcow2
@@ -112,6 +119,13 @@ downloads:
   distro: ubuntu
   url: http://mirror.csclub.uwaterloo.ca/ubuntu-releases/16.04.6/ubuntu-16.04.6-server-amd64.iso
   dest: /srv/iso/ubuntu-16.04.6-server-amd64.iso
+  image_type: iso
+  getit: true
+
+- name: debian-10.0.0-amd64-netinst.iso
+  distro: debian
+  url: https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.0.0-amd64-netinst.iso
+  dest: /srv/iso/debian-10.0.0-amd64-netinst.iso
   image_type: iso
   getit: true
 
