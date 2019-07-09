@@ -47,13 +47,6 @@ downloads:
   image_type: cloud
   getit: true
 
-- name: debian-9-openstack-amd64.qcow2
-  distro: debian
-  url: http://cdimage.debian.org/cdimage/openstack/current-9/debian-9-openstack-amd64.qcow2
-  dest: /srv/cloud/debian-9-openstack-amd64.qcow2
-  image_type: cloud
-  getit: true
-
 - name: devuan_ascii_2.0.0_amd64_qemu.qcow2.xz
   distro: debian
   url: https://files.devuan.org/devuan_ascii/virtual/devuan_ascii_2.0.0_amd64_qemu.qcow2.xz
@@ -126,13 +119,6 @@ downloads:
   distro: debian
   url: https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.0.0-amd64-netinst.iso
   dest: /srv/iso/debian-10.0.0-amd64-netinst.iso
-  image_type: iso
-  getit: true
-
-- name: debian-9.9.0-amd64-netinst.iso
-  distro: debian
-  url: https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-9.9.0-amd64-netinst.iso
-  dest: /srv/iso/debian-9.9.0-amd64-netinst.iso
   image_type: iso
   getit: true
 
