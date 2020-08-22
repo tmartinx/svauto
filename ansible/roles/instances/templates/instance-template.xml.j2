@@ -1,0 +1,285 @@
+<domain type='kvm'>
+
+  <name>{{ instance.name }}</name>
+  <title>{{ instance.title | default(instance.name) }} </title>
+  <description>{{ instance.description | default(instance.name)}}</description>
+
+  <memory unit='KiB'>{{ 1024 * (instance.devices.memory | default(libvirt_profiles[instance.profile].devices.memory)) }}</memory>
+  <currentMemory unit='KiB'>{{ 1024 * (instance.devices.memory | default(libvirt_profiles[instance.profile].devices.memory)) }}</currentMemory>
+
+{% if (instance.devices.hugepages is defined and instance.devices.hugepages) %}
+  <memoryBacking>
+    <hugepages/>
+  </memoryBacking>
+{% endif %}
+
+  <os>
+    <type arch='x86_64'>hvm</type>
+
+{% if (instance.devices.firmware is defined and instance.devices.firmware == 'efi') %}
+    <loader readonly='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE.fd</loader>
+    <nvram>{{ instance_subdir }}/nvram-{{ instance.name }}_VARS.fd</nvram>
+{% endif %}
+
+    <bootmenu enable='yes'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+
+{% if (instance.devices.hyperv is defined and instance.devices.hyperv) %}
+    <hyperv>
+      <relaxed state='on'/>
+      <vapic state='on'/>
+      <spinlocks state='on' retries='8191'/>
+    </hyperv>
+{% endif %}
+
+    <vmport state='off'/>
+  </features>
+
+{% if instance.devices.numa is defined %}
+  <numatune>
+    <memory mode='strict' nodeset='{{ instance.devices.numa.node }}'/>
+  </numatune>
+{% endif %}
+
+  <vcpu placement='static'>{{ instance.devices.cpu.cores | default(libvirt_profiles[instance.profile].devices.cpu.cores) }}</vcpu>
+
+  <cpu mode='host-model' check='partial'>
+    <model fallback='allow'/>
+
+{% if (instance.devices.cpu.sockets is defined and instance.devices.cpu.threads is defined) %}
+    <topology sockets='{{ instance.devices.cpu.sockets }}' cores='{{ instance.devices.cpu.cores }}' threads='{{ instance.devices.cpu.threads }}'/>
+{% endif %}
+
+{% if instance.devices.numa is defined %}
+    <numa>
+      <cell id='0' cpus='{{ instance.devices.numa.cpus }}' memory='{{ instance.devices.memory * 1024 }}' unit='KiB' memAccess='shared'/>
+    </numa>
+{% endif %}
+
+  </cpu>
+  <clock offset='utc'>
+    <timer name='rtc' tickpolicy='catchup'/>
+    <timer name='pit' tickpolicy='delay'/>
+    <timer name='hpet' present='no'/>
+
+{% if (instance.devices.hyperv is defined and instance.devices.hyperv) %}
+    <timer name='hypervclock' present='yes'/>
+{% endif %}
+
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>restart</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/kvm-spice</emulator>
+
+{% for disk in instance.devices.storage.disks | default(libvirt_profiles[instance.profile].devices.storage.disks) %}
+
+{% if (disk.driver.type is defined and disk.driver.type == 'raw') %}
+    <disk type='block' device='disk'>
+    <driver name='qemu' type='{{ disk.driver.type }}' discard='unmap'/>
+    <source dev='{{ disk.source }}'/>
+{% else %}
+    <disk type='file' device='disk'>
+    <driver name='qemu' type='qcow2' discard='unmap'/>
+    <source file='{{ disk_destination }}'/>
+{% endif %}
+
+      <target dev='{{ disk.target }}' bus='scsi'/>
+
+{% if (disk.boot is defined) %}
+      <boot order='{{ disk.boot }}'/>
+{% endif %}
+
+      <address type='drive' controller='0' bus='0' target='0' unit='{{ disk.unit }}'/>
+{% if disk.name is defined %}
+      <serial>{{ disk.name }}</serial>
+{% endif %}
+    </disk>
+
+{% endfor %}
+
+{% if (instance.config_drive_iso | default(libvirt_profiles[instance.profile].config_drive_iso)) or (instance.cdrom is defined | default (false)) %}
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+{% if instance.cdrom | default (false) %}
+      <source file='{{ isos[instance.cdrom]  }}'/>
+{% else %}
+      <source file='{{ config_drive_filename }}'/>
+{% endif %}
+      <target dev='hda' bus='ide'/>
+      <readonly/>
+{% if instance.cdrom is defined and instance.cdroom.boot is defined %}
+      <boot order='{{ cdrom.boot }}'/>
+{% endif %}
+      <address type='drive' controller='0' bus='0' target='0' unit='1'/>
+    </disk>
+{% endif %}
+
+{% if instance.devices.storage.cdroms is defined %}
+{% for cdrom in instance.devices.storage.cdroms %}
+
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+
+      <source file='{{ cdrom.source }}'/>
+
+      <target dev='hdb' bus='ide'/>
+      <readonly/>
+      <address type='drive' controller='0' bus='0' target='0' unit='{{ cdrom.unit }}'/>
+    </disk>
+
+{% endfor %}
+{% endif %}
+
+    <controller type='usb' index='0' model='ich9-ehci1'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x7'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci1'>
+      <master startport='0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x0' multifunction='on'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci2'>
+      <master startport='2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x1'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci3'>
+      <master startport='4'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x2'/>
+    </controller>
+    <controller type='scsi' index='0' model='virtio-scsi'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0d' function='0x0'/>
+    </controller>
+    <controller type='pci' index='0' model='pci-root'/>
+    <controller type='virtio-serial' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0e' function='0x0'/>
+    </controller>
+
+{% for interface in instance.devices.network.interfaces | default(libvirt_profiles[instance.profile].devices.network.interfaces) %}
+
+     <interface type='{{ interface.source.type }}'>
+
+{% if interface.source.type == "bridge" %}
+      <source bridge='{{ interface.source.bridge }}'/>
+{% endif %}
+
+{% if interface.source.type == "network" %}
+      <source network='{{ interface.source.bridge }}'/>
+{% endif %}
+
+{% if interface.source.type == "vhostuser" %}
+      <source type='unix' path='/tmp/{{ instance.name }}-ens{{ interface.source.slot }}' mode='server'/>
+{% endif %}
+
+{% if (interface.backend is defined and interface.backend == "openvswitch") %}
+       <virtualport type='openvswitch'/>
+{% endif %}
+
+{% if interface.model is defined %}
+       <model type='{{ interface.model.type }}'/>
+{% else %}
+       <model type='virtio'/>
+{% endif %}
+
+{% if interface.boot is defined %}
+       <boot order='{{ interface.boot }}'/>
+{% endif %}
+
+       <address type='pci' domain='0x0000' bus='0x00' slot='0x0{{ interface.source.slot }}' function='0x0'/>
+
+{% if (interface.queues is defined and interface.queues >= 1) %}
+      <driver queues='{{ interface.queues }}'/>
+{% endif %}
+
+{% if (interface.csum_off is defined and interface.csum_off == true) %}
+{% if (interface.queues is defined and interface.queues >= 1) %}
+      <driver name='vhost' queues='{{ interface.queues }}'>
+{% else %}
+      <driver>
+{% endif %}
+        <host csum='off'/>
+        <guest csum='off'/>
+      </driver>
+{% endif %}
+
+     </interface>
+{% endfor %}
+
+    <serial type='pty'>
+      <log file='/var/log/libvirt/qemu/{{ instance.name }}-serial0.log' append='off'/>
+      <target type='isa-serial' port='0'>
+        <model name='isa-serial'/>
+      </target>
+    </serial>
+    <console type='pty'>
+      <log file='/var/log/libvirt/qemu/{{ instance.name }}-serial0.log' append='off'/>
+      <target type='serial' port='0'/>
+    </console>
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>
+      <address type='virtio-serial' controller='0' bus='0' port='1'/>
+    </channel>
+    <channel type='spicevmc'>
+      <target type='virtio' name='com.redhat.spice.0'/>
+      <address type='virtio-serial' controller='0' bus='0' port='2'/>
+    </channel>
+    <input type='tablet' bus='usb'>
+      <address type='usb' bus='0' port='1'/>
+    </input>
+    <input type='mouse' bus='ps2'/>
+    <input type='keyboard' bus='ps2'/>
+    <graphics type='spice' autoport='yes'>
+      <listen type='address'/>
+
+{% if (instance.devices.fast_local_graphics is defined and instance.devices.fast_local_graphics) %}
+      <image compression='off'/>
+      <streaming mode='off'/>
+{% endif %}
+
+    </graphics>
+    <sound model='ich6'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0b' function='0x0'/>
+    </sound>
+    <video>
+
+{% if instance.devices.video is defined %}
+
+      <model type='{{ instance.devices.video.driver }}' heads='1' primary='yes'>
+
+{% if (instance.devices.video.driver == 'virtio' and instance.devices.video.enable_3d is defined and instance.devices.video.enable_3d) %}
+        <acceleration accel3d='yes'/>
+{% else %}
+        <acceleration accel3d='no'/>
+{% endif %}
+      </model>
+
+{% else %}
+
+      <model type='qxl' heads='1' primary='yes'/>
+
+{% endif %}
+
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
+    </video>
+    <redirdev bus='usb' type='spicevmc'>
+      <address type='usb' bus='0' port='2'/>
+    </redirdev>
+    <redirdev bus='usb' type='spicevmc'>
+      <address type='usb' bus='0' port='3'/>
+    </redirdev>
+    <memballoon model='virtio'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0f' function='0x0'/>
+    </memballoon>
+    <rng model='virtio'>
+      <backend model='random'>/dev/urandom</backend>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x10' function='0x0'/>
+    </rng>
+  </devices>
+</domain>

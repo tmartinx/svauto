@@ -1,0 +1,16 @@
+---
+
+- name: instance-firmware-efi - Copy Instance's private NVRAM ({{ instance.name }}_VARS.fd)
+  synchronize:
+    src: "/usr/share/OVMF/OVMF_VARS.fd"
+    dest: "{{ libvirt_pool }}/nvram-{{ instance.name }}_VARS.fd"
+    rsync_opts:
+    - "--ignore-existing"
+
+
+- name: instance-firmware-efi - Set file permissions for "{{ instance.name }}_VARS.fd"
+  file:
+    path: "{{ libvirt_pool }}/nvram-{{ instance.name }}_VARS.fd"
+    owner: libvirt-qemu
+    group: kvm
+    mode: 0640

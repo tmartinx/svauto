@@ -1,0 +1,102 @@
+---
+
+# Copyright 2020, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+#
+# Set and check ISO destinations
+#
+- name: set_fact cdrom config
+  set_fact:
+    cdrom:
+      unit: 0
+      pool: local
+      target: hba
+
+- name: create-config-drive - Set fact libvirt_pool to ({{ cdrom.pool }}) for {{ instance.name }}-disk-{{ cdrom.unit }}.iso
+  set_fact:
+    libvirt_pool: "/var/lib/libvirt/{{ cdrom.pool }}"
+
+- name: create-config-drive - ({{ instance.name }}) - Set fact disk_destination
+  set_fact:
+    config_drive_filename: "{{ libvirt_pool }}/{{ instance.name }}-disk-{{ cdrom.unit }}.iso"
+
+- name: create-config-drive - Check if {{ config_drive_filename }} already exists
+  stat:
+    path: "{{ config_drive_filename }}"
+  register: iso_existance
+
+
+
+- name: create-config-drive - Set fact config_drive_tmp_subdir to /tmp/{{ instance.name }}-disk-{{ cdrom.unit }}-config-drive
+  set_fact:
+    config_drive_tmp_subdir: "/tmp/{{ instance.name }}-disk-{{ cdrom.unit }}-config-drive"
+  when: not iso_existance.stat.exists
+
+- name: create-config-drive - Create temporary subdirecory
+  file:
+    path: "{{ config_drive_tmp_subdir }}"
+    state: directory
+  when: not iso_existance.stat.exists
+
+
+#
+# Cloud-Init Files
+#
+- name: set_fact network_config
+  set_fact:
+    network_config: "{{ instance.network }}"
+
+- name: create-config-drive - Output Cloud-Init files ({{ instance.name }})
+  copy:
+    dest: '{{ config_drive_tmp_subdir }}/{{ cloud_init.dest }}'
+    content: "{{ cloud_init.content | to_nice_yaml }}"
+  with_items:
+    - { dest: user-data, content: "{{ config_drive.user_data }}" }
+    - { dest: meta-data, content: "{{ config_drive.meta_data }}" }
+    - { dest: network-config, content: "{{ network_config | combine({'version': 2 }) }}" } 
+  loop_control:
+    loop_var: cloud_init
+  when: not iso_existance.stat.exists
+
+- name: create-config-drive - Add \#cloud-config header to user-date file
+  lineinfile:
+    path: '{{ config_drive_tmp_subdir }}/user-data'
+    line: "#cloud-config"
+    insertbefore: BOF
+  when: not iso_existance.stat.exists
+
+#
+# Config Drive ISO Creation
+#
+
+- name: create-config-drive - Create Config Drive ISO Image for {{ instance.name }}
+  shell: genisoimage -v -output "{{ config_drive_filename }}" -volid cidata -joliet -rock "{{ config_drive_tmp_subdir }}/"*
+  when: not iso_existance.stat.exists
+
+
+- name: create-config-drive - Set file permissions for {{ config_drive_filename }} ({{ instance.name }})
+  file:
+    path: "{{ config_drive_filename }}"
+    owner: libvirt-qemu
+    group: kvm
+    mode: 0640
+
+
+- name: create-config-drive - Clean artifact subdir
+  file:
+    state: absent
+    path: "{{ config_drive_tmp_subdir }}"
+  when: not iso_existance.stat.exists

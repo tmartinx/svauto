@@ -1,0 +1,47 @@
+---
+
+# Copyright 2020, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+- name: create-disk - Set fact libvirt_pool to ({{ disk.pool }}) for {{ instance.name }}-disk-{{ disk.unit }}.qcow2c
+  set_fact:
+    libvirt_pool: "/var/lib/libvirt/{{ disk.pool }}"
+
+
+- name: create-disk - ({{ instance.name }}) - Set fact disk_destination
+  set_fact:
+    disk_destination: "{{ libvirt_pool }}/{{ instance.name }}-disk-{{ disk.unit }}.qcow2c"
+
+- name: create-disk - ({{ instance.name }}) - Register {{ disk_destination }} stat
+  stat:
+    path: "{{ disk_destination }}"
+  register: disk_existance
+
+
+- name: "create-disk - ({{ instance.name }}) - Clone with cp {{ disk.source }} to {{ disk_destination }}"
+  shell: cp -n {{ distros[instance.distro | default(libvirt_profiles[instance.profile].distro)] }} {{ disk_destination }}
+  when: not disk_existance.stat.exists
+
+- name: create-disk - ({{ instance.name }}) - Set {{ disk_destination }} size to {{ disk.size }}
+  shell: "qemu-img resize {{ disk_destination }} {{ disk.size }}"
+  when: not disk_existance.stat.exists
+
+
+- name: create-disk - ({{ instance.name }}) - Set file permissions for {{ disk_destination }}
+  file:
+    path: "{{ disk_destination }}"
+    owner: libvirt-qemu
+    group: kvm
+    mode: 0640

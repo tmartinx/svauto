@@ -1,0 +1,77 @@
+---
+
+# Copyright 2020, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+- name: spin-instance-libvirt - Include create-disk.yml when instance disk is defined
+  include: create-disk.yml
+  with_items: "{{ instance.devices.storage.disks }}"
+  loop_control:
+    loop_var: disk
+  when:
+  - instance.devices.storage.disks is defined
+
+- name: spin-instance-libvirt - Include create-disk.yml with default disk
+  include: create-disk.yml
+  with_items: "{{ libvirt_profiles[instance.profile].devices.storage.disks }}"
+  loop_control:
+    loop_var: disk
+  when:
+  - instance.devices.storage.disks is undefined
+  - libvirt_profiles[instance.profile].devices.storage.disks is defined
+
+
+- name: set_fact config_drive
+  set_fact:
+    config_drive: "{{ lookup('template', 'config-drive.j2') | from_yaml }}"
+
+- name: spin-instance-libvirt - Include create-config-drive.yml
+  include: create-config-drive.yml
+  when:
+  - instance.config_drive_iso | default(libvirt_profiles[instance.profile].config_drive_iso)
+
+- name: spin-instance-libvirt - instance-firmware-efi.yml
+  include: instance-firmware-efi.yml
+  when:
+  - instance.firmware is defined
+  - instance.firmware == 'efi'
+
+
+- name: spin-instance-libvirt - Define ({{ instance.name }})
+  virt:
+    command: define
+    xml: "{{ lookup('template', 'instance-template.xml.j2') }}"
+
+
+- name: spin-instance-libvirt - Set ({{ instance.name }}) to AutoStart
+  virt:
+    name: "{{ instance.name }}"
+    autostart: yes
+  when:
+  - instance.autostart | default(libvirt_profiles[instance.profile].autostart)
+
+- name: spin-instance-libvirt - Start ({{ instance.name }})
+  virt:
+    name: "{{ instance.name }}"
+    state: running
+  when:
+  - instance.state is defined and instance.state == "started" or libvirt_profiles[instance.profile].state == "started"
+
+- name: spin-instance-libvirt - Stop ({{ instance.name }})
+  virt:
+    name: "{{ instance.name }}"
+    state: shutdown
+  when:
+  - instance.state is defined and instance.state == "stopped" or libvirt_profiles[instance.profile].state == "stopped"

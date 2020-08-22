@@ -1,0 +1,19 @@
+---
+
+- name: spin-instance-lxd - Create {{ instance.name }} Instance
+  lxd_container:
+    name: "{{ instance.name }}"
+    state: "{{ instance.state }}"
+    source:
+      type: image
+      mode: pull
+      server: https://cloud-images.ubuntu.com/releases
+      protocol: simplestreams
+      alias: "{{ instance.distro }}"
+    config:
+      user.user-data: "{{ lookup('template', 'config-drive/user-data.j2') }}"
+      user.meta-data: "{{ lookup('template', 'config-drive/meta-data.j2') }}"
+      user.network-config: "{{ lookup('template', 'config-drive/network-config.j2') }}"
+    profiles: ["{{ instance.profiles }}"]
+    devices: "{{ instance.devices }}"
+    wait_for_ipv4_addresses: false

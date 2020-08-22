@@ -1,0 +1,10 @@
+---
+
+#
+# Virtualization Playbook for Instances Role
+#
+
+- hosts: metals
+  become: true
+  roles:
+  - instances

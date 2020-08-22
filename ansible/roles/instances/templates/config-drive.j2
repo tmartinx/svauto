@@ -1,0 +1,19 @@
+meta_data:
+  instance-id: "{{ instance.name }}"
+  local-hostname: "{{ instance.name }}"
+network_config:
+  network:
+    version: 2
+    {{ instance.network | to_nice_yaml }}  
+user_data:
+  system_info:
+    default_user:
+      name: "{{ metal_deployment.regular_system_user }}"
+      gecos: "IT Network Admin"
+  chpasswd:
+    list: |
+      {{ metal_deployment.regular_system_user }}:{{ metal_deployment.regular_system_user }}
+    expire: False
+  ssh_pwauth: False
+  ssh_authorized_keys:
+  - "{{ ssh_pub_key }}"
