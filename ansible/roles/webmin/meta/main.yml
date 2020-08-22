@@ -1,14 +1,15 @@
 ---
 galaxy_info:
-  author: it-network
-  description: This role install webmin
-  company: Shopify
-  license: GPLv2
+  author: Thiago Martins
+  description: Role to install Webmin.
+  company: TCMC
+  license: Apache
 
-  min_ansible_version: 1.2
+  min_ansible_version: 2.5
   platforms:
     - name: Ubuntu
       versions:
+        - 20.04
         - 18.04
   galaxy_tags: []
 dependencies: []
