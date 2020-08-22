@@ -1,6 +1,6 @@
 ---
 
-# Copyright 2020, TCMC
+# Copyright 2019, TCMC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,19 +15,28 @@
 # limitations under the License.
 
 - name: Creating /srv/iso subdirectory
-  file: path=/srv/iso owner=root state=directory
+  file:
+    path: /srv/iso
+    owner: root
+    state: directory
 
 
 - name: Creating /srv/cloud subdirectory
-  file: path=/srv/cloud owner=root state=directory
+  file:
+    path: /srv/cloud
+    owner: root
+    state: directory
 
 
 - name: Creating /srv/svauto subdirectory
-  file: path=/srv/svauto owner=root state=directory
+  file:
+    path: /srv/svauto
+    owner: root
+    state: directory
 
 
 - name: main - Download the requested O.S. Images
-  include: download-image.yml
+  include: download.yml
   with_items:
   - "{{ downloads }}"
   loop_control:

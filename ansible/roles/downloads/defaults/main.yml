@@ -1,0 +1,273 @@
+---
+
+# Copyright 2020, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+downloads:
+
+
+#
+# Cloud Images, ready-to-go QCoW images with cloud-init support
+#
+
+- name: ubuntu-20.04-server-cloudimg-amd64.img
+  distro: ubuntu
+  url: https://uec-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64.img
+  dest: /srv/cloud/ubuntu-20.04-server-cloudimg-amd64.img
+  image_type: cloud
+  getit: true
+
+- name: ubuntu-18.04-server-cloudimg-amd64.img
+  distro: ubuntu
+  url: http://uec-images.ubuntu.com/releases/18.04/release/ubuntu-18.04-server-cloudimg-amd64.img
+  dest: /srv/cloud/ubuntu-18.04-server-cloudimg-amd64.img
+  image_type: cloud
+  getit: false
+
+- name: ubuntu-16.04-server-cloudimg-amd64-disk1.img
+  distro: ubuntu
+  url: http://uec-images.ubuntu.com/releases/16.04/release/ubuntu-16.04-server-cloudimg-amd64-disk1.img
+  dest: /srv/cloud/ubuntu-16.04-server-cloudimg-amd64-disk1.img
+  image_type: cloud
+  getit: false
+
+- name: debian-10-openstack-amd64.qcow2
+  distro: debian
+  url: http://cdimage.debian.org/cdimage/openstack/current-10/debian-10-openstack-amd64.qcow2
+  dest: /srv/cloud/debian-10-openstack-amd64.qcow2
+  image_type: cloud
+  getit: false
+
+- name: devuan_ascii_2.0.0_amd64_qemu.qcow2.xz
+  distro: debian
+  url: https://files.devuan.org/devuan_ascii/virtual/devuan_ascii_2.0.0_amd64_qemu.qcow2.xz
+  dest: /srv/cloud/devuan_ascii_2.0.0_amd64_qemu.qcow2.xz
+  image_type: cloud
+  getit: false
+
+- name: CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2
+  distro: centos
+  url: http://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2
+  dest: /srv/cloud/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2
+  image_type: cloud
+  getit: false
+
+- name: CentOS-7-x86_64-GenericCloud.qcow2c
+  distro: centos
+  url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2c
+  dest: /srv/cloud/CentOS-7-x86_64-GenericCloud.qcow2c
+  image_type: cloud
+  getit: false
+
+- name: CentOS-6-x86_64-GenericCloud.qcow2c
+  distro: centos
+  url: http://cloud.centos.org/centos/6/images/CentOS-6-x86_64-GenericCloud.qcow2c
+  dest: /srv/cloud/CentOS-6-x86_64-GenericCloud.qcow2c
+  image_type: cloud
+  getit: false
+
+- name: Fedora-Cloud-Base-32-1.6.x86_64.qcow2
+  distro: fedora
+  url: https://mirror.csclub.uwaterloo.ca/fedora/linux/releases/32/Cloud/x86_64/images/Fedora-Cloud-Base-32-1.6.x86_64.qcow2
+  dest: /srv/cloud/Fedora-Cloud-Base-32-1.6.x86_64.qcow2
+  image_type: cloud
+  getit: false
+
+- name: cumulus-linux-3.7.12-vx-amd64-qemu.qcow2
+  distro: cumulus
+  url: https://d2cd9e7ca6hntp.cloudfront.net/public/CumulusLinux-3.7.12/cumulus-linux-3.7.12-vx-amd64-qemu.qcow2
+  dest: /srv/cloud/cumulus-linux-3.7.12-vx-amd64-qemu.qcow2
+  image_type: cloud
+  getit: false
+
+- name: cumulus-linux-4.2.0-vx-amd64-qemu.qcow2
+  distro: cumulus
+  url: https://d2cd9e7ca6hntp.cloudfront.net/public/CumulusLinux-4.2.0/cumulus-linux-4.2.0-vx-amd64-qemu.qcow2
+  dest: /srv/cloud/cumulus-linux-4.2.0-vx-amd64-qemu.qcow2
+  image_type: cloud
+  getit: false
+
+- name: coreos_production_openstack_image.img.bz
+  distro: coreos
+  url: https://stable.release.core-os.net/amd64-usr/current/coreos_production_openstack_image.img.bz2
+  dest: /srv/cloud/coreos_production_openstack_image.img.bz2
+  image_type: cloud
+  getit: false
+
+- name: vyos-1.2.5-ci-2G.tgz
+  distro: vyos
+  url: https://cdn.vyos.io/1.2.5/c98eccba-7e6a-11ea-bc55-0242ac130003/vyos-1.2.5-ci-2G.tgz
+  dest: /srv/cloud/vyos-1.2.5-ci-2G.tgz
+  image_type: cloud
+  getit: false
+
+- name: OPNsense-20.7-OpenSSL-nano-amd64.img.bz2
+  distro: pfsense
+  url: http://mirror.wdc1.us.leaseweb.net/opnsense/releases/20.7/OPNsense-20.7-OpenSSL-nano-amd64.img.bz2
+  dest: /srv/cloud/OPNsense-20.7-OpenSSL-nano-amd64.img.bz2
+  image_type: cloud
+  getit: false
+
+- name: cirros-0.5.1-x86_64-disk.img
+  distro: cirros
+  url: http://download.cirros-cloud.net/0.5.1/cirros-0.5.1-x86_64-disk.img
+  dest: /srv/cloud/cirros-0.5.1-x86_64-disk.img
+  image_type: cloud
+  getit: false
+
+
+#
+# ISO Images
+#
+
+- name: ubuntu-20.04.1-legacy-server-amd64.iso
+  distro: ubuntu
+  url: http://cdimage.ubuntu.com/ubuntu-legacy-server/releases/20.04/release/ubuntu-20.04.1-legacy-server-amd64.iso
+  dest: /srv/iso/ubuntu-20.04.1-legacy-server-amd64.iso
+  image_type: iso
+  getit: true
+
+- name: ubuntu-20.04.1-live-server-amd64.iso
+  distro: ubuntu
+  url: https://releases.ubuntu.com/20.04/ubuntu-20.04.1-live-server-amd64.iso
+  dest: /srv/iso/ubuntu-20.04-live-server-amd64.iso
+  image_type: iso
+  getit: true
+
+- name: ubuntu-20.04.1-desktop-amd64.iso
+  distro: ubuntu
+  url: https://releases.ubuntu.com/20.04/ubuntu-20.04.1-desktop-amd64.iso
+  dest: /srv/iso/ubuntu-20.04.1-desktop-amd64.iso
+  image_type: iso
+  getit: false
+
+- name: ubuntu-18.04.5-server-amd64.iso
+  distro: ubuntu
+  url: http://cdimage.ubuntu.com/ubuntu/releases/18.04/release/ubuntu-18.04.5-server-amd64.iso
+  dest: /srv/iso/ubuntu-18.04.5-server-amd64.iso
+  image_type: iso
+  getit: false
+
+- name: ubuntu-16.04.7-server-amd64.iso
+  distro: ubuntu
+  url: http://mirror.csclub.uwaterloo.ca/ubuntu-releases/16.04.7/ubuntu-16.04.7-server-amd64.iso
+  dest: /srv/iso/ubuntu-16.04.7-server-amd64.iso
+  image_type: iso
+  getit: false
+
+- name: debian-10.5.0-amd64-netinst.iso
+  distro: debian
+  url: https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.5.0-amd64-netinst.iso
+  dest: /srv/iso/debian-10.5.0-amd64-netinst.iso
+  image_type: iso
+  getit: false
+
+- name: devuan_ascii_2.1_amd64_netinst.iso
+  distro: devuan
+  url: https://files.devuan.org/devuan_ascii/installer-iso/devuan_ascii_2.1_amd64_netinst.iso
+  dest: /srv/iso/devuan_ascii_2.1_amd64_netinst.iso
+  image_type: iso
+  getit: false
+
+- name: CentOS-8.2.2004-x86_64-boot.iso
+  distro: centos
+  url: https://mirror.rcg.sfu.ca/mirror/CentOS/8.2.2004/isos/x86_64/CentOS-8.2.2004-x86_64-boot.iso
+  dest: /srv/iso/CentOS-8.2.2004-x86_64-boot.iso
+  image_type: iso
+  getit: false
+
+- name: CentOS-7-x86_64-Minimal-2003.iso
+  distro: centos
+  url: https://mirror.rcg.sfu.ca/mirror/CentOS/7.8.2003/isos/x86_64/CentOS-7-x86_64-Minimal-2003.iso
+  dest: /srv/iso/CentOS-7-x86_64-Minimal-2003.iso
+  image_type: iso
+  getit: false
+
+- name: CentOS-6.10-x86_64-minimal.iso
+  distro: centos
+  url: http://mirror.its.sfu.ca/mirror/CentOS/6.10/isos/x86_64/CentOS-6.10-x86_64-minimal.iso
+  dest: /srv/iso/CentOS-6.10-x86_64-minimal.iso
+  image_type: iso
+  getit: false
+
+- name: Fedora-Server-netinst-x86_64-32-1.6.iso
+  distro: fedora
+  url: https://mirror.csclub.uwaterloo.ca/fedora/linux/releases/32/Server/x86_64/iso/Fedora-Server-netinst-x86_64-32-1.6.iso
+  dest: /srv/iso/Fedora-Server-netinst-x86_64-32-1.6.iso
+  image_type: iso
+  getit: false
+
+- name: vyos-1.2.5-amd64.iso
+  distro: vyos
+  url: https://cdn.vyos.io/1.2.5/abfe6db3-8df8-4ce4-bb0a-c1539ccb278a/vyos-1.2.5-amd64.iso
+  dest: /srv/iso/vyos-1.2.5-amd64.iso
+  image_type: iso
+  getit: false
+
+- name: vyos-rolling-latest.iso
+  distro: vyos
+  url: https://downloads.vyos.io/rolling/current/amd64/vyos-rolling-latest.iso
+  dest: /srv/iso/vyos-rolling-latest.iso
+  image_type: iso
+  getit: false
+
+- name: pfSense-CE-2.4.5-RELEASE-amd64.iso.gz
+  distro: pfsense
+  url: https://nyifiles.pfsense.org/mirror/downloads/pfSense-CE-2.4.5-RELEASE-amd64.iso.gz
+  dest: /srv/iso/pfSense-CE-2.4.5-RELEASE-amd64.iso.gz
+  image_type: iso
+  getit: false
+
+- name: OPNsense-20.7-OpenSSL-dvd-amd64.iso.bz2
+  distro: pfsense
+  url: http://mirror.wdc1.us.leaseweb.net/opnsense/releases/20.7/OPNsense-20.7-OpenSSL-dvd-amd64.iso.bz2
+  dest: /srv/iso/OPNsense-20.7-OpenSSL-dvd-amd64.iso.bz2
+  image_type: iso
+  getit: false
+
+- name: systemrescuecd-i686-6.1.7.iso
+  distro: gentoo
+  url: https://osdn.net/projects/systemrescuecd/storage/releases/6.1.7/systemrescuecd-i686-6.1.7.iso
+  dest: /srv/iso/systemrescuecd-i686-6.1.7.iso
+  image_type: iso
+  getit: false
+
+- name: android-x86_64-9.0-r2.iso
+  distro: android
+  url: https://osdn.net/dl/android-x86/android-x86_64-9.0-r2.iso
+  dest: /srv/iso/android-x86_64-9.0-r2.iso
+  image_type: iso
+  getit: false
+
+- name: ReactOS-0.4.13-iso.zip
+  distro: windows
+  url: https://phoenixnap.dl.sourceforge.net/project/reactos/ReactOS/0.4.13/ReactOS-0.4.13-iso.zip
+  dest: /srv/iso/ReactOS-0.4.13-iso.zip
+  image_type: iso
+  getit: false
+
+- name: virtio-win.iso (stable)
+  distro: virtio-win
+  url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
+  dest: /srv/iso/virtio-win-stable.iso
+  image_type: iso
+  getit: false
+
+- name: virtio-win.iso (latest)
+  distro: virtio-win
+  url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win.iso
+  dest: /srv/iso/virtio-win-latest.iso
+  image_type: iso
+  getit: false

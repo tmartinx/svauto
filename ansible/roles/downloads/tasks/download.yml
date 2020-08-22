@@ -5,7 +5,7 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
@@ -26,4 +26,10 @@
     url: '{{ download.url }}'
     dest: '{{ download.dest }}'
     mode: 0644
+  when: download.getit and stat_result.stat.exists == False
+  register: url_result
+
+
+- name: download-image - Convert .img to .qcow2c
+  command: "qemu-img convert -c -O qcow2 {{ url_result.dest }} {{ (( url_result.dest | splitext)[:-1] | join('.')) }}.qcow2c"
   when: download.getit and stat_result.stat.exists == False
