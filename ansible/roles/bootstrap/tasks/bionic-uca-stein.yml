@@ -1,4 +1,0 @@
----
-
-- name: bionic - stein - apt enabling Stein Ubuntu Cloud Archive
-  apt_repository: repo='deb http://ubuntu-cloud.archive.canonical.com/ubuntu bionic-updates/stein main'

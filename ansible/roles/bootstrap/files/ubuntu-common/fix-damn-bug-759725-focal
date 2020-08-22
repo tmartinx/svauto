@@ -1,0 +1,9 @@
+#!/bin/sh
+
+version="$1"
+
+# Passing the kernel version is required
+
+[ -z "${version}" ] && exit 0
+
+dpkg-statoverride --force-all --update --add root root 0644 /boot/vmlinuz-${version}

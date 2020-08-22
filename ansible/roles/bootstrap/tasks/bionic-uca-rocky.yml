@@ -1,4 +1,0 @@
----
-
-- name: bionic - rocky - apt enabling Rocky Ubuntu Cloud Archive
-  apt_repository: repo='deb http://ubuntu-cloud.archive.canonical.com/ubuntu bionic-updates/rocky main'

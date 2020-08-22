@@ -16,11 +16,12 @@
 
 
 - name: ubuntu - copy sudoers config file for members of group "sudo"
-  copy: src=ubuntu-common/sudo-group
-        dest=/etc/sudoers.d/sudo-group
-        owner=root
-        group=root
-        mode=0644
+  copy:
+    src: ubuntu-common/sudo-group
+    dest: /etc/sudoers.d/sudo-group
+    owner: root
+    group: root
+    mode: 0644
 
 
 - name: ubuntu - Copy Ubuntu's default sources.list
@@ -34,83 +35,130 @@
 
 - name: ubuntu - apt Installing Cloud Archive Keyring
   apt:
-    name: ubuntu-cloud-keyring
-    state: latest
     update_cache: yes
+    state: latest
+    pkg: ubuntu-cloud-keyring
 
 
 - name: ubuntu - include custom book
   include: "{{ ansible_distribution_release }}.yml"
-  when: ansible_distribution_release == "bionic"
+  when: ansible_distribution_release == "bionic" or ansible_distribution_release == "focal"
+
+
+# Workaround bug: LP#759725
+# https://bugs.launchpad.net/ubuntu/+source/linux/+bug/759725
+#
+# Affects:
+# https://bugs.launchpad.net/ubuntu/+source/libguestfs/+bug/1813662
+# https://opendev.org/openstack/openstack-ansible-os_nova/commit/7ad805df1fcb18f00d8848acd5a471355c3a1e52
+- name: ubuntu - copy Ubuntu's workaround for bug LP-759725
+  copy:
+    src: "ubuntu-common/fix-damn-bug-759725-{{ ansible_distribution_release }}"
+    dest: /etc/kernel/postinst.d/fix-damn-bug-759725
+    owner: root
+    group: root
+    mode: 0755
 
 
 - name: ubuntu - apt full-upgrade
-  apt: upgrade=dist update_cache=yes
-  when: base_os_upgrade
+  apt:
+    upgrade: dist
+    update_cache: yes
+  when: metal_deployment.base_os_upgrade
 
 
-- name: ubuntu - apt installing minimum tools
-  apt: name={{item}} state=latest update_cache=yes
-  with_items:
+- name: ubuntu - apt install minimum tools
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
     - ssh
+    - zip
     - curl
     - tmux
     - pigz
-    - iftop
+    - lshw
+    - flip
+    - unzip
     - lldpd
-    - bwm-ng
-    - ifstat
+    - snapd
+    - man-db
     - psmisc
-    - tcpick
+    - tzdata
+    - sysstat
     - tcpdump
     - mlocate
+    - sshpass
+    - xfsprogs
+    - ppa-purge
     - traceroute
+    - btrfs-progs
+    - ecryptfs-utils
+    - command-not-found
+    - popularity-contest
+    - apt-transport-https
+    - ubuntu-cloud-keyring
+    - linux-headers-generic
+    - software-properties-common
 
 
-- name: ubuntu - apt installing network tools
-  apt: name={{item}} state=latest update_cache=yes
-  with_items:
+- name: ubuntu - apt install network tools
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
+    - cbm
     - lftp
     - bmon
     - nmap
     - vlan
+    - ipfm
     - socat
     - ipset
     - ngrep
+    - iftop
+    - nload
     - netcat
     - telnet
     - iperf3
     - tshark
-    - netperf
+    - ifstat
+    - tcpick
+    - bwm-ng
     - openssl
+    - pktstat
+    - netperf
+    - nethogs
     - nftables
     - iptables
+    - tcptrack
+    - ostinato
     - conntrack
+    - net-tools
     - tcpreplay
     - iptraf-ng
     - subnetcalc
     - nbd-client
     - bind9utils
+    - speedometer
+    - speedtest-cli
   when: network_tools
 
 
-- name: ubuntu - apt installing extra packages
-  apt: name={{item}} state=latest update_cache=yes
-  with_items:
+- name: ubuntu - apt install extra packages
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
     - jq
     - pv
     - mc
     - gpm
-    - zip
     - git
     - zsh
-    - atop
     - htop
-    - flip
-    - lshw
     - gpart
     - gdisk
-    - unzip
     - iotop
     - patch
     - byobu
@@ -118,51 +166,71 @@
     - figlet
     - strace
     - ltrace
-    - man-db
     - logtop
-    - tzdata
-    - python
     - numactl
-    - sysstat
+    - ansible
     - aptitude
     - pm-utils
-    - xfsprogs
-    - dos2unix
-    - ppa-purge
-    - hugepages
     - gddrescue
     - virtualenv
     - sysfsutils
-    - python-pip
-    - btrfs-tools
     - genisoimage
-    - ecryptfs-utils
-    - python-libvirt
-    - python-mysqldb
-    - python-httplib2
+    - build-essential
     - silversearcher-ag
-    - command-not-found
-    - ubuntu-cloud-keyring
-    - software-properties-common
   when: extra_packages and (mode == 'server' or mode == 'desktop')
 
 
-- name: ubuntu - apt installing ZRAM Config
-  apt: name=zram-config state=latest update_cache=yes
-  when: (zram is defined and zram) and mode != 'container'
+- name: ubuntu - apt install Packer
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
+    - packer
+    install_recommends: no
+  when: extra_packages
 
 
-- name: ubuntu - apt installing Server tools
-  apt: name={{item}} state=latest update_cache=yes
-  with_items:
-    - vim-nox
-    - mtr-tiny
-  when: mode == 'container' or mode == 'server'
+- name: ubuntu - apt install atop
+  apt:
+    update_cache: yes
+    state: latest
+    pkg: atop
+  when: extra_packages and (mode == 'server' or mode == 'desktop') and ansible_virtualization_type != 'lxc'
+
+
+- name: ubuntu - update popularity-contest config
+  lineinfile:
+    path: /etc/popularity-contest.conf
+    regexp: "^PARTICIPATE=.*"
+    line: "PARTICIPATE=\"yes\""
+
+- name: ubuntu - update popularity-contest config
+  shell: dpkg-reconfigure --frontend noninteractive popularity-contest
+
+
+- name: ubuntu - apt install ZRAM Config
+  apt:
+    update_cache: yes
+    state: latest
+    pkg: zram-config
+  when: (zram is defined and zram) and ansible_virtualization_type != 'lxc'
+
+
+- name: ubuntu - apt install Server tools
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
+      - vim-nox
+      - mtr-tiny
+  when: mode == 'server'
 
 
 - name: ubuntu - dpkg enabling MultiArch on Desktops
   shell: dpkg --add-architecture i386
-  when: mode == 'desktop'
+  when:
+  - mode == 'desktop'
+  - ansible_distribution_release == "bionic"
 
 
 # The desktop_environments var is an array, like:
@@ -171,14 +239,19 @@
 #
 # So, it will install two DEs, regular Ubuntu and MATE on the same Machine.
 #
-- name: ubuntu - apt installing Desktop Environments
-  apt: name={{ desktop_environments }} state=latest update_cache=yes
+- name: ubuntu - apt install Desktop Environments
+  apt:
+    update_cache: yes
+    state: latest
+    pkg: "{{ desktop_environments }}"
   when: mode == 'desktop' and desktop_environments is defined
 
 
-- name: ubuntu - apt installing Desktop tools
-  apt: name={{item}} state=latest update_cache=yes
-  with_items:
+- name: ubuntu - apt install Desktop tools
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
     - vim
     - mtr
     - vlc
@@ -187,8 +260,9 @@
     - clipit
     - kdiff3
     - xine-ui
+    - flatpak
     - gparted
-    - ostinato
+    - remmina
     - rdesktop
     - filezilla
     - evolution
@@ -198,62 +272,109 @@
     - default-jre
     - samba-common
     - wireshark-qt
+    - libgconf-2-4
+    - freerdp2-x11
     - evolution-ews
     - tigervnc-viewer
+    - gnome-tweak-tool
     - chromium-browser
+    - freerdp2-wayland
+    - remmina-plugin-nx
+    - remmina-plugin-www
+    - remmina-plugin-exec
+    - remmina-plugin-xdmcp
+    - remmina-plugin-spice
     - classicmenu-indicator
+    - libcanberra-gtk-module
     - ubuntu-restricted-extras
     - compizconfig-settings-manager
   when: mode == 'desktop'
 
 
-- name: ubuntu - apt installing Desktop libraries (WebEx)
-  apt: name={{item}} state=latest update_cache=yes
-  with_items:
+- name: ubuntu - apt install Desktop libraries (WebEx)
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
     - libxmu6:i386
     - libxft2:i386
     - libgtk2.0-0:i386
     - libpangox-1.0-0:i386
     - libpangoxft-1.0-0:i386
     - libpangoft2-1.0-0:i386
-  when: mode == 'desktop'
+  when:
+  - mode == 'desktop'
+  - ansible_distribution_release == "bionic"
 
 
 - name: ubuntu - copy root's htop config directory
-  file: path=/root/.config/htop
-        state=directory
+  file:
+    path: /root/.config/htop
+    state: directory
 
 - name: ubuntu - copy root's htoprc config file
-  copy: src=ubuntu-common/htoprc.j2
-        dest=/root/.config/htop/htoprc
-        owner=root
-        group=root
-        mode=0644
+  copy:
+    src: ubuntu-common/htoprc.j2
+    dest: /root/.config/htop/htoprc
+    owner: root
+    group: root
+    mode: 0644
+
+
+# vimrc file, workaround to bug:
+# https://bugs.launchpad.net/ubuntu/+source/vim/+bug/1767314
+- name: ubuntu - copy root's vimrc config file
+  copy:
+    src: ubuntu-common/vimrc
+    dest: /root/.vimrc
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_distribution_release == "bionic"
+
+- name: ubuntu - copy "{{ metal_deployment.regular_system_user }}"s vimrc config file
+  copy:
+    src: ubuntu-common/vimrc
+    dest: /home/{{ metal_deployment.regular_system_user }}/.vimrc
+    owner: "{{ metal_deployment.regular_system_user }}"
+    group: "{{ metal_deployment.regular_system_user }}"
+    mode: 0644
+  when: ansible_distribution_release == "bionic"
 
 
 - name: ubuntu - vim-nox as default for editor
-  alternatives: name=editor path=/usr/bin/vim.nox
-  when: mode == 'container' or mode == 'server'
+  alternatives:
+    name: editor
+    path: /usr/bin/vim.nox
+  when: mode == 'server'
 
 
 - name: ubuntu - vim as default for editor
-  alternatives: name=editor path=/usr/bin/vim
+  alternatives:
+    name: editor
+    path: /usr/bin/vim
   when: mode == 'desktop'
 
 
 - name: ubuntu - group add regular system user to know Server groups
-  user: name={{ regular_system_user }} groups=adm,dialout,cdrom,floppy,sudo,dip,plugdev append=yes
-  when: mode == 'container' or mode == 'server'
+  user:
+    name: "{{ metal_deployment.regular_system_user }}"
+    groups: adm,dialout,cdrom,floppy,sudo,dip,plugdev
+    append: yes
+  when: mode == 'server'
 
 
 - name: ubuntu - group add regular system user to know Desktop groups
-  user: name={{ regular_system_user }} groups=adm,cdrom,sudo,dip,plugdev,lpadmin append=yes
+  user:
+    name: "{{ metal_deployment.regular_system_user }}"
+    groups: adm,cdrom,sudo,dip,plugdev,lpadmin
+    append: yes
   when: mode == 'desktop'
 
 
-- name: ubuntu - install QEmu Guest Agent
+- name: ubuntu - install QEMU Guest Agent
   apt:
-    name: qemu-guest-agent
-    state: latest
     update_cache: yes
+    state: latest
+    pkg: qemu-guest-agent
   when: ansible_virtualization_type == 'kvm' and ansible_virtualization_role == 'guest'

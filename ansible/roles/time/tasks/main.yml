@@ -1,4 +1,16 @@
 ---
+
+- name: include pre_flight.yml
+  include: pre_flight.yml
+
+- name: set timezone to {{ local_timezone }}
+  timezone:
+    name: '{{ local_timezone }}'
+
+- name: update timezone for Debian family
+  shell: dpkg-reconfigure --frontend noninteractive tzdata
+  when: ansible_os_family == 'Debian'
+
 - name: set ntp service name depending on OS family
   block:
     - name: set ntp service name for Debian family
@@ -14,17 +26,17 @@
   block:
     - name: install and enable timesyncd
       command: timedatectl set-ntp on
-      when: ntp_daemon_type == "timesyncd"
+      when: metal_deployment.ntp_daemon_type == "timesyncd"
       notify:
         - disable ntpd
         - disable chronyd
 
     - name: disable time sync using timesyncd if we are not using it
       command: timedatectl set-ntp no
-      when: ntp_daemon_type != "timesyncd"
+      when: metal_deployment.ntp_daemon_type != "timesyncd"
 
     - name: setup ntpd
-      when: ntp_daemon_type == "ntpd"
+      when: metal_deployment.ntp_daemon_type == "ntpd"
       block:
         - name: install ntp
           package:
@@ -42,7 +54,7 @@
             - disable timesyncd
 
     - name: setup chronyd
-      when: ntp_daemon_type == "chronyd"
+      when: metal_deployment.ntp_daemon_type == "chronyd"
       block:
         - name: install chrony
           package:

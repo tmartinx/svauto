@@ -15,20 +15,6 @@
 # limitations under the License.
 
 
-- name: xenial - apt installing Ubuntu 16.04 HWE - Linux
-  apt:
-    state: latest
-    pkg: linux-generic-hwe-16.04
-
-
-- name: xenial - apt installing Ubuntu 16.04 HWE - XOrg
-  apt:
-    state: latest
-    pkg: xserver-xorg-hwe-16.04
-  when: mode == 'desktop'
-
-
-- name: xenial - apt removing ubuntu-fan (it is broken)
-  apt:
-    state: absent
-    pkg: ubuntu-fan
+# Ubuntu and CentOS common book ([Ubuntu|Centos].yml)
+- name: common - include common book
+  include: "{{ ansible_distribution }}.yml"

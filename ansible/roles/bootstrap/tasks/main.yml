@@ -15,17 +15,16 @@
 # limitations under the License.
 
 
+# Check if required vars are defined
+- name: include pre-flight.yml
+  include: pre-flight.yml
+
+
 # Ubuntu and CentOS common book ([Ubuntu|Centos].yml)
 - name: common - include common book
   include: "{{ ansible_distribution }}.yml"
 
 
 # Common Settings
-- name: timesync - Setting timezone to {{ local_timezone }}
-  timezone:
-    name: '{{ local_timezone }}'
-  when: local_timezone is defined
-
-
 - name: mlocate - updating root file system list
   command: 'updatedb'

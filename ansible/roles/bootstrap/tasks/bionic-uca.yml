@@ -1,0 +1,6 @@
+---
+
+- name: bionic-uca - apt enabling Ubuntu Cloud Archive ({{ uca_version }})
+  apt_repository:
+    repo: "deb http://ubuntu-cloud.archive.canonical.com/ubuntu bionic-updates/{{ uca_version }} main"
+    filename: "/etc/apt/sources.list.d/uca"

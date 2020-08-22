@@ -15,20 +15,15 @@
 # limitations under the License.
 
 
-- name: xenial - apt installing Ubuntu 16.04 HWE - Linux
-  apt:
+- name: centos7 - yum install EPEL repository
+  yum:
+    state: installed
+    pkg: epel-release
+
+
+- name: centos7 - yum install Python 3.4
+  yum:
     state: latest
-    pkg: linux-generic-hwe-16.04
-
-
-- name: xenial - apt installing Ubuntu 16.04 HWE - XOrg
-  apt:
-    state: latest
-    pkg: xserver-xorg-hwe-16.04
-  when: mode == 'desktop'
-
-
-- name: xenial - apt removing ubuntu-fan (it is broken)
-  apt:
-    state: absent
-    pkg: ubuntu-fan
+    update_cache: yes
+    pkg:
+    - python34

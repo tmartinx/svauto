@@ -17,20 +17,16 @@
 
 - name: bionic - Installing Linux HWE
   apt:
-    name: "{{ packages }}"
-  vars:
-    packages:
+    pkg:
     - linux-generic-hwe-18.04
-    - linux-image-generic-hwe-18.04
-    - linux-cloud-tools-generic-hwe-18.04
-  when: mode == 'server' or mode == 'desktop'
+  when: (mode == 'server' or mode == 'desktop') and ansible_virtualization_type != 'lxc'
 
 
 - name: bionic - Installing XOrg HWE
   apt:
-    name: xserver-xorg-hwe-18.04
+    pkg: xserver-xorg-hwe-18.04
   when: mode == 'desktop'
 
 
-- name: ubuntu - include uca book
-  include: "{{ ansible_distribution_release }}-uca-{{ os_release }}.yml"
+- name: bionic - include UCA book
+  include: "{{ ansible_distribution_release }}-uca.yml"

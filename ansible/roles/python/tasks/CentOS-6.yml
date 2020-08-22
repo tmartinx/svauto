@@ -14,21 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: centos6 - yum EPEL repository
+  yum:
+    pkg: http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
-- name: xenial - apt installing Ubuntu 16.04 HWE - Linux
-  apt:
+
+- name: centos6 - yum SCL repository
+  yum:
+    pkg: centos-release-scl
+
+
+- name: centos6 - yum install Python 3.4
+  yum:
     state: latest
-    pkg: linux-generic-hwe-16.04
-
-
-- name: xenial - apt installing Ubuntu 16.04 HWE - XOrg
-  apt:
-    state: latest
-    pkg: xserver-xorg-hwe-16.04
-  when: mode == 'desktop'
-
-
-- name: xenial - apt removing ubuntu-fan (it is broken)
-  apt:
-    state: absent
-    pkg: ubuntu-fan
+    update_cache: yes
+    pkg:
+    - python34

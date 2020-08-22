@@ -15,20 +15,21 @@
 # limitations under the License.
 
 
-- name: xenial - apt installing Ubuntu 16.04 HWE - Linux
-  apt:
+- name: centos - yum install Python
+  yum:
     state: latest
-    pkg: linux-generic-hwe-16.04
+    update_cache: yes
+    pkg:
+    - python-pip
+    - python-virtualenv
 
 
-- name: xenial - apt installing Ubuntu 16.04 HWE - XOrg
-  apt:
+- name: centos - yum install libselinux-python
+  yum:
     state: latest
-    pkg: xserver-xorg-hwe-16.04
-  when: mode == 'desktop'
+    update_cache: yes
+    pkg: libselinux-python
 
 
-- name: xenial - apt removing ubuntu-fan (it is broken)
-  apt:
-    state: absent
-    pkg: ubuntu-fan
+- name: centos - include custom book
+  include: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"

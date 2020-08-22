@@ -15,23 +15,26 @@
 # limitations under the License.
 
 - name: centos7 - yum installing epel repository
-  yum: pkg=epel-release state=installed
+  yum:
+    state: installed
+    pkg: epel-release
 
 
 - name: centos7 - yum installing basic tools
-  yum: pkg={{item}} state=latest update_cache=yes
-  with_items:
+  yum:
+    state: latest
+    update_cache: yes
+    pkg:
     - kernel
-    - ansible
-    - python34
     - nmap-ncat
     - kernel-tools
     - dracut-config-generic
 
 
 - name: centos7 - yum uninstalling Network Manager
-  yum: pkg={{item}} state=absent
-  with_items:
+  yum:
+    state: absent
+    pkg:
     - NetworkManager
     - NetworkManager-tui
     - NetworkManager-libnm
@@ -43,9 +46,10 @@
 
 
 - name: centos7 - copy SSH Daemon config
-  copy: src=centos7/sshd_config
-        dest=/etc/ssh/sshd_config
-        owner=root
-        group=root
-        mode=0600
-        backup=yes
+  copy:
+    src: centos7/sshd_config
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 0600
+    backup: yes

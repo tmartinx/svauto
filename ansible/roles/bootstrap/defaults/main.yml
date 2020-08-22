@@ -16,9 +16,11 @@
 
 
 # Upgrade Base OS:
-base_os_upgrade: false
+base_os_upgrade: "{{ metal_deployment.base_os_upgrde }}"
 
-mode: "server"
+mode: "{{ metal_deployment.mode }}"
+
+regular_system_user: "{{ metal_deployment.regular_system_user }}"
 
 chrony_enabled: false
 

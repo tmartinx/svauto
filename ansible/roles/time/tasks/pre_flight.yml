@@ -1,0 +1,9 @@
+---
+
+- name: check if required variables are set
+  fail:
+    msg: '{{ item.var_name }} variable is not defined. {{ item.var_msg }}'
+  when: 'item.var_name is not defined'
+  with_items:
+    - { var_name: local_timezone, var_msg: "local_timezone variable shoud be set." }
+    - { var_name: metal_deployment.ntp_daemon_type, var_msg: "ntp_daemon_type variable is not set. Please choose one of the values: ntpd, timesyncd or chronyd. " }

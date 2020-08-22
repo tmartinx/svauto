@@ -1,0 +1,12 @@
+---
+
+#
+# Top Level Playbook for Bare Infrastructure
+#
+
+- hosts: all
+  become: true
+  roles:
+  - python
+  - bootstrap
+  - time

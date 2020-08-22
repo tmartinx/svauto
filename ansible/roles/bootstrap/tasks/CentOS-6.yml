@@ -15,45 +15,46 @@
 # limitations under the License.
 
 - name: centos6 - yum EPEL repository
-  yum: pkg=http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+  yum:
+    pkg: http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
 
 - name: centos6 - yum SCL repository
-  yum: pkg=centos-release-scl
+  yum:
+    pkg: centos-release-scl
 
 
 - name: centos6 - yum installing basic tools
-  yum: pkg={{item}} state=latest update_cache=yes
-  with_items:
+  yum:
+    state: latest
+    update_cache: yes
+    pkg:
     - nc
     - man
     - ntp
-    - python34
     - kernel
 
 
-- name: centos6 - yum installing Ansible from EPEL Testing
-  yum: pkg={{item}} state=latest update_cache=yes enablerepo=epel-testing
-  with_items:
-    - ansible
-    - libselinux-python
-
-
 - name: centos6 - service ntpd enabled
-  service: name=ntpd state=started enabled=yes
+  service:
+    name: ntpd
+    state: started
+    enabled: yes
 
 
 - name: centos6 - copy SSH Daemon config
-  copy: src=centos6/sshd_config
-        dest=/etc/ssh/sshd_config
-        owner=root
-        group=root
-        mode=0600
-        backup=yes
+  copy:
+    src: centos6/sshd_config
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 0600
+    backup: yes
 
 
 - name: centos6 - enable non-interactive fsck
-  lineinfile: dest=/fsckoptions
-              line=" -y"
-              create=yes
-              state=present
+  lineinfile:
+    dest: /fsckoptions
+    line: " -y"
+    create: yes
+    state: present

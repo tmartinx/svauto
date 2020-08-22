@@ -1,0 +1,10 @@
+---
+
+#
+# Top Level Playbook for Python Role
+#
+
+- hosts: all
+  become: true
+  roles:
+  - python
