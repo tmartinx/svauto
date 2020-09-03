@@ -20,7 +20,7 @@ base_os_upgrade: "{{ metal_deployment.base_os_upgrde }}"
 
 mode: "{{ metal_deployment.mode }}"
 
-regular_system_user: "{{ metal_deployment.regular_system_user }}"
+default_user: "{{ metal_deployment.default_user }}"
 
 chrony_enabled: false
 

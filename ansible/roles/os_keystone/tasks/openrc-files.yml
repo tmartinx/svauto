@@ -16,14 +16,14 @@
 
 - name: Creating admin-openrc.sh file
   template: src=common/admin-openrc.sh.j2
-            dest=/home/{{regular_system_user}}/admin-openrc.sh
-            owner={{regular_system_user}}
-            group={{regular_system_user}}
+            dest=/home/{{default_user}}/admin-openrc.sh
+            owner={{default_user}}
+            group={{default_user}}
             mode=0640
 
 - name: Creating demo-openrc.sh file
   template: src=common/demo-openrc.sh.j2
-            dest=/home/{{regular_system_user}}/demo-openrc.sh
-            owner={{regular_system_user}}
-            group={{regular_system_user}}
+            dest=/home/{{default_user}}/demo-openrc.sh
+            owner={{default_user}}
+            group={{default_user}}
             mode=0640

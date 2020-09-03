@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- stat: path=/home/{{regular_system_user}}/Downloads/svnfv-7.50.0021-vpl-1-centos7-amd64-disk1.qcow2c
+- stat: path=/home/{{default_user}}/Downloads/svnfv-7.50.0021-vpl-1-centos7-amd64-disk1.qcow2c
   register: svnfv_image_register
 
 - name: uploading svnfv-7.50.0021-vpl-1-centos7-amd64-disk1.qcow2c
@@ -25,13 +25,13 @@
     container_format: bare
     disk_format: qcow2
     state: present
-    filename: /home/{{regular_system_user}}/Downloads/svnfv-7.50.0021-vpl-1-centos7-amd64-disk1.qcow2c
+    filename: /home/{{default_user}}/Downloads/svnfv-7.50.0021-vpl-1-centos7-amd64-disk1.qcow2c
     properties:
       cpu_arch: x86_64
   when: svnfv_image_register.stat.exists == True
 
 
-- stat: path=/home/{{regular_system_user}}/Downloads/sveng-7.70.0017-vpl-1-centos7-amd64-disk1.qcow2c
+- stat: path=/home/{{default_user}}/Downloads/sveng-7.70.0017-vpl-1-centos7-amd64-disk1.qcow2c
   register: sveng_image_register
 
 - name: uploading sveng-7.70.0017-vpl-1-centos7-amd64-disk1.qcow2c
@@ -42,13 +42,13 @@
     container_format: bare
     disk_format: qcow2
     state: present
-    filename: /home/{{regular_system_user}}/Downloads/sveng-7.70.0017-vpl-1-centos7-amd64-disk1.qcow2c
+    filename: /home/{{default_user}}/Downloads/sveng-7.70.0017-vpl-1-centos7-amd64-disk1.qcow2c
     properties:
       cpu_arch: x86_64
   when: sveng_image_register.stat.exists == True
 
 
-- stat: path=/home/{{regular_system_user}}/Downloads/svdba-6.65.0136-vpl-1-centos6-amd64-disk1.qcow2c
+- stat: path=/home/{{default_user}}/Downloads/svdba-6.65.0136-vpl-1-centos6-amd64-disk1.qcow2c
   register: svdba_image_register
 
 - name: uploading svdba-6.65.0136-vpl-1-centos6-amd64-disk1.qcow2c
@@ -59,7 +59,7 @@
     container_format: bare 
     disk_format: qcow2
     state: present
-    filename: /home/{{regular_system_user}}/Downloads/svdba-6.65.0136-vpl-1-centos6-amd64-disk1.qcow2c
+    filename: /home/{{default_user}}/Downloads/svdba-6.65.0136-vpl-1-centos6-amd64-disk1.qcow2c
     properties:
       cpu_arch: x86_64
   when: svdba_image_register.stat.exists == True

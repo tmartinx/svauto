@@ -16,7 +16,7 @@
 
 - name: Creating SSH Keypair
   user:
-    name: "{{ regular_system_user }}"
+    name: "{{ default_user }}"
     generate_ssh_key: yes
     ssh_key_bits: 4096
     ssh_key_file: .ssh/id_rsa

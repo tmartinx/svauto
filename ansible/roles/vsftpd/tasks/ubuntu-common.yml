@@ -31,7 +31,7 @@
 
 
 - name: ubuntu - user home directory for ftp user
-  user: name=ftp home=/home/{{regular_system_user}}/svauto/public_dir createhome=no
+  user: name=ftp home=/home/{{default_user}}/svauto/public_dir createhome=no
   notify: reload-vsftpd
 
 

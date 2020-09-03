@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ssh_pub_key: "{{ lookup('file', '/home/' + metal_deployment.regular_system_user + '/.ssh/id_rsa.pub') }}"
+ssh_pub_key: "{{ lookup('file', '/home/' + metal_deployment.default_user + '/.ssh/id_rsa.pub') }}"
 
 ## Instance's definitions
 #instances:

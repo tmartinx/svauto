@@ -21,4 +21,4 @@
 
 
 - name: host - group add regular system user to LXD group
-  user: name={{ regular_system_user }} groups=lxd append=yes
+  user: name={{ default_user }} groups=lxd append=yes

@@ -23,7 +23,7 @@
 #
 
 # System user, usualy, your local Desktop user, or a remote "cloud" user.
-regular_system_user: ubuntu
+default_user: ubuntu
 
 # Release ver: ca, dev, prod
 release: dev

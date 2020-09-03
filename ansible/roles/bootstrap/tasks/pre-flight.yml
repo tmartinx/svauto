@@ -5,5 +5,5 @@
     msg: '{{ item.var_name }} variable is not defined. {{ item.var_msg }}'
   when: 'item.var_name is not defined'
   with_items:
-    - { var_name: regular_system_user, var_msg: "regular_system_user variable shoud be set." }
+    - { var_name: default_user, var_msg: "default_user variable shoud be set." }
     - { var_name: mode, var_msg: "mode variable shoud be set to either desktop or server." }

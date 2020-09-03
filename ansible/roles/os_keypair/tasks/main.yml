@@ -19,4 +19,4 @@
   os_keypair:
       state: present
       name: default
-      public_key_file: "/home/{{ regular_system_user }}/.ssh/id_rsa.pub"
+      public_key_file: "/home/{{ default_user }}/.ssh/id_rsa.pub"

@@ -332,12 +332,12 @@
     mode: 0644
   when: ansible_distribution_release == "bionic"
 
-- name: ubuntu - copy "{{ metal_deployment.regular_system_user }}"s vimrc config file
+- name: ubuntu - copy "{{ metal_deployment.default_user }}"s vimrc config file
   copy:
     src: ubuntu-common/vimrc
-    dest: /home/{{ metal_deployment.regular_system_user }}/.vimrc
-    owner: "{{ metal_deployment.regular_system_user }}"
-    group: "{{ metal_deployment.regular_system_user }}"
+    dest: /home/{{ metal_deployment.default_user }}/.vimrc
+    owner: "{{ metal_deployment.default_user }}"
+    group: "{{ metal_deployment.default_user }}"
     mode: 0644
   when: ansible_distribution_release == "bionic"
 
@@ -358,7 +358,7 @@
 
 - name: ubuntu - group add regular system user to know Server groups
   user:
-    name: "{{ metal_deployment.regular_system_user }}"
+    name: "{{ metal_deployment.default_user }}"
     groups: adm,dialout,cdrom,floppy,sudo,dip,plugdev
     append: yes
   when: mode == 'server'
@@ -366,7 +366,7 @@
 
 - name: ubuntu - group add regular system user to know Desktop groups
   user:
-    name: "{{ metal_deployment.regular_system_user }}"
+    name: "{{ metal_deployment.default_user }}"
     groups: adm,cdrom,sudo,dip,plugdev,lpadmin
     append: yes
   when: mode == 'desktop'

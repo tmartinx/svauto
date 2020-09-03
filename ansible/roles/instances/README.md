@@ -15,7 +15,7 @@ Spin up Instances on both LXD and QEMU Hypervisors.
     when: instances is defined
   vars:
     ssh_pub_key: "$YOUR_SSH_PUBLIC_KEY_HERE"
-    metal_deployment.regular_system_user: ubuntu
+    metal_deployment.default_user: ubuntu
 ```
 
 ### Virtual machine definition example
@@ -35,11 +35,11 @@ instances:
     user_data:
       system_info:
         default_user:
-          name: "{{ metal_deployment.regular_system_user }}"
+          name: "{{ metal_deployment.default_user }}"
       chpasswd:
         list: |
-          root:{{ metal_deployment.regular_system_user }}
-          {{ metal_deployment.regular_system_user }}:{{ metal_deployment.regular_system_user }}
+          root:{{ metal_deployment.default_user }}
+          {{ metal_deployment.default_user }}:{{ metal_deployment.default_user }}
         expire: False
       ssh_pwauth: True
       ssh_authorized_keys:
@@ -124,11 +124,11 @@ instances:
       #cloud-config
       system_info:
         default_user:
-          name: "{{ metal_deployment.regular_system_user }}"
+          name: "{{ metal_deployment.default_user }}"
       chpasswd:
         list: |
-          root:{{ metal_deployment.regular_system_user }}
-          {{ metal_deployment.regular_system_user }}:{{ metal_deployment.regular_system_user }}
+          root:{{ metal_deployment.default_user }}
+          {{ metal_deployment.default_user }}:{{ metal_deployment.default_user }}
         expire: False
       ssh_pwauth: True
       ssh_authorized_keys:
