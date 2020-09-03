@@ -1,0 +1,66 @@
+---
+
+# Copyright 2020, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+- name: main - apt install xrdp
+  apt:
+    state: latest
+    pkg:
+    - xrdp
+
+- name: main - apt install xorgxrdp
+  apt:
+    state: latest
+    pkg:
+    - xorgxrdp
+  when: ansible_distribution_release == "focal"
+
+- name: main - apt install xorgxrdp-hwe-18.04
+  apt:
+    state: latest
+    pkg:
+    - xorgxrdp-hwe-18.04
+  when: ansible_distribution_release == "bionic"
+
+- name: main - apt install xrdp audio support
+  apt:
+    state: latest
+    pkg:
+    - xrdp-pulseaudio-installer
+  when: xrdp_audio
+
+- name: main - group add xrdp user to ssl-cert group
+  user:
+    name: xrdp
+    groups: ssl-cert
+
+- name: main - copy xrdp startwm script
+  copy:
+    src: startwm.sh
+    dest: /etc/xrdp/startwm.sh
+    owner: root
+    group: root
+    mode: 0755
+    backup: yes
+
+- name: main - copy required polkit
+  copy:
+    src: 45-allow.colord.pkla
+    dest: /etc/polkit-1/localauthority/50-local.d/45-allow.colord.pkla
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
