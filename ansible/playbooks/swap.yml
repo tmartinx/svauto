@@ -1,0 +1,10 @@
+---
+
+#
+# Top Level Playbook for QEMU Role
+#
+
+- hosts: all
+  become: true
+  roles:
+  - swap

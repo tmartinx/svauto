@@ -1,0 +1,60 @@
+---
+
+# Copyright 2020, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+- name: "main | set swap_file variable"
+  set_fact:
+    swap_file: "{{ swapfile_full_path }}"
+
+- name: "main | check if swap file exists"
+  stat:
+    path: "{{ swap_file }}"
+  register: swap_file_check
+
+- name: "main | Create the file to be used for swap"
+  command: fallocate --length {{ swap_size }} {{ swap_file }}
+  when: not swap_file_check.stat.exists
+
+- name: "main | Change swap file permissions"
+  file:
+    path: "{{ swap_file }}"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: "main | Format the file for swap"
+  command: mkswap {{ swap_file }}
+  when: not swap_file_check.stat.exists
+
+- name: "main | Write swap entry in fstab"
+  mount:
+    path: none
+    src: "{{ swap_file }}"
+    fstype: swap
+    opts: sw
+    passno: 0
+    dump: 0
+    state: present
+
+- name: "main | Enable the swapfile at run-time"
+  command: swapon -a
+
+# REVIEW:
+#- name: set swapiness
+#  sudo: yes
+#  sysctl:
+#    name: vm.swappiness
+#    value: "1"
