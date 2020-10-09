@@ -1,0 +1,12 @@
+#! /bin/bash
+
+echo "Stopping $1..."
+lxc-stop -n $1
+
+sleep 6
+
+echo "Starting $1..."
+lxc-start -n $1
+
+echo "Done."
+echo

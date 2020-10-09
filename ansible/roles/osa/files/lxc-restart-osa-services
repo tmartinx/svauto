@@ -1,0 +1,10 @@
+#! /bin/bash
+
+CONTAINER_LIST=`lxc-ls -f | grep vosctrl | grep -v galera | grep -v ceph | awk '{print $1}' | xargs`
+
+for X in $CONTAINER_LIST
+do
+
+        lxc-restart $X
+
+done

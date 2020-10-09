@@ -1,0 +1,44 @@
+---
+
+# Copyright 2020, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Reference:
+# https://docs.openstack.org/project-deploy-guide/openstack-ansible/ussuri/deploymenthost.html
+
+- name: main - apt install OpenStack Ansible dependencies
+  apt: name={{item}} state=latest
+  with_items:
+    - python-dev-is-python3
+
+
+- name: main - git clone OpenStack Ansible Repository
+  git:
+    repo: 'https://opendev.org/openstack/openstack-ansible'
+    dest: /opt/openstack-ansible
+    version: stable/ussuri
+
+
+- name: main - Run OpenStack Ansible bootstrap.sh
+  shell: scripts/bootstrap-ansible.sh
+  args:
+    chdir: /opt/openstack-ansible
+
+#- name: main - Create OpenSSL self-sign certificate (I would love to have Letsencrypt)
+#  shell: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/tcmc.pub-selfsigned.key -out /etc/ssl/certs/tcmc.pub-selfsigned.crt
+
+# After cloning SVAuto's Inventory under /etc/inventory and linking /etc/openstack_deploy to it, do:
+# cp /opt/openstack-ansible/etc/openstack_deploy/user_secrets.yml /etc/openstack_deploy/
+# cd /opt/openstack-ansible
+# ./scripts/pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml --regen

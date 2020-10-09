@@ -1,0 +1,10 @@
+
+Reference: https://linoxide.com/linux-how-to/hwto-configure-single-node-ceph-cluster/
+
+ceph osd getcrushmap -o crush_map_compressed ; crushtool -d crush_map_compressed -o crush_map_decompressed
+
+vi crush_map_decompressed
+
+crushtool -c crush_map_decompressed -o new_crush_map_compressed ; ceph osd setcrushmap -i new_crush_map_compressed
+
+
