@@ -263,6 +263,7 @@
     - flatpak
     - gparted
     - remmina
+    - firefox
     - rdesktop
     - filezilla
     - evolution
@@ -275,10 +276,12 @@
     - libgconf-2-4
     - freerdp2-x11
     - evolution-ews
+    - gnome-software
     - tigervnc-viewer
     - gnome-tweak-tool
     - chromium-browser
     - freerdp2-wayland
+    - firefox-locale-en
     - remmina-plugin-nx
     - remmina-plugin-www
     - remmina-plugin-exec
@@ -287,6 +290,8 @@
     - classicmenu-indicator
     - libcanberra-gtk-module
     - ubuntu-restricted-extras
+    - gnome-software-plugin-snap
+    - gnome-software-plugin-flatpak
     - compizconfig-settings-manager
   when: mode == 'desktop'
 
