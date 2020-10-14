@@ -18,7 +18,7 @@
 #
 # Set and check ISO destinations
 #
-- name: set_fact cdrom config
+- name: create-config-drive - set_fact cdrom config
   set_fact:
     cdrom:
       unit: 0
@@ -55,7 +55,8 @@
 #
 # Cloud-Init Files
 #
-- name: set_fact network_config
+
+- name: create-config-drive - set_fact network_config
   set_fact:
     network_config: "{{ instance.network }}"
 

@@ -33,7 +33,7 @@
   - libvirt_profiles[instance.profile].devices.storage.disks is defined
 
 
-- name: set_fact config_drive
+- name: spin-instance-libvirt - set_fact config_drive
   set_fact:
     config_drive: "{{ lookup('template', 'config-drive.j2') | from_yaml }}"
 
@@ -41,6 +41,7 @@
   include: create-config-drive.yml
   when:
   - instance.config_drive_iso | default(libvirt_profiles[instance.profile].config_drive_iso)
+
 
 - name: spin-instance-libvirt - instance-firmware-efi.yml
   include: instance-firmware-efi.yml
