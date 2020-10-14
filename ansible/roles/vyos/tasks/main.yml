@@ -1,0 +1,6 @@
+---
+
+- name: main - Render the Border Template onto the VyOS router
+  vyos_config:
+    src: vyos-border.j2
+    save: true

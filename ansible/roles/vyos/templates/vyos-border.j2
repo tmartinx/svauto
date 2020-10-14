@@ -1,0 +1,89 @@
+
+set interfaces bonding bond0 hash-policy layer2
+set interfaces bonding bond0 mode adaptive-load-balance
+
+
+set interfaces bonding bond0 vif {{ iface_wvlan_1 }} description 'outside'
+set interfaces bonding bond0 vif {{ iface_wvlan_1 }} address {{ local_iface_wip_1 }}{{ iface_wmsk_1 }}
+
+set interfaces bonding bond0 vif {{ iface_lvlan_1 }} description 'inside'
+set interfaces bonding bond0 vif {{ iface_lvlan_1 }} address {{ local_iface_lip_1 }}{{ iface_lmsk_1 }}
+
+
+set interfaces ethernet eth1 bond-group 'bond0'
+set interfaces ethernet eth2 bond-group 'bond0'
+set interfaces ethernet eth3 bond-group 'bond0'
+set interfaces ethernet eth4 bond-group 'bond0'
+
+
+set protocols static route 0.0.0.0/0 next-hop {{ iface_wrt_1 }}
+
+
+set system name-server 1.1.1.1
+set system name-server 9.9.9.9
+set system name-server 8.8.8.8
+
+
+set service ssh port '22'
+
+
+set high-availability vrrp group public hello-source-address '{{ local_iface_wip_1 }}'
+set high-availability vrrp group public interface '{{ iface_wan_1 }}'
+set high-availability vrrp group public peer-address '{{ remote_iface_wip_1 }}'
+set high-availability vrrp group public no-preempt
+set high-availability vrrp group public priority '{{ vrrp_priority }}'
+set high-availability vrrp group public virtual-address '{{ iface_wvip_1 }}{{ iface_wmsk_1 }}'
+set high-availability vrrp group public vrid '{{ iface_wvrid_1 }}'
+
+set high-availability vrrp group office hello-source-address '{{ local_iface_lip_1 }}'
+set high-availability vrrp group office interface '{{ iface_lan_1 }}'
+set high-availability vrrp group office peer-address '{{ remote_iface_lip_1 }}'
+set high-availability vrrp group office no-preempt
+set high-availability vrrp group office priority '{{ vrrp_priority }}'
+set high-availability vrrp group office virtual-address '{{ iface_lvip_1 }}{{ iface_lmsk_1 }}'
+set high-availability vrrp group office vrid '{{ iface_lvrid_1 }}'
+
+set high-availability vrrp sync-group sync member 'office'
+
+
+set protocols static route {{ internal_route_1 }} next-hop {{ iface_lrt_1 }}
+set protocols static route {{ internal_route_2 }} next-hop {{ iface_lrt_1 }}
+
+
+set nat source rule 100 outbound-interface '{{ iface_wan_1 }}'
+set nat source rule 100 source address '{{ office_subnet }}'
+set nat source rule 100 translation address {{ iface_wvip_1 }}
+
+
+set firewall name outside-in default-action 'drop'
+set firewall name outside-in rule 10 action 'accept'
+set firewall name outside-in rule 10 state established 'enable'
+set firewall name outside-in rule 10 state related 'enable'
+
+set firewall name outside-local default-action 'drop'
+set firewall name outside-local rule 10 action 'accept'
+set firewall name outside-local rule 10 state established 'enable'
+set firewall name outside-local rule 10 state related 'enable'
+set firewall name outside-local rule 20 action 'accept'
+set firewall name outside-local rule 20 icmp type-name 'echo-request'
+set firewall name outside-local rule 20 protocol 'icmp'
+set firewall name outside-local rule 20 state new 'enable'
+
+set interfaces bonding bond0 vif {{ iface_wvlan_1 }} firewall in name 'outside-in'
+set interfaces bonding bond0 vif {{ iface_wvlan_1 }} firewall local name 'outside-local'
+
+
+set service conntrack-sync accept-protocol 'tcp,udp,icmp'
+set service conntrack-sync event-listen-queue-size '8'
+set service conntrack-sync failover-mechanism vrrp sync-group 'sync'
+set service conntrack-sync interface {{ iface_lan_1 }}
+set service conntrack-sync mcast-group '224.0.0.50'
+set service conntrack-sync sync-queue-size '8'
+
+
+set system conntrack modules ftp disable
+set system conntrack modules gre disable
+set system conntrack modules nfs disable
+set system conntrack modules pptp disable
+set system conntrack modules sip disable
+set system conntrack modules tftp disable
