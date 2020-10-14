@@ -11,11 +11,11 @@ There is also a preliminary support for Vagrant with Ansible, that uses regular 
 
 Looking forward to add support for Linux Containers (systemd-nspawn, LXD and Docker).
 
-SVAuto was designed for Ubuntu Bionic 18.04 (latest LTS), Server or Desktop. But CentOS is also supported.
+SVAuto was designed for Ubuntu Bionic 20.04 (latest LTS), Server or Desktop. But CentOS is also supported.
 
 It uses the following Open Source projects:
 
-* Ubuntu Bionic 18.04
+* Ubuntu Bionic 20.04
 * LXD 3.0
 * QEmu 3.1
 * Libvirt 5.0
@@ -161,11 +161,11 @@ Go to SVAuto's subdir
 
 Ubuntu 18.04
 
-    sudo packer build packer/ubuntu18.yaml
+    packer build packer/ubuntu18.yaml
 
 CentOS 7
 
-    sudo packer build packer/centos7.yaml
+    packer build packer/centos7.yaml
 
 To have a better visual about what Packer is doing, you can enable the KVM GUI (SDL-based) screen.
 
@@ -173,11 +173,11 @@ Allow local root user to use X Window System:
 
     xhost local:root
 
-    sudo packer build packer/ubuntu18-gui.yaml
+    packer build packer/ubuntu18-gui.yaml
 
 or:
 
-    sudo packer build packer/centos7-gui.yaml
+    packer build packer/centos7-gui.yaml
 
 *NOTE: You can export `PACKER_LOG=1` variable, to enable Packer debug messages.*
 
