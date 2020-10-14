@@ -1,0 +1,35 @@
+
+add hostname vcucore-1
+
+add bond bond0 bond slaves swp1-4
+add bond bond0 bond mode balance-xor
+
+
+add interface bond0 ip address {{ subnet_prefix }}.223.2/29
+add interface bond0 ip address {{ subnet_prefix }}.223.1/29
+
+add interface bond0 ip address {{ subnet_prefix }}.223.10/29
+add interface bond0 ip address {{ subnet_prefix }}.223.9/29
+
+add interface bond0 ip address {{ subnet_prefix }}.223.18/29
+add interface bond0 ip address {{ subnet_prefix }}.223.17/29
+
+add interface bond0 ip address {{ subnet_prefix }}.223.26/29
+add interface bond0 ip address {{ subnet_prefix }}.223.25/29
+
+add interface bond0 ip address {{ subnet_prefix }}.0.2/17
+add interface bond0 ip address {{ subnet_prefix }}.0.1/17
+
+add interface bond0 ip address {{ subnet_prefix }}.128.2/20
+add interface bond0 ip address {{ subnet_prefix }}.128.1/20
+
+add interface bond0 ip address {{ subnet_prefix }}.240.2/24
+add interface bond0 ip address {{ subnet_prefix }}.240.1/24
+
+add interface bond0 ip address {{ subnet_prefix }}.252.2/22
+add interface bond0 ip address {{ subnet_prefix }}.252.1/22
+
+
+add routing route 0.0.0.0/0 {{ subnet_prefix }}.223.4
+add routing route 10.0.0.0/8 {{ subnet_prefix }}.223.28
+add routing route 172.26.0.0/16 {{ subnet_prefix }}.223.28

@@ -1,0 +1,6 @@
+---
+
+- name: main - Render the L3 Core Template onto the Cumulus VX Switch
+  nclu:
+    template: "{{ lookup('template', 'l3-core-cumulus-vx.j2') }}"
+    commit: true
