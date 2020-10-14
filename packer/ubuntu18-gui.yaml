@@ -4,12 +4,12 @@
     {
       "type": "qemu",
       "iso_urls": [
-        "/srv/iso/ubuntu-18.04.2-server-amd64.iso"
+        "/srv/iso/ubuntu-18.04.5-server-amd64.iso"
       ],
-      "iso_checksum": "a2cb36dc010d98ad9253ea5ad5a07fd6b409e3412c48f1860536970b073c98f5",
+      "iso_checksum": "8c5fc24894394035402f66f3824beb7234b757dd2b5531379cb310cedfdf0996",
       "iso_checksum_type": "sha256",
       "output_directory": "packer/ubuntu18-tmpl",
-      "vm_name": "ubuntu-18.04.2-server-amd64.raw",
+      "vm_name": "ubuntu-18.04.5-server-amd64.raw",
       "ssh_wait_timeout": "30s",
       "shutdown_command": "sudo -S shutdown -P now",
       "qemuargs": [
