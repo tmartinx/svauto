@@ -11,9 +11,8 @@
       protocol: simplestreams
       alias: "{{ instance.distro }}"
     config:
-      user.user-data: "{{ lookup('template', 'config-drive/user-data.j2') }}"
-      user.meta-data: "{{ lookup('template', 'config-drive/meta-data.j2') }}"
-      user.network-config: "{{ lookup('template', 'config-drive/network-config.j2') }}"
-    profiles: ["{{ instance.profiles }}"]
+      user.user-data: "{{ lookup('template', 'lxd-user-data.j2') }}"
+      user.network-config: "{{ lookup('template', 'lxd-network-config.j2') }}"
+    profiles: ["{{ instance.profile }}"]
     devices: "{{ instance.devices }}"
     wait_for_ipv4_addresses: false
