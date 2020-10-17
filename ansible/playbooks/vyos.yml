@@ -1,0 +1,11 @@
+---
+
+#
+# Top-Level Playbook for VyOS Internet Gateways
+#
+
+- hosts: borders
+  become: true
+  gather_facts: no
+  roles:
+  - vyos

@@ -1,0 +1,10 @@
+---
+
+#
+# Top Level Playbook for LXD Role
+#
+
+- hosts: metals
+  become: true
+  roles:
+  - lxd

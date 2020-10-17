@@ -1,0 +1,10 @@
+---
+
+#
+# Top-Level Playbook for Cumulus L3 Cores
+#
+
+- hosts: cores
+  become: true
+  roles:
+  - cumulus
