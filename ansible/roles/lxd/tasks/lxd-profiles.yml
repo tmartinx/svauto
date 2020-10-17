@@ -15,6 +15,10 @@
 # limitations under the License.
 
 
-- include: lxd-host.yml
-- include: lxd-profile.yml
-- include: lxd-container.yml
+- name: lxd-profiles - Spin Profiles
+  include: spin-profile.yml
+  with_items:
+  - "{{ lxd_profiles }}"
+  loop_control:
+    loop_var: lxd_profile
+  when: lxd_profiles is defined

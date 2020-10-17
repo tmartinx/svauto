@@ -15,8 +15,9 @@
 # limitations under the License.
 
 
-- name: main - Install LXD Daemon
-  include: "lxd-host.yml"
-
-- name: main - Set LXD Profiles
-  include: "lxd-profiles.yml"
+- name: check if required variables are set
+  fail:
+    msg: '{{ item.var_name }} variable is not defined. {{ item.var_msg }}'
+  when: 'item.var_name not in vars'
+  with_items:
+    - { var_name: default_user, var_msg: "Set the default_user variable to the user that will have permission over qemu" }

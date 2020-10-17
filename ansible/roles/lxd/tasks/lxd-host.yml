@@ -14,11 +14,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: host - apt installing LXD
-  apt: name={{item}} state=latest
-  with_items:
+
+- name: lxd-host - snap install LXD
+  snap:
+    state: present
+#    channel: 4.6/stable
+    name:
     - lxd
 
 
-- name: host - group add regular system user to LXD group
-  user: name={{ default_user }} groups=lxd append=yes
+- name: lxd-host - group add "{{ default_user }}" to LXD group
+  user:
+    name: "{{ default_user }}"
+    groups: lxd
+    append: yes
+
+
+- name: lxd-host - LXD Initializing
+  shell: |
+    cat <<EOF | lxd init --preseed
+    config: {}
+    networks: []
+    storage_pools:
+    - config: {}
+      description: ""
+      name: default
+      driver: dir
+    profiles:
+    - config: {}
+      description: ""
+      devices:
+        root:
+          path: /
+          pool: default
+          type: disk
+      name: default
+    cluster: null
+    EOF

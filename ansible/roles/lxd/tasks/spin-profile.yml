@@ -15,8 +15,9 @@
 # limitations under the License.
 
 
-- name: main - Install LXD Daemon
-  include: "lxd-host.yml"
-
-- name: main - Set LXD Profiles
-  include: "lxd-profiles.yml"
+- name: spin-profile - Create {{ lxd_profile.name }} Profile
+  lxd_profile:
+    name: "{{ lxd_profile.name }}"
+    description: "{{ lxd_profile.description }}"
+    config: "{{ lxd_profile.config }}"
+    devices: "{{ lxd_profile.devices }}"

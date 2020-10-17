@@ -1,8 +1,0 @@
----
-
-- name: "container - Spinning LXD Containers"
-  include: spin_container.yml
-  with_items:
-  - "{{ containers }}"
-  loop_control:
-    loop_var: container
