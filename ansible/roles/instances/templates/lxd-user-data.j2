@@ -1,2 +1,12 @@
 #cloud-config
-{{ instance.user_data | to_nice_yaml }}
+system_info:
+  default_user:
+    name: "{{ metal_deployment.default_user }}"
+    gecos: "IT Network Admin"
+chpasswd:
+  list: |
+    {{ metal_deployment.default_user }}:{{ metal_deployment.default_user }}
+  expire: False
+ssh_pwauth: False
+ssh_authorized_keys:
+- "{{ ssh_pub_key }}"
