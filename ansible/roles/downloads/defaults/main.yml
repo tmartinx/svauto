@@ -78,10 +78,10 @@ downloads:
   image_type: cloud
   getit: false
 
-- name: Fedora-Cloud-Base-32-1.6.x86_64.qcow2
+- name: Fedora-Cloud-Base-33-1.2.x86_64.qcow2
   distro: fedora
-  url: https://mirror.csclub.uwaterloo.ca/fedora/linux/releases/32/Cloud/x86_64/images/Fedora-Cloud-Base-32-1.6.x86_64.qcow2
-  dest: /srv/cloud/Fedora-Cloud-Base-32-1.6.x86_64.qcow2
+  url: https://mirror.csclub.uwaterloo.ca/fedora/linux/releases/33/Cloud/x86_64/images/Fedora-Cloud-Base-33-1.2.x86_64.qcow2
+  dest: /srv/cloud/Fedora-Cloud-Base-33-1.2.x86_64.qcow2
   image_type: cloud
   getit: false
 
@@ -137,14 +137,14 @@ downloads:
   url: http://cdimage.ubuntu.com/ubuntu-legacy-server/releases/20.04/release/ubuntu-20.04.1-legacy-server-amd64.iso
   dest: /srv/iso/ubuntu-20.04.1-legacy-server-amd64.iso
   image_type: iso
-  getit: true
+  getit: false
 
 - name: ubuntu-20.04.1-live-server-amd64.iso
   distro: ubuntu
   url: https://releases.ubuntu.com/20.04/ubuntu-20.04.1-live-server-amd64.iso
   dest: /srv/iso/ubuntu-20.04.1-live-server-amd64.iso
   image_type: iso
-  getit: true
+  getit: false
 
 - name: ubuntu-20.04.1-desktop-amd64.iso
   distro: ubuntu
@@ -202,10 +202,10 @@ downloads:
   image_type: iso
   getit: false
 
-- name: Fedora-Server-netinst-x86_64-32-1.6.iso
+- name: Fedora-Server-netinst-x86_64-33-1.2.iso
   distro: fedora
-  url: https://mirror.csclub.uwaterloo.ca/fedora/linux/releases/32/Server/x86_64/iso/Fedora-Server-netinst-x86_64-32-1.6.iso
-  dest: /srv/iso/Fedora-Server-netinst-x86_64-32-1.6.iso
+  url: https://mirror.csclub.uwaterloo.ca/fedora/linux/releases/33/Server/x86_64/iso/Fedora-Server-netinst-x86_64-33-1.2.iso
+  dest: /srv/iso/Fedora-Server-netinst-x86_64-33-1.2.iso
   image_type: iso
   getit: false
 
@@ -223,10 +223,10 @@ downloads:
   image_type: iso
   getit: false
 
-- name: pfSense-CE-2.4.5-RELEASE-amd64.iso.gz
+- name: pfSense-CE-2.4.5-RELEASE-p1-amd64.iso.gz
   distro: pfsense
-  url: https://nyifiles.pfsense.org/mirror/downloads/pfSense-CE-2.4.5-RELEASE-amd64.iso.gz
-  dest: /srv/iso/pfSense-CE-2.4.5-RELEASE-amd64.iso.gz
+  url: https://nyifiles.pfsense.org/mirror/downloads/pfSense-CE-2.4.5-RELEASE-p1-amd64.iso.gz
+  dest: /srv/iso/pfSense-CE-2.4.5-RELEASE-p1-amd64.iso.gz
   image_type: iso
   getit: false
 
