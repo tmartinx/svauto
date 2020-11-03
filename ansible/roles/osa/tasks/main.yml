@@ -20,7 +20,7 @@
 - name: main - apt install OpenStack Ansible dependencies
   apt: name={{item}} state=latest
   with_items:
-    - python-dev-is-python3
+    - python-dev-is-python3 libffi-dev libssl-dev
 
 
 - name: main - git clone OpenStack Ansible Repository
