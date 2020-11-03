@@ -1,5 +1,6 @@
 ---
-- name: fail if users variable not found
+
+- name: main - Fail if users variable not found
   fail:
     msg: "|
         You have to define a users variable. Example:
@@ -10,14 +11,14 @@
             "
   when: 'users is undefined'
 
-- name: for each user include create_user.yml
-  include: create_user.yml
+- name: main - For each user include manage-user.yml
+  include: manage-user.yml
   with_items: "{{ users }}"
   loop_control:
     loop_var: 'user'
 
-- name: for each user include add_user_key.yml
-  include: add_user_key.yml
+- name: main - For each user include add_user_key.yml
+  include: add-user-key.yml
   with_items: "{{ users }}"
   loop_control:
     loop_var: 'user'

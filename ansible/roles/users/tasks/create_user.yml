@@ -1,4 +1,0 @@
-- name: create user account
-  user:
-    name: "{{ user.username }}"
-    comment: "{{ user.name }}"

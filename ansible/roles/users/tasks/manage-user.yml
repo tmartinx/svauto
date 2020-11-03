@@ -1,0 +1,9 @@
+---
+
+- name: manage-user - Manage user account
+  user:
+    name: "{{ user.username }}"
+    comment: "{{ user.name }}"
+    shell: "/bin/bash"
+    groups:
+    - sudo
