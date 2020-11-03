@@ -15,31 +15,23 @@
 # limitations under the License.
 
 
-- name: focal - Using iptables-nft as default for iptables
-  alternatives:
-    name: iptables
-    path: /usr/sbin/iptables-nft
+#- name: focal - Installing Linux HWE
+#  apt:
+#    pkg:
+#    - linux-generic-hwe-20.04
+#  when: (mode == 'server' or mode == 'desktop') and ansible_virtualization_type != 'lxc'
+#
+#
+#- name: focal - Installing XOrg HWE
+#  apt:
+#    pkg: xserver-xorg-hwe-20.04
+#  when: mode == 'desktop'
 
 
-- name: focal - Using ip6tables-nft as default for ip6tables
-  alternatives:
-    name: ip6tables
-    path: /usr/sbin/ip6tables-nft
+#- name: focal - include UCA book
+#  include: "{{ ansible_distribution_release }}-uca.yml"
 
 
-- name: focal - Using arptables-nft as default for arptables-nft
-  alternatives:
-    name: arptables
-    path: /usr/sbin/arptables-nft
-
-
-- name: focal - Using ebtables-nft as default for ebtables
-  alternatives:
-    name: ebtables
-    path: /usr/sbin/ebtables-nft
-
-
-- name: ubuntu - apt install python-is-python3
-  apt:
-    state: latest
-    pkg: python-is-python3
+- name: focal - Set nftables as default
+  include: focal-nftables.yml
+  when: ansible_virtualization_type != 'lxc'

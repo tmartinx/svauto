@@ -81,7 +81,6 @@
     - flip
     - unzip
     - lldpd
-    - snapd
     - man-db
     - psmisc
     - tzdata
@@ -290,7 +289,6 @@
     - classicmenu-indicator
     - libcanberra-gtk-module
     - ubuntu-restricted-extras
-    - gnome-software-plugin-snap
     - gnome-software-plugin-flatpak
     - compizconfig-settings-manager
   when: mode == 'desktop'
