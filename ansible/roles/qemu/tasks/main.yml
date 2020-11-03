@@ -1,0 +1,26 @@
+---
+
+# tasks file for qemu
+
+- name: main - apt installing QEMU and Libvirt
+  apt:
+    state: latest
+    pkg:
+    - ovmf
+    - qemu-kvm
+    - libvirt-daemon-system
+
+- name: main - apt installing QEmu/KVM Hypervisor - Desktop
+  apt:
+    state: latest
+    pkg:
+    - virt-viewer
+    - virt-manager
+    - spice-client-gtk
+  when: mode == 'desktop'
+
+- name: main - group add regular system user to Libvirt/KVM groups
+  user:
+    name: "{{ default_user }}"
+    groups: libvirt,kvm
+    append: yes
