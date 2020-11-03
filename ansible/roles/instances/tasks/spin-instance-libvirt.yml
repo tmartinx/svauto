@@ -33,10 +33,6 @@
   - libvirt_profiles[instance.profile].devices.storage.disks is defined
 
 
-- name: spin-instance-libvirt - set_fact config_drive
-  set_fact:
-    config_drive: "{{ lookup('template', 'config-drive.j2') | from_yaml }}"
-
 - name: spin-instance-libvirt - Include create-config-drive.yml
   include: create-config-drive.yml
   when:
@@ -54,7 +50,6 @@
   virt:
     command: define
     xml: "{{ lookup('template', 'instance-template.xml.j2') }}"
-
 
 - name: spin-instance-libvirt - Set ({{ instance.name }}) to AutoStart
   virt:

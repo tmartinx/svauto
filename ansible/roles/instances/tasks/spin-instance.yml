@@ -15,5 +15,10 @@
 # limitations under the License.
 
 
-- name: spin-instance - Spin {{ instance.type }} {{ instance.name }} Instance
+- name: spin-instance - set_fact config_drive_contents
+  set_fact:
+    config_drive: "{{ lookup('template', 'config-drive.j2') | from_yaml }}"
+
+
+- name: spin-instance - Spin {{ instance.type | default(libvirt_profiles[instance.profile].type) }} {{ instance.name }} Instance
   include: spin-instance-{{ instance.type | default(libvirt_profiles[instance.profile].type) }}.yml

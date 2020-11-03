@@ -56,18 +56,14 @@
 # Cloud-Init Files
 #
 
-- name: create-config-drive - set_fact network_config
-  set_fact:
-    network_config: "{{ instance.network }}"
-
 - name: create-config-drive - Output Cloud-Init files ({{ instance.name }})
   copy:
     dest: '{{ config_drive_tmp_subdir }}/{{ cloud_init.dest }}'
     content: "{{ cloud_init.content | to_nice_yaml }}"
   with_items:
-    - { dest: user-data, content: "{{ config_drive.user_data }}" }
     - { dest: meta-data, content: "{{ config_drive.meta_data }}" }
-    - { dest: network-config, content: "{{ network_config | combine({'version': 2 }) }}" } 
+    - { dest: network-config, content: "{{ config_drive.network_config }}" }
+    - { dest: user-data, content: "{{ config_drive.user_data }}" }
   loop_control:
     loop_var: cloud_init
   when: not iso_existance.stat.exists

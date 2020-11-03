@@ -1,12 +1,20 @@
+{% if instance.config_drive_contents.user_data_contents is defined %}
+#cloud-config
+{{ instance.config_drive_contents.user_data_contents.user_data | to_nice_yaml }} 
+
+{% else %}
+
 #cloud-config
 system_info:
   default_user:
     name: "{{ metal_deployment.default_user }}"
-    gecos: "IT Network Admin"
+    gecos: "{{ metal_deployment.default_user_gecos }}"
 chpasswd:
   list: |
-    {{ metal_deployment.default_user }}:{{ metal_deployment.default_user }}
+    {{ metal_deployment.default_user }}:{{ metal_deployment.default_user_password }}
   expire: False
 ssh_pwauth: False
 ssh_authorized_keys:
 - "{{ ssh_pub_key }}"
+
+{% endif %}

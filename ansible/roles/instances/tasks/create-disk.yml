@@ -15,31 +15,40 @@
 # limitations under the License.
 
 
-- name: create-disk - Set fact libvirt_pool to ({{ disk.pool }}) for {{ instance.name }}-disk-{{ disk.unit }}.qcow2c
+- name: "create-disk - Set fact libvirt_pool to ({{ disk.pool }}) for {{ instance.name }}-disk-{{ disk.unit }}.qcow2c"
   set_fact:
     libvirt_pool: "/var/lib/libvirt/{{ disk.pool }}"
 
 
-- name: create-disk - ({{ instance.name }}) - Set fact disk_destination
+- name: "create-disk - ({{ instance.name }}) - Set fact disk_destination"
   set_fact:
     disk_destination: "{{ libvirt_pool }}/{{ instance.name }}-disk-{{ disk.unit }}.qcow2c"
 
-- name: create-disk - ({{ instance.name }}) - Register {{ disk_destination }} stat
+- name: "create-disk - ({{ instance.name }}) - Register {{ disk_destination }} stat"
   stat:
     path: "{{ disk_destination }}"
   register: disk_existance
 
+- debug:
+    var: distros[instance.distro | default(libvirt_profiles[instance.profile].distro)]
 
-- name: "create-disk - ({{ instance.name }}) - Clone with cp {{ disk.source }} to {{ disk_destination }}"
+- debug:
+    var: disk_destination
+
+- debug:
+    var: disk.unit
+
+- name: "create-disk - ({{ instance.name }}) - Clone with cp {{ distros[instance.distro | default(libvirt_profiles[instance.profile].distro)] }} to {{ disk_destination }}"
   shell: cp -n {{ distros[instance.distro | default(libvirt_profiles[instance.profile].distro)] }} {{ disk_destination }}
   when: not disk_existance.stat.exists
 
-- name: create-disk - ({{ instance.name }}) - Set {{ disk_destination }} size to {{ disk.size }}
+
+- name: "create-disk - ({{ instance.name }}) - Set {{ disk_destination }} size to {{ disk.size }}"
   shell: "qemu-img resize {{ disk_destination }} {{ disk.size }}"
   when: not disk_existance.stat.exists
 
 
-- name: create-disk - ({{ instance.name }}) - Set file permissions for {{ disk_destination }}
+- name: "create-disk - ({{ instance.name }}) - Set file permissions for {{ disk_destination }}"
   file:
     path: "{{ disk_destination }}"
     owner: libvirt-qemu
