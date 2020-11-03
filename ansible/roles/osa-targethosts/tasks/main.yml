@@ -1,0 +1,48 @@
+---
+
+# Copyright 2020, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Reference:
+# https://docs.openstack.org/project-deploy-guide/openstack-ansible/ussuri/targethosts.html
+
+- name: main - apt install OpenStack Ansible targethosts dependencies
+  apt: name={{item}} state=latest
+  with_items:
+    - vlan
+    - ifenslave
+    - ifenslave-2.6
+    - bridge-utils
+    - debootstrap
+
+# TODO:
+# Get the root's ssh public key from the vousa-1 VM and add it in all targethosts, also for their root user.
+#- name: main - Copy SSH Public Key (from OSA Deployment to Target Hosts)
+#  synchronize:
+#    src: /root/.ssh/id_rsa.pub
+#    dest: /root/.ssh/authorized_keys
+#  delegate_to: vuosa-1
+- name: main - Copy SSH Public Key (from OSA Deployment to Target Hosts)
+  copy:
+    src: "/home/{{ default_user }}/osa-root-authorized_keys"
+    dest: /root/.ssh/authorized_keys
+    owner: root
+    group: root
+    mode: '0644'
+
+
+- name: main - Delete freaking docker.io
+  shell: |
+    apt purge docker.io -y
+    apt autoremove -y
