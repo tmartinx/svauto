@@ -27,6 +27,7 @@
 - name: "create-disk - ({{ instance.name }}) - Register {{ disk_destination }} stat"
   stat:
     path: "{{ disk_destination }}"
+    get_checksum: False
   register: disk_existance
 
 - debug:
