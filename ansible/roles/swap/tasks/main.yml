@@ -22,6 +22,7 @@
 - name: "main | check if swap file exists"
   stat:
     path: "{{ swap_file }}"
+    get_checksum: False
   register: swap_file_check
 
 - name: "main | Create the file to be used for swap"
