@@ -14,23 +14,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Creating Neutron External Network
+
+- name: main - Create Neutron External Network
   environment: "{{admin_openrc_env}}"
   os_network:
+    validate_certs: false
     state: present
-    name: ext-net
+    name: "{{ ext_net_netname }}"
     external: true
     provider_physical_network: external
     provider_network_type: flat
     shared: true
 
 
-- name: Creating Neutron External Subnet
+- name: main - Create Neutron External Subnet
   environment: "{{admin_openrc_env}}"
   os_subnet:
+    validate_certs: false
     state: present
-    network_name: ext-net
-    name: ext-subnet
+    network_name: "{{ ext_net_netname }}"
+    name: "{{ ext_net_subnetname }}"
     enable_dhcp: False
     cidr: "{{ext_net_subnet}}"
     allocation_pool_start: "{{ext_net_start}}"
