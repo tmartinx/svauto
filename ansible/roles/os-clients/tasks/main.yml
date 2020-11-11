@@ -1,0 +1,46 @@
+---
+
+# Copyright 2020, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: main - apt install OpenStack Clients and Python dependencies
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
+    - python3-ryu
+    - python3-yaql
+    - python3-heat
+    - python3-shade
+    - python3-croniter
+    - python3-aodhclient
+    - python3-novaclient
+    - python3-heatclient
+    - python3-zaqarclient
+    - python3-swiftclient
+    - python3-manilaclient
+    - python3-saharaclient
+    - python3-openstacksdk
+    - python3-senlinclient
+    - python3-glanceclient
+    - python3-cinderclient
+    - python3-magnumclient
+    - python3-monascaclient
+    - python3-mistralclient
+    - python3-neutronclient
+    - python3-gnocchiclient
+    - python3-barbicanclient
+    - python3-keystoneclient
+    - python3-openstackclient
+    - python3-ceilometerclient
