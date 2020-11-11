@@ -30,14 +30,6 @@
     get_checksum: False
   register: disk_existance
 
-- debug:
-    var: distros[instance.distro | default(libvirt_profiles[instance.profile].distro)]
-
-- debug:
-    var: disk_destination
-
-- debug:
-    var: disk.unit
 
 - name: "create-disk - ({{ instance.name }}) - Clone with cp {{ distros[instance.distro | default(libvirt_profiles[instance.profile].distro)] }} to {{ disk_destination }}"
   shell: cp -n {{ distros[instance.distro | default(libvirt_profiles[instance.profile].distro)] }} {{ disk_destination }}
