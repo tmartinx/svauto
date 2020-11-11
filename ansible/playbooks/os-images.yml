@@ -1,0 +1,10 @@
+---
+
+#
+# Top Level Playbook for OpenStack Ansible Target Hosts
+#
+
+- hosts: all
+  become: true
+  roles:
+  - os-images

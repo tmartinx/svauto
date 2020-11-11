@@ -1,0 +1,465 @@
+---
+
+# Copyright 2020, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+- stat:
+    path: /srv/cloud/ubuntu-20.04-server-cloudimg-amd64.raw
+    get_checksum: False
+  register: ubuntu20_image_register
+
+- name: main - uploading "ubuntu-20.04"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: ubuntu-20-04
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/ubuntu-20.04-server-cloudimg-amd64.raw
+    properties:
+      cpu_arch: x86_64
+      distro: ubuntu
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: ubuntu20_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/ubuntu-18.04-server-cloudimg-amd64.raw
+    get_checksum: False
+  register: ubuntu18_image_register
+
+- name: main - uploading "ubuntu-18.04"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: ubuntu-18-04
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/ubuntu-18.04-server-cloudimg-amd64.raw
+    properties:
+      cpu_arch: x86_64
+      distro: ubuntu
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: ubuntu18_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/ubuntu-16.04-server-cloudimg-amd64-disk1.raw
+    get_checksum: False
+  register: ubuntu16_image_register
+
+- name: main - uploading "ubuntu-16.04"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: ubuntu-16-04
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/ubuntu-16.04-server-cloudimg-amd64-disk1.raw
+    properties:
+      cpu_arch: x86_64
+      distro: ubuntu
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: ubuntu16_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/debian-10-openstack-amd64.raw
+    get_checksum: False
+  register: debian10_image_register
+
+- name: main - uploading "debian-10"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: debian-10
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/debian-10-openstack-amd64.raw
+    properties:
+      cpu_arch: x86_64
+      distro: debian
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: debian10_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/devuan_ascii_2.0.0_amd64_qemu.raw
+    get_checksum: False
+  register: devuan2_image_register
+
+- name: main - uploading "devuan-2"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: devuan-2
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/devuan_ascii_2.0.0_amd64_qemu.raw
+    properties:
+      cpu_arch: x86_64
+      distro: debian
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: devuan2_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/OPNsense-20.7-OpenSSL-nano-amd64.raw
+    get_checksum: False
+  register: opnsense_image_register
+
+- name: main - uploading "opnsense-20.7"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: opnsense-20-7
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/OPNsense-20.7-OpenSSL-nano-amd64.raw
+    properties:
+      cpu_arch: x86_64
+      distro: freebsd
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: opnsense_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.raw
+    get_checksum: False
+  register: centos8_image_register
+
+- name: main - uploading "centos-8"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: centos-8
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.raw
+    properties:
+      cpu_arch: x86_64
+      distro: centos
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: centos8_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/CentOS-7-x86_64-GenericCloud.raw
+    get_checksum: False
+  register: centos7_image_register
+
+- name: main - uploading "centos-7"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: centos-7
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/CentOS-7-x86_64-GenericCloud.raw
+    properties:
+      cpu_arch: x86_64
+      distro: centos
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: centos7_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/CentOS-6-x86_64-GenericCloud.raw
+    get_checksum: False
+  register: centos6_image_register
+
+- name: main - uploading "centos-6"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: centos-6
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/CentOS-6-x86_64-GenericCloud.raw
+    properties:
+      cpu_arch: x86_64
+      distro: centos
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: centos6_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/Fedora-Cloud-Base-31-1.9.x86_64.raw
+    get_checksum: False
+  register: fedora31_image_register
+
+- name: main - uploading "fedora-31"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: fedora-31
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/Fedora-Cloud-Base-31-1.9.x86_64.raw
+    properties:
+      cpu_arch: x86_64
+      distro: fedora
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: fedora31_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/coreos_production_openstack_image.raw
+    get_checksum: False
+  register: coreos_image_register
+
+- name: main - uploading "coreos"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: coreos
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/coreos_production_openstack_image.raw
+    properties:
+      cpu_arch: x86_64
+      distro: coreos
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: coreos_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/cumulus-linux-4.2.0-vx-amd64-qemu.raw
+    get_checksum: False
+  register: cumulus_image_register
+
+- name: main - uploading "cumulus-4.2.0"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: cumulus-4-2-0
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/cumulus-linux-4.2.0-vx-amd64-qemu.raw
+    properties:
+      cpu_arch: x86_64
+      distro: cumulus
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: cumulus_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/windows-10-pro.raw
+    get_checksum: False
+  register: win10_image_register
+
+- name: main - uploading "windows-10-pro"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: windows-10-pro
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/windows-10-pro.raw
+    properties:
+      cpu_arch: x86_64
+      distro: windows
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: win10_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/windows-server-2016-standard.raw
+    get_checksum: False
+  register: win16_image_register
+
+- name: main - uploading "windows-server-2016-standard"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: windows-server-2016-standard
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/windows-server-2016-standard.raw
+    properties:
+      cpu_arch: x86_64
+      distro: windows
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: win16_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/windows-server-2019-standard.raw
+    get_checksum: False
+  register: win19_image_register
+
+- name: main - uploading "windows-server-2019-standard"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: windows-server-2019-standard
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/windows-server-2019-standard.raw
+    properties:
+      cpu_arch: x86_64
+      distro: windows
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: win19_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/vyos-1.2.5-ci.raw
+    get_checksum: False
+  register: vyos_lts_image_register
+
+- name: main - uploading "vyos-1.2.5-ci"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: vyos-1.2.5-ci
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/vyos-1.2.5-ci.raw
+    properties:
+      cpu_arch: x86_64
+      distro: debian
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: vyos_lts_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/vyos-rolling-latest.raw
+    get_checksum: False
+  register: vyos_roll_image_register
+
+- name: main - uploading "vyos-rolling"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: vyos-rolling
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/vyos-rolling-latest.raw
+    properties:
+      cpu_arch: x86_64
+      distro: debian
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: vyos_roll_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/arubaoscx-disk-image-genericx86-p4-20191031190628.raw
+    get_checksum: False
+  register: arubaos_image_register
+
+- name: main - uploading "arubaoscx-p4"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: arubaoscx-p4
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/arubaoscx-disk-image-genericx86-p4-20191031190628.raw
+    properties:
+      cpu_arch: x86_64
+      distro: arubaos
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: arubaos_image_register.stat.exists == True
