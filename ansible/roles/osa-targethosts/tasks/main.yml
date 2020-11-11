@@ -18,13 +18,21 @@
 # https://docs.openstack.org/project-deploy-guide/openstack-ansible/ussuri/targethosts.html
 
 - name: main - apt install OpenStack Ansible targethosts dependencies
-  apt: name={{item}} state=latest
-  with_items:
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
     - vlan
     - ifenslave
-    - ifenslave-2.6
     - bridge-utils
     - debootstrap
+
+- name: main - Delete freaking docker.io
+  apt:
+    state: absent
+    pkg:
+    - docker.io
+
 
 # TODO:
 # Get the root's ssh public key from the vousa-1 VM and add it in all targethosts, also for their root user.
@@ -40,9 +48,3 @@
     owner: root
     group: root
     mode: '0644'
-
-
-- name: main - Delete freaking docker.io
-  shell: |
-    apt purge docker.io -y
-    apt autoremove -y
