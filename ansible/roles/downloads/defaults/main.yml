@@ -50,6 +50,13 @@ downloads:
   image_type: cloud
   getit: false
 
+- name: debian-testing-openstack-amd64.qcow2
+  distro: debian
+  url: https://cdimage.debian.org/cdimage/openstack/testing/debian-testing-openstack-amd64.qcow2
+  dest: /srv/cloud/debian-testing-openstack-amd64.qcow2
+  image_type: cloud
+  getit: false
+
 - name: devuan_ascii_2.0.0_amd64_qemu.qcow2.xz
   distro: debian
   url: https://files.devuan.org/devuan_ascii/virtual/devuan_ascii_2.0.0_amd64_qemu.qcow2.xz

@@ -116,6 +116,31 @@
 
 
 - stat:
+    path: /srv/cloud/debian-testing-openstack-amd64.raw
+    get_checksum: False
+  register: debian11_image_register
+
+- name: main - uploading "debian-testing"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: debian-testing
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/debian-testing-openstack-amd64.raw
+    properties:
+      cpu_arch: x86_64
+      distro: debian
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: debian11_image_register.stat.exists == True
+
+
+- stat:
     path: /srv/cloud/devuan_ascii_2.0.0_amd64_qemu.raw
     get_checksum: False
   register: devuan2_image_register
@@ -308,10 +333,6 @@
     properties:
       cpu_arch: x86_64
       distro: cumulus
-      hw_scsi_model: virtio-scsi
-      hw_disk_bus: scsi
-      hw_qemu_guest_agent: yes
-      os_require_quiesce: yes
   when: cumulus_image_register.stat.exists == True
 
 
