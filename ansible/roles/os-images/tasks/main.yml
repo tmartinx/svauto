@@ -266,20 +266,20 @@
 
 
 - stat:
-    path: /srv/cloud/Fedora-Cloud-Base-31-1.9.x86_64.raw
+    path: /srv/cloud/Fedora-Cloud-Base-33-1.2.x86_64.raw
     get_checksum: False
-  register: fedora31_image_register
+  register: fedora33_image_register
 
-- name: main - uploading "fedora-31"
+- name: main - uploading "fedora-33"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: fedora-31
+    name: fedora-33
     is_public: yes
     container_format: bare
     disk_format: raw
     state: present
-    filename: /srv/cloud/Fedora-Cloud-Base-31-1.9.x86_64.raw
+    filename: /srv/cloud/Fedora-Cloud-Base-33-1.2.x86_64.raw
     properties:
       cpu_arch: x86_64
       distro: fedora
@@ -287,7 +287,32 @@
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
       os_require_quiesce: yes
-  when: fedora31_image_register.stat.exists == True
+  when: fedora33_image_register.stat.exists == True
+
+
+- stat:
+    path: /srv/cloud/fedora-coreos-32.20201104.3.0-openstack.x86_64.raw
+    get_checksum: False
+  register: fedora_coreos_image_register
+
+- name: main - uploading "fedora-coreos-32"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: fedora-coreos-32
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/fedora-coreos-32.20201104.3.0-openstack.x86_64.raw
+    properties:
+      cpu_arch: x86_64
+      distro: coreos
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: fedora33_image_register.stat.exists == True
 
 
 - stat:
