@@ -113,6 +113,13 @@ downloads:
   image_type: cloud
   getit: false
 
+- name: fedora-coreos-32.20201104.3.0-openstack.x86_64.qcow2.xz
+  distro: coreos
+  url: https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20201104.3.0/x86_64/fedora-coreos-32.20201104.3.0-openstack.x86_64.qcow2.xz
+  dest: /srv/cloud/fedora-coreos-32.20201104.3.0-openstack.x86_64.qcow2.xz
+  image_type: cloud
+  getit: false
+
 - name: vyos-1.2.5-ci-2G.tgz
   distro: vyos
   url: https://cdn.vyos.io/1.2.5/c98eccba-7e6a-11ea-bc55-0242ac130003/vyos-1.2.5-ci-2G.tgz
