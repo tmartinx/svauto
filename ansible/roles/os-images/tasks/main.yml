@@ -312,7 +312,7 @@
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
       os_require_quiesce: yes
-  when: fedora33_image_register.stat.exists == True
+  when: fedora_coreos_image_register.stat.exists == True
 
 
 - stat:
