@@ -1,0 +1,49 @@
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+include "/etc/bind/rndc.key";
+
+{% if dns_role == "master" %}
+controls {
+      inet 0.0.0.0 port 953
+              allow { {{ authorized_dhcp_ip }}; } keys { "{{ dns_key_name }}"; };
+};
+{% endif %}
+
+{% for domain, subnet in subnets.items() %}
+zone "{{ domain }}" {
+{% if dns_role == "master" %}
+  type master;
+  file "/var/lib/bind/{{ domain }}.hosts";
+  allow-update { key {{ dns_key_name }}; };
+  notify yes;
+{% endif %}
+{% if dns_role == "slave" %}
+  type slave;
+  masters { {{ dns_masters }}; };
+  file "/var/lib/bind/{{ domain }}.hosts";
+{% endif %}
+};
+
+{% if subnet.reverse|default(false) %}
+zone "{{ subnet.reverse }}.in-addr.arpa" {
+{% if dns_role == "master" %}
+  type master;
+  file "/var/lib/bind/{{ subnet.reverse }}.rev";
+  allow-update { key {{ dns_key_name }}; };
+{% endif %}
+{% if dns_role == "slave" %}
+  type slave;
+  masters { {{ dns_masters }}; };
+  file "/var/lib/bind/{{ subnet.reverse }}.rev";
+{% endif %}
+};
+
+{% endif %}
+
+{% endfor %}

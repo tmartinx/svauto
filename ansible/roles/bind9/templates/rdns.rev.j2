@@ -1,0 +1,38 @@
+; This line indicates that the object we're configuring below (in this case,
+; 0.0.10) has its origin at the "." domain.  "." is the root domain
+; from which all the TLDs branch.
+$ORIGIN .
+
+; Next line defines the DNS time-to-live setting
+$TTL 3600 ; 1 hour - Testing only
+
+; The next set of lines are the "Start of Authority" record and define important
+; info about the domain. In my case, we're defining {{ item.key }} and saying
+; that {{ ansible_hostname }}.{{ item.key }} is its source host, and {{ soa|replace('@', '.') }}
+; is the domain maintainer. For the e-mail address, we use a dot instead of an @.
+; The lines after that define the zone serial number, which is used to keep track
+; of when the zone file was modified, and then some interval definitions which
+; you can leave as default.
+{{ item.value.reverse }}.in-addr.arpa	IN	SOA  {{ ansible_hostname }}.{{ item.key }}. {{ soa|replace('@', '.') }}. (
+              1263527838 ; serial
+              10800      ; refresh (3 hours)
+              3600       ; retry (1 hour)
+              604800     ; expire (1 week)
+              38400      ; minimum (10 hours 40 minutes)
+              )
+
+; Next, we define the hosts necessary to make the domain function. First, we add
+; an "NS Record" to define the domain's name server...
+	NS	{{ ansible_hostname }}.{{ item.key }}.
+
+; Now we're ready to begin adding hosts, but first we need another origin
+; statement to indicate that the hosts added below originate not from ".", like
+; the domain itself; rather, they originate from "{{ item.key }}".
+;
+
+$ORIGIN {{ item.value.reverse }}.in-addr.arpa.
+
+; ...then an "PTR Record" for the domain server's IP address...
+{% for hostname, system in item.value.systems.items() %}
+{{ system.ip_octet }}	PTR {{ hostname }}.{{ item.key }}.
+{% endfor %}
