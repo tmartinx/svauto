@@ -24,6 +24,7 @@
     - python3-heat
     - python3-shade
     - python3-croniter
+    - python3-zunclient
     - python3-aodhclient
     - python3-novaclient
     - python3-heatclient
@@ -36,6 +37,7 @@
     - python3-glanceclient
     - python3-cinderclient
     - python3-magnumclient
+    - python3-muranoclient
     - python3-monascaclient
     - python3-mistralclient
     - python3-neutronclient
