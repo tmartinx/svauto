@@ -106,13 +106,6 @@ downloads:
   image_type: cloud
   getit: false
 
-- name: coreos_production_openstack_image.img.bz
-  distro: coreos
-  url: https://stable.release.core-os.net/amd64-usr/current/coreos_production_openstack_image.img.bz2
-  dest: /srv/cloud/coreos_production_openstack_image.img.bz2
-  image_type: cloud
-  getit: false
-
 - name: fedora-coreos-32.20201104.3.0-openstack.x86_64.qcow2.xz
   distro: coreos
   url: https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20201104.3.0/x86_64/fedora-coreos-32.20201104.3.0-openstack.x86_64.qcow2.xz

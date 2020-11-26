@@ -32,7 +32,7 @@
     filename: /srv/cloud/ubuntu-20.04-server-cloudimg-amd64.raw
     properties:
       cpu_arch: x86_64
-      distro: ubuntu
+      os_distro: ubuntu
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -57,7 +57,7 @@
     filename: /srv/cloud/ubuntu-18.04-server-cloudimg-amd64.raw
     properties:
       cpu_arch: x86_64
-      distro: ubuntu
+      os_distro: ubuntu
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -82,7 +82,7 @@
     filename: /srv/cloud/ubuntu-16.04-server-cloudimg-amd64-disk1.raw
     properties:
       cpu_arch: x86_64
-      distro: ubuntu
+      os_distro: ubuntu
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -107,7 +107,7 @@
     filename: /srv/cloud/debian-10-openstack-amd64.raw
     properties:
       cpu_arch: x86_64
-      distro: debian
+      os_distro: debian
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -132,7 +132,7 @@
     filename: /srv/cloud/debian-testing-openstack-amd64.raw
     properties:
       cpu_arch: x86_64
-      distro: debian
+      os_distro: debian
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -157,7 +157,7 @@
     filename: /srv/cloud/devuan_ascii_2.0.0_amd64_qemu.raw
     properties:
       cpu_arch: x86_64
-      distro: debian
+      os_distro: debian
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -182,7 +182,7 @@
     filename: /srv/cloud/OPNsense-20.7-OpenSSL-nano-amd64.raw
     properties:
       cpu_arch: x86_64
-      distro: freebsd
+      os_distro: freebsd
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -207,7 +207,7 @@
     filename: /srv/cloud/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.raw
     properties:
       cpu_arch: x86_64
-      distro: centos
+      os_distro: centos
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -232,7 +232,7 @@
     filename: /srv/cloud/CentOS-7-x86_64-GenericCloud.raw
     properties:
       cpu_arch: x86_64
-      distro: centos
+      os_distro: centos
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -257,7 +257,7 @@
     filename: /srv/cloud/CentOS-6-x86_64-GenericCloud.raw
     properties:
       cpu_arch: x86_64
-      distro: centos
+      os_distro: centos
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -282,7 +282,7 @@
     filename: /srv/cloud/Fedora-Cloud-Base-33-1.2.x86_64.raw
     properties:
       cpu_arch: x86_64
-      distro: fedora
+      os_distro: fedora
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -307,37 +307,12 @@
     filename: /srv/cloud/fedora-coreos-32.20201104.3.0-openstack.x86_64.raw
     properties:
       cpu_arch: x86_64
-      distro: coreos
+      os_distro: coreos
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
       os_require_quiesce: yes
   when: fedora_coreos_image_register.stat.exists == True
-
-
-- stat:
-    path: /srv/cloud/coreos_production_openstack_image.raw
-    get_checksum: False
-  register: coreos_image_register
-
-- name: main - uploading "coreos"
-  environment: "{{admin_openrc_env}}"
-  os_image:
-    validate_certs: false
-    name: coreos
-    is_public: yes
-    container_format: bare
-    disk_format: raw
-    state: present
-    filename: /srv/cloud/coreos_production_openstack_image.raw
-    properties:
-      cpu_arch: x86_64
-      distro: coreos
-      hw_scsi_model: virtio-scsi
-      hw_disk_bus: scsi
-      hw_qemu_guest_agent: yes
-      os_require_quiesce: yes
-  when: coreos_image_register.stat.exists == True
 
 
 - stat:
@@ -357,7 +332,7 @@
     filename: /srv/cloud/cumulus-linux-4.2.0-vx-amd64-qemu.raw
     properties:
       cpu_arch: x86_64
-      distro: cumulus
+      os_distro: cumulus
   when: cumulus_image_register.stat.exists == True
 
 
@@ -378,7 +353,7 @@
     filename: /srv/cloud/windows-10-pro.raw
     properties:
       cpu_arch: x86_64
-      distro: windows
+      os_distro: windows
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -403,7 +378,7 @@
     filename: /srv/cloud/windows-server-2016-standard.raw
     properties:
       cpu_arch: x86_64
-      distro: windows
+      os_distro: windows
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -428,7 +403,7 @@
     filename: /srv/cloud/windows-server-2019-standard.raw
     properties:
       cpu_arch: x86_64
-      distro: windows
+      os_distro: windows
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -453,7 +428,7 @@
     filename: /srv/cloud/vyos-1.2.5-ci.raw
     properties:
       cpu_arch: x86_64
-      distro: debian
+      os_distro: debian
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -478,7 +453,7 @@
     filename: /srv/cloud/vyos-rolling-latest.raw
     properties:
       cpu_arch: x86_64
-      distro: debian
+      os_distro: debian
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
@@ -503,7 +478,7 @@
     filename: /srv/cloud/arubaoscx-disk-image-genericx86-p4-20191031190628.raw
     properties:
       cpu_arch: x86_64
-      distro: arubaos
+      os_distro: arubaos
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
