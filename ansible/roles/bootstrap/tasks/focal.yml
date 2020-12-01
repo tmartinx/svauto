@@ -14,6 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: ubuntu - apt install python-is-python3
+  apt:
+    state: latest
+    pkg: python-is-python3
+
 
 #- name: focal - Installing Linux HWE
 #  apt:
@@ -28,10 +33,10 @@
 #  when: mode == 'desktop'
 
 
-#- name: focal - include UCA book
-#  include: "{{ ansible_distribution_release }}-uca.yml"
+- name: focal - include UCA book
+  include: "{{ ansible_distribution_release }}-uca.yml"
+  when: uca_version is defined
 
 
-- name: focal - Set nftables as default
-  include: focal-nftables.yml
-  when: ansible_virtualization_type != 'lxc'
+- name: focal - Set firewall {{ firewall_backend }} as default
+  include: focal-firewall.yml

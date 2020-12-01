@@ -40,6 +40,19 @@
     pkg: ubuntu-cloud-keyring
 
 
+- name: ubuntu - apt install very basic tools
+  apt:
+    state: latest
+    pkg:
+    - ssh
+    - curl
+    - tmux
+    - nftables
+    - iptables
+    - arptables
+    - ebtables
+
+
 - name: ubuntu - include custom book
   include: "{{ ansible_distribution_release }}.yml"
   when: ansible_distribution_release == "bionic" or ansible_distribution_release == "focal"
@@ -63,13 +76,11 @@
 - name: ubuntu - apt full-upgrade
   apt:
     upgrade: dist
-    update_cache: yes
   when: metal_deployment.base_os_upgrade
 
 
 - name: ubuntu - apt install minimum tools
   apt:
-    update_cache: yes
     state: latest
     pkg:
     - ssh
@@ -80,7 +91,6 @@
     - lshw
     - flip
     - unzip
-    - lldpd
     - man-db
     - psmisc
     - tzdata
@@ -89,6 +99,8 @@
     - mlocate
     - sshpass
     - xfsprogs
+    - nftables
+    - iptables
     - ppa-purge
     - traceroute
     - btrfs-progs
@@ -103,7 +115,6 @@
 
 - name: ubuntu - apt install network tools
   apt:
-    update_cache: yes
     state: latest
     pkg:
     - cbm
@@ -117,6 +128,7 @@
     - ngrep
     - iftop
     - nload
+    - lldpd
     - netcat
     - telnet
     - iperf3
@@ -128,8 +140,6 @@
     - pktstat
     - netperf
     - nethogs
-    - nftables
-    - iptables
     - tcptrack
     - ostinato
     - conntrack
@@ -146,7 +156,6 @@
 
 - name: ubuntu - apt install extra packages
   apt:
-    update_cache: yes
     state: latest
     pkg:
     - jq
@@ -181,7 +190,6 @@
 
 - name: ubuntu - apt install Packer
   apt:
-    update_cache: yes
     state: latest
     pkg:
     - packer
@@ -191,7 +199,6 @@
 
 - name: ubuntu - apt install atop
   apt:
-    update_cache: yes
     state: latest
     pkg: atop
   when: extra_packages and (mode == 'server' or mode == 'desktop') and ansible_virtualization_type != 'lxc'
@@ -209,7 +216,6 @@
 
 - name: ubuntu - apt install ZRAM Config
   apt:
-    update_cache: yes
     state: latest
     pkg: zram-config
   when: (zram is defined and zram) and ansible_virtualization_type != 'lxc'
@@ -217,7 +223,6 @@
 
 - name: ubuntu - apt install Server tools
   apt:
-    update_cache: yes
     state: latest
     pkg:
       - vim-nox
@@ -240,7 +245,6 @@
 #
 - name: ubuntu - apt install Desktop Environments
   apt:
-    update_cache: yes
     state: latest
     pkg: "{{ desktop_environments }}"
   when: mode == 'desktop' and desktop_environments is defined
@@ -248,7 +252,6 @@
 
 - name: ubuntu - apt install Desktop tools
   apt:
-    update_cache: yes
     state: latest
     pkg:
     - vim
@@ -296,7 +299,6 @@
 
 - name: ubuntu - apt install Desktop libraries (WebEx)
   apt:
-    update_cache: yes
     state: latest
     pkg:
     - libxmu6:i386
@@ -377,7 +379,6 @@
 
 - name: ubuntu - install QEMU Guest Agent
   apt:
-    update_cache: yes
     state: latest
     pkg: qemu-guest-agent
   when: ansible_virtualization_type == 'kvm' and ansible_virtualization_role == 'guest'

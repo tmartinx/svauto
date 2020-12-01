@@ -15,31 +15,25 @@
 # limitations under the License.
 
 
-- name: focal - Using iptables-nft as default for iptables
+- name: focal - Using iptables-{{ firewall_backend }} as default for iptables
   alternatives:
     name: iptables
-    path: /usr/sbin/iptables-nft
+    path: /usr/sbin/iptables-{{ firewall_backend }}
 
 
-- name: focal - Using ip6tables-nft as default for ip6tables
+- name: focal - Using ip6tables-{{ firewall_backend }} as default for ip6tables
   alternatives:
     name: ip6tables
-    path: /usr/sbin/ip6tables-nft
+    path: /usr/sbin/ip6tables-{{ firewall_backend }}
 
 
-- name: focal - Using arptables-nft as default for arptables-nft
+- name: focal - Using arptables-{{ firewall_backend }} as default for arptables
   alternatives:
     name: arptables
-    path: /usr/sbin/arptables-nft
+    path: /usr/sbin/arptables-{{ firewall_backend }}
 
 
-- name: focal - Using ebtables-nft as default for ebtables
+- name: focal - Using ebtables-{{ firewall_backend }} as default for ebtables
   alternatives:
     name: ebtables
-    path: /usr/sbin/ebtables-nft
-
-
-- name: ubuntu - apt install python-is-python3
-  apt:
-    state: latest
-    pkg: python-is-python3
+    path: /usr/sbin/ebtables-{{ firewall_backend }}
