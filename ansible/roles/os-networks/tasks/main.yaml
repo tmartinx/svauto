@@ -18,24 +18,24 @@
 - name: main - Create Neutron External Network
   environment: "{{admin_openrc_env}}"
   os_network:
-    validate_certs: false
+#    validate_certs: false
     state: present
-    name: "{{ ext_net_netname }}"
+    name: "{{ ext_net_network_name }}"
     external: true
-    provider_physical_network: external
-    provider_network_type: flat
+    provider_physical_network: "{{ ext_net_provider_name }}"
+    provider_network_type: "{{ ext_net_provider_type }}"
     shared: true
 
 
 - name: main - Create Neutron External Subnet
   environment: "{{admin_openrc_env}}"
   os_subnet:
-    validate_certs: false
+#    validate_certs: false
     state: present
-    network_name: "{{ ext_net_netname }}"
-    name: "{{ ext_net_subnetname }}"
+    network_name: "{{ ext_net_network_name }}"
+    name: "{{ ext_net_subnet_name }}"
     enable_dhcp: False
-    cidr: "{{ext_net_subnet}}"
-    allocation_pool_start: "{{ext_net_start}}"
-    allocation_pool_end: "{{ext_net_end}}"
-    gateway_ip: "{{ext_net_gateway}}"
+    cidr: "{{ ext_net_subnet_cidr }}"
+    allocation_pool_start: "{{ ext_net_start }}"
+    allocation_pool_end: "{{ ext_net_end }}"
+    gateway_ip: "{{ ext_net_gateway }}"
