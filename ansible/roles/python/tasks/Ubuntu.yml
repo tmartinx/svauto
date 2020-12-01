@@ -24,6 +24,7 @@
     - ipython3
     - virtualenv
     - python3-pip
+    - python3-apt
     - python3-lxml
     - python3-shade
     - python3-gssapi
@@ -47,6 +48,7 @@
     - ipython
     - virtualenv
     - python-pip
+    - python-apt
     - python-lxml
     - python-shade
     - python-gssapi
