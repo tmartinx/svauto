@@ -71,10 +71,10 @@ downloads:
   image_type: cloud
   getit: false
 
-- name: CentOS-7-x86_64-GenericCloud.qcow2c
+- name: CentOS-7-x86_64-GenericCloud-2009.qcow2c
   distro: centos
-  url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2c
-  dest: /srv/cloud/CentOS-7-x86_64-GenericCloud.qcow2c
+  url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2c
+  dest: /srv/cloud/CentOS-7-x86_64-GenericCloud-2009.qcow2c
   image_type: cloud
   getit: false
 
@@ -195,10 +195,10 @@ downloads:
   image_type: iso
   getit: false
 
-- name: CentOS-7-x86_64-Minimal-2003.iso
+- name: CentOS-7-x86_64-Minimal-2009.iso
   distro: centos
-  url: https://mirror.rcg.sfu.ca/mirror/CentOS/7.8.2003/isos/x86_64/CentOS-7-x86_64-Minimal-2003.iso
-  dest: /srv/iso/CentOS-7-x86_64-Minimal-2003.iso
+  url: https://mirror.rcg.sfu.ca/mirror/CentOS/7.9.2009/isos/x86_64/CentOS-7-x86_64-Minimal-2009.iso
+  dest: /srv/iso/CentOS-7-x86_64-Minimal-2009.iso
   image_type: iso
   getit: false
 

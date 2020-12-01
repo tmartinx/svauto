@@ -216,20 +216,20 @@
 
 
 - stat:
-    path: /srv/cloud/CentOS-7-x86_64-GenericCloud.raw
+    path: /srv/cloud/CentOS-7-x86_64-GenericCloud-2009.raw
     get_checksum: False
   register: centos7_image_register
 
-- name: main - uploading "centos-7"
+- name: main - uploading "centos-7.9.2009"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: centos-7
+    name: centos-7.9.2009
     is_public: yes
     container_format: bare
     disk_format: raw
     state: present
-    filename: /srv/cloud/CentOS-7-x86_64-GenericCloud.raw
+    filename: /srv/cloud/CentOS-7-x86_64-GenericCloud-2009.raw
     properties:
       cpu_arch: x86_64
       os_distro: centos
@@ -245,11 +245,11 @@
     get_checksum: False
   register: centos6_image_register
 
-- name: main - uploading "centos-6"
+- name: main - uploading "centos-6.10"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: centos-6
+    name: centos-6.10
     is_public: yes
     container_format: bare
     disk_format: raw
