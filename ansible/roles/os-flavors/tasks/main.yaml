@@ -29,15 +29,15 @@
 #    vcpus: 1
 #    disk: 4
 
-- name: main - nova creating m1.tiny flavor
-  environment: "{{admin_openrc_env}}"
-  os_nova_flavor:
-    validate_certs: false
-    state: present
-    name: m1.tiny
-    ram: 512
-    vcpus: 1
-    disk: 8
+#- name: main - nova creating m1.tiny flavor
+#  environment: "{{admin_openrc_env}}"
+#  os_nova_flavor:
+#    validate_certs: false
+#    state: present
+#    name: m1.tiny
+#    ram: 512
+#    vcpus: 1
+#    disk: 8
 
 - name: main - nova creating m1.little flavor
   environment: "{{admin_openrc_env}}"
@@ -66,7 +66,7 @@
     state: present
     name: m1.medium
     ram: 4096
-    vcpus: 2
+    vcpus: 4
     disk: 64
 
 - name: main - nova creating m1.large flavor
@@ -76,7 +76,7 @@
     state: present
     name: m1.large
     ram: 8192
-    vcpus: 4
+    vcpus: 8
     disk: 128
 
 - name: main - nova creating m1.xlarge flavor
@@ -86,7 +86,7 @@
     state: present
     name: m1.xlarge
     ram: 16384
-    vcpus: 8
+    vcpus: 16
     disk: 256
 
 
@@ -180,47 +180,46 @@
     disk: 128
 
 
+##
+## Windows Flavors
+##
 #
-# Windows Flavors
+#- name: main - nova creating w1.small flavor
+#  environment: "{{admin_openrc_env}}"
+#  os_nova_flavor:
+#    validate_certs: false
+#    state: present
+#    name: w1.small
+#    ram: 2048
+#    vcpus: 2
+#    disk: 32
 #
-
-- name: main - nova creating w1.small flavor
-  environment: "{{admin_openrc_env}}"
-  os_nova_flavor:
-    validate_certs: false
-    state: present
-    name: w1.small
-    ram: 2048
-    vcpus: 1
-    disk: 32
-
-- name: main - nova creating w1.medium flavor
-  environment: "{{admin_openrc_env}}"
-  os_nova_flavor:
-    validate_certs: false
-    state: present
-    name: w1.medium
-    ram: 4096
-    vcpus: 2
-    disk: 64
-
-- name: main - nova creating w1.large flavor
-  environment: "{{admin_openrc_env}}"
-  os_nova_flavor:
-    validate_certs: false
-    state: present
-    name: w1.large
-    ram: 8192
-    vcpus: 4
-    disk: 128
-
-- name: main - nova creating w1.xlarge flavor
-  environment: "{{admin_openrc_env}}"
-  os_nova_flavor:
-    validate_certs: false
-    state: present
-    name: w1.xlarge
-    ram: 16384
-    vcpus: 8
-    disk: 256
-
+#- name: main - nova creating w1.medium flavor
+#  environment: "{{admin_openrc_env}}"
+#  os_nova_flavor:
+#    validate_certs: false
+#    state: present
+#    name: w1.medium
+#    ram: 4096
+#    vcpus: 4
+#    disk: 64
+#
+#- name: main - nova creating w1.large flavor
+#  environment: "{{admin_openrc_env}}"
+#  os_nova_flavor:
+#    validate_certs: false
+#    state: present
+#    name: w1.large
+#    ram: 8192
+#    vcpus: 8
+#    disk: 128
+#
+#- name: main - nova creating w1.xlarge flavor
+#  environment: "{{admin_openrc_env}}"
+#  os_nova_flavor:
+#    validate_certs: false
+#    state: present
+#    name: w1.xlarge
+#    ram: 16384
+#    vcpus: 16
+#    disk: 256
