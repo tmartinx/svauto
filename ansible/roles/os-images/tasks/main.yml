@@ -20,11 +20,11 @@
     get_checksum: False
   register: ubuntu20_image_register
 
-- name: main - uploading "ubuntu-20.04"
+- name: main - uploading "ubuntu-20.04.1-20201123"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: ubuntu-20-04
+    name: ubuntu-20.04.1-20201123
     is_public: yes
     container_format: bare
     disk_format: raw
@@ -49,7 +49,7 @@
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: ubuntu-18-04
+    name: ubuntu-18.04
     is_public: yes
     container_format: bare
     disk_format: raw
@@ -74,7 +74,7 @@
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: ubuntu-16-04
+    name: ubuntu-16.04
     is_public: yes
     container_format: bare
     disk_format: raw
@@ -174,7 +174,7 @@
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: opnsense-20-7
+    name: opnsense-20.7
     is_public: yes
     container_format: bare
     disk_format: raw
@@ -195,11 +195,11 @@
     get_checksum: False
   register: centos8_image_register
 
-- name: main - uploading "centos-8"
+- name: main - uploading "centos-8.2.2004-20200611.2"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: centos-8
+    name: centos-8.2.2004-20200611.2
     is_public: yes
     container_format: bare
     disk_format: raw
@@ -270,11 +270,11 @@
     get_checksum: False
   register: fedora33_image_register
 
-- name: main - uploading "fedora-33"
+- name: main - uploading "fedora-33-1.2"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: fedora-33
+    name: fedora-33-1.2
     is_public: yes
     container_format: bare
     disk_format: raw
@@ -295,11 +295,11 @@
     get_checksum: False
   register: fedora_coreos_image_register
 
-- name: main - uploading "fedora-coreos-32"
+- name: main - uploading "fedora-coreos-32.20201104.3.0"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: fedora-coreos-32
+    name: fedora-coreos-32.20201104.3.0
     is_public: yes
     container_format: bare
     disk_format: raw
@@ -324,7 +324,7 @@
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: cumulus-4-2-0
+    name: cumulus-4.2.0
     is_public: yes
     container_format: bare
     disk_format: raw
@@ -470,7 +470,7 @@
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: arubaoscx-p4
+    name: arubaoscx-p4-20191031190628
     is_public: yes
     container_format: bare
     disk_format: raw
