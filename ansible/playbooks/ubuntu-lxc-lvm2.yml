@@ -1,0 +1,6 @@
+---
+
+- hosts: all
+  become: true
+  roles:
+  - { role: ubuntu-lxc-lvm2, when: "ansible_virtualization_type == 'lxc'" }

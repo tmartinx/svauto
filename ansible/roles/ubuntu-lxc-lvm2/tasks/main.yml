@@ -1,0 +1,18 @@
+---
+
+- name: ubuntu - copy LVM systemd service
+  copy:
+    src: lvm2-vgmknodes.service
+    dest: /lib/systemd/system/lvm2-vgmknodes.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: ubuntu - enable it
+  shell: systemctl enable /lib/systemd/system/lvm2-vgmknodes.service
+
+- name: ubuntu - lvm no udev_sync
+  shell: sed -i -e 's/udev_sync.*/udev_sync = 0/g' /etc/lvm/lvm.conf
+
+- name: ubuntu - lvm no udev_rules
+  shell: sed -i -e 's/udev_rules.*/udev_rules = 0/g' /etc/lvm/lvm.conf

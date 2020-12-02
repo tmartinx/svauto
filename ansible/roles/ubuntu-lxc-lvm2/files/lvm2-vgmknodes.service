@@ -1,0 +1,15 @@
+[Unit]
+Description=Linux Volume Manager (LVM)
+
+After=systemd-udevd.service
+Before=local-fs-pre.target
+
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/lvm vgmknodes --refresh
+
+[Install]
+WantedBy=local-fs.target
