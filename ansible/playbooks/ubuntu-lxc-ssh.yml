@@ -1,0 +1,6 @@
+---
+
+- hosts: all
+  become: true
+  roles:
+  - { role: ubuntu-lxc-ssh, when: "ansible_virtualization_type == 'lxc'" }

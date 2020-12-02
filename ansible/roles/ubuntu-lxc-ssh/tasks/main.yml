@@ -1,0 +1,3 @@
+---
+
+- shell: if [ -f /etc/ssh/sshd_config.ucf-dist ]; then mv /etc/ssh/sshd_config.ucf-dist /etc/ssh/sshd_config ; systemctl restart ssh ; fi
