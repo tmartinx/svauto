@@ -15,10 +15,10 @@
 # limitations under the License.
 
 
-- name: main - Spin Networks
-  include: spin-network.yml
+- name: main - Spin Subnets
+  include: spin-subnet.yml
   with_items:
-  - "{{ os_networks }}"
+  - "{{ os_subnets }}"
   loop_control:
-    loop_var: os_network
-  when: os_networks is defined
+    loop_var: os_subnet
+  when: os_subnets is defined

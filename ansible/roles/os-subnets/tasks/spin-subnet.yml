@@ -15,10 +15,6 @@
 # limitations under the License.
 
 
-- name: main - Spin Networks
-  include: spin-network.yml
-  with_items:
-  - "{{ os_networks }}"
-  loop_control:
-    loop_var: os_network
-  when: os_networks is defined
+- name: main - Create Neutron External Subnet
+  environment: "{{ admin_openrc_env }}"
+  os_subnet: "{{ os_subnet }}"
