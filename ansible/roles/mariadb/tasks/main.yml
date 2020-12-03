@@ -1,0 +1,98 @@
+---
+
+# Copyright 2020, TCMC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# References:
+# https://severalnines.com/database-blog/how-setup-mariadb-103-replication-using-ansible-and-vagrant
+# https://mariadb.com/resources/blog/devops-with-mariadb-part-1/
+# https://mariadb.com/resources/blog/devops-with-mariadb-and-ansible-part-2/
+
+- name: main - Copy MariaDB's Repository File
+  copy:
+    src: mariadb.list
+    dest: /etc/apt/sources.list.d/mariadb.list
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_distribution_release == "bionic"
+
+
+- name: main - Download MariaDB Keyring with check (sha256)
+  get_url:
+    url: https://downloads.mariadb.com/MariaDB/mariadb-keyring-2019.gpg
+    dest: /etc/apt/trusted.gpg.d/mariadb-keyring-2019.gpg
+    checksum: sha256:0caed67ec619ef635a48edee9abca6882a32e4864a97444616f0335ccd3669ec
+  when: ansible_distribution_release == "bionic"
+
+
+- name: main - Install MariaDB Server Packages
+  apt:
+    pkg:
+    - mariadb-server
+    - mariadb-client
+    state: latest
+    update_cache: yes
+
+
+- name: main - Modify configuration file to listen on all interfaces
+  template:
+    src: mariadb-custom.cnf.j2
+    dest: /etc/mysql/mariadb.conf.d/mariadb-custom.cnf
+    owner: root
+    group: root
+    mode: 0644
+
+
+- name: main - Restart mariadb service
+  service:
+    name: mariadb
+    state: restarted
+
+
+- name: main - Create replication account
+  mysql_user:
+    name: "repl"
+    host: "%"
+    password: "lper"
+    priv: "*.*:REPLICATION SLAVE"
+    state: present
+
+- name: main - Create readwrite user
+  mysql_user:
+    name: "rwuser"
+    host: "%"
+    password: "adminpwd"
+    priv: "*.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP"
+    state: present
+
+
+# TODO: See if the "commands" below can be replaced by Ansible modules.
+
+# Masters
+- name: main - Masters, reset binlog
+  command: /usr/bin/mysql -u root -e "RESET MASTER"
+
+
+# Slaves
+# TODO: This is NOT idenpotent! Please, fix it!
+- name: main - Slaves, setup replication
+  command: /usr/bin/mysql -uroot -e "CHANGE MASTER TO master_host='{{ replicate_from }}', master_user='repl', master_password='lper', master_use_gtid=current_pos"
+  ignore_errors: true
+
+
+- name: main - Restart mariadb service
+  service:
+    name: mariadb
+    state: restarted

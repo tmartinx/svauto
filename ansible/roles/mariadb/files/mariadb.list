@@ -1,0 +1,11 @@
+# MariaDB Server
+# To use a different major version of the server, or to pin to a specific minor version, change URI below.
+deb http://downloads.mariadb.com/MariaDB/mariadb-10.4/repo/ubuntu bionic main
+
+# MariaDB MaxScale
+# To use the latest stable release of MaxScale, use "latest" as the version
+# To use the latest beta (or stable if no current beta) release of MaxScale, use "beta" as the version
+deb http://downloads.mariadb.com/MaxScale/2.4/ubuntu bionic main
+
+# MariaDB Tools
+deb http://downloads.mariadb.com/Tools/ubuntu bionic main

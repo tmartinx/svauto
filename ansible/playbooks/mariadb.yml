@@ -1,0 +1,10 @@
+---
+
+#
+# MariaDB Install Playbook
+#
+
+- hosts: all
+  become: yes
+  roles:
+  - mariadb
