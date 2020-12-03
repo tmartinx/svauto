@@ -1,0 +1,32 @@
+---
+
+# This role installs and sets up keepalived
+
+- name: main - Yum Install keepalived
+  yum:
+    pkg: keepalived
+    state: latest
+  when: ansible_distribution == "CentOS"
+  tags: keepalived
+  notify: restart keepalived
+
+- name: main - Apt Install keepalived
+  apt:
+    state: latest
+    pkg: keepalived
+  when: ansible_distribution == "Ubuntu"
+  tags: keepalived
+  notify: restart keepalived
+
+- name: main - Config keepalived
+  template:
+    src: keepalived_conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  tags: keepalived
+  notify: restart keepalived
+
+- name: main - Start keepalived
+  service:
+    name: keepalived
+    state: started
+  tags: keepalived

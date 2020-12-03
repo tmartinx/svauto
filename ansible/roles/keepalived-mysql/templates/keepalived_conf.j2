@@ -1,0 +1,41 @@
+
+{% if global_defs is defined %}
+global_defs {
+{% if global_defs.enable_script_security is defined %}
+    enable_script_security
+{% endif %}
+{% if global_defs.script_user is defined %}
+    script_user {{ global_defs.script_user }}
+{% endif %}
+}
+{% endif %}
+
+vrrp_script chk_mysql {
+
+    script "/usr/bin/pgrep mysqld"
+    interval 2
+    weight 2
+
+}
+
+vrrp_instance {{ vrrp_instance }} {
+
+    interface {{ interface }}
+    state {{ state }}
+    virtual_router_id {{ virtual_router_id }}
+    unicast_src_ip {{ master_ip }}
+
+    unicast_peer {
+        {{ slave_ip }}
+    }
+
+    priority {{ priority }}
+
+    track_script {
+         chk_mysql
+    }
+
+    virtual_ipaddress {
+        {{ ip }} dev {{ dev }}
+    }
+}
