@@ -204,7 +204,7 @@
 # Windows Flavors
 #
 
-- name: main - nova creating w1.small flavor
+- name: main - nova creating w1.little flavor
   environment: "{{admin_openrc_env}}"
   os_nova_flavor:
     validate_certs: false
@@ -214,6 +214,16 @@
     vcpus: 2
     disk: 32
 
+- name: main - nova creating w1.small flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    validate_certs: false
+    state: present
+    name: w1.small
+    ram: 2048
+    vcpus: 4
+    disk: 64
+
 - name: main - nova creating w1.medium flavor
   environment: "{{admin_openrc_env}}"
   os_nova_flavor:
@@ -221,8 +231,8 @@
     state: present
     name: w1.medium
     ram: 4096
-    vcpus: 4
-    disk: 64
+    vcpus: 8
+    disk: 128
 
 - name: main - nova creating w1.large flavor
   environment: "{{admin_openrc_env}}"
@@ -231,8 +241,8 @@
     state: present
     name: w1.large
     ram: 8192
-    vcpus: 8
-    disk: 128
+    vcpus: 16
+    disk: 256
 
 - name: main - nova creating w1.xlarge flavor
   environment: "{{admin_openrc_env}}"
@@ -241,5 +251,5 @@
     state: present
     name: w1.xlarge
     ram: 16384
-    vcpus: 16
-    disk: 256
+    vcpus: 32
+    disk: 512
