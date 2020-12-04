@@ -20,11 +20,11 @@
     get_checksum: False
   register: ubuntu20_image_register
 
-- name: main - uploading "ubuntu-20.04.1-20201123"
+- name: main - uploading "ubuntu-20.04.1-20201201"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: ubuntu-20.04.1-20201123
+    name: ubuntu-20.04.1-20201201
     is_public: yes
     container_format: bare
     disk_format: raw
@@ -307,7 +307,7 @@
     filename: /srv/cloud/fedora-coreos-32.20201104.3.0-openstack.x86_64.raw
     properties:
       cpu_arch: x86_64
-      os_distro: coreos
+      os_distro: fedora-coreos
       hw_scsi_model: virtio-scsi
       hw_disk_bus: scsi
       hw_qemu_guest_agent: yes
