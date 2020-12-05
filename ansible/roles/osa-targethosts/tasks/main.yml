@@ -26,6 +26,7 @@
     - ifenslave
     - bridge-utils
     - debootstrap
+    - python3-apt
 
 - name: main - Delete freaking docker.io
   apt:
