@@ -16,6 +16,31 @@
 
 
 - stat:
+    path: /srv/cloud/ubuntu-20.10-server-cloudimg-amd64.raw
+    get_checksum: False
+  register: ubuntu20_10_image_register
+
+- name: main - uploading "ubuntu-20.10-20201126"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: ubuntu-20.10-20201126
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/ubuntu-20.10-server-cloudimg-amd64.raw
+    properties:
+      cpu_arch: x86_64
+      os_distro: ubuntu
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: ubuntu20_10_image_register.stat.exists == True
+
+
+- stat:
     path: /srv/cloud/ubuntu-20.04-server-cloudimg-amd64.raw
     get_checksum: False
   register: ubuntu20_image_register
