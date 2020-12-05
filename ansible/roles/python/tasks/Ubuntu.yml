@@ -37,6 +37,19 @@
     - python-is-python3
   when:
   - ansible_distribution_release == "focal"
+  - ansible_virtualization_type != 'lxc'
+
+
+- name: ubuntu - apt install Python 3 packages for Focal on LXC
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
+    - python3
+    - python-is-python3
+  when:
+  - ansible_distribution_release == "focal"
+  - ansible_virtualization_type == 'lxc'
 
 
 - name: ubuntu - apt install Python 2 packages for Bionic
@@ -60,3 +73,15 @@
     - python-paramiko
   when:
   - ansible_distribution_release == "bionic"
+  - ansible_virtualization_type != 'lxc'
+
+
+- name: ubuntu - apt install Python 2 packages for Bionic on LXC
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
+    - python
+  when:
+  - ansible_distribution_release == "bionic"
+  - ansible_virtualization_type == 'lxc'
