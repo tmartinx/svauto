@@ -79,6 +79,18 @@
   when: metal_deployment.base_os_upgrade
 
 
+- name: ubuntu - apt install Linux
+  apt:
+    state: latest
+    pkg:
+    - linux-generic
+    - linux-headers-generic
+  when:
+  - ansible_virtualization_type != 'lxc'
+  - ansible_virtualization_type == 'host'
+  - ansible_virtualization_role == 'guest' and mode == 'desktop'
+
+
 - name: ubuntu - apt install minimum tools
   apt:
     state: latest
@@ -109,7 +121,6 @@
     - popularity-contest
     - apt-transport-https
     - ubuntu-cloud-keyring
-    - linux-headers-generic
     - software-properties-common
 
 
