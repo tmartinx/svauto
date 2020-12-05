@@ -1,7 +1,7 @@
 ---
 
 #
-# Top Level Playbook for QEMU Role
+# Top Level Playbook for swap role
 #
 
 - hosts: all

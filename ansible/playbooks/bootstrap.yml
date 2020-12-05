@@ -7,7 +7,7 @@
 - hosts: all
   become: true
   roles:
+  - { role: swap, when: "ansible_virtualization_type != 'lxc'" }
+  - time
   - python
   - bootstrap
-  - time
-  - { role: swap, when: "ansible_virtualization_type != 'lxc'" }
