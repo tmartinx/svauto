@@ -212,7 +212,7 @@
     name: w1.small
     ram: 2048
     vcpus: 2
-    disk: 32
+    disk: 48
 
 - name: main - nova creating w1.small flavor
   environment: "{{admin_openrc_env}}"
@@ -232,7 +232,7 @@
     name: w1.medium
     ram: 4096
     vcpus: 8
-    disk: 128
+    disk: 96
 
 - name: main - nova creating w1.large flavor
   environment: "{{admin_openrc_env}}"
@@ -242,7 +242,7 @@
     name: w1.large
     ram: 8192
     vcpus: 16
-    disk: 256
+    disk: 128
 
 - name: main - nova creating w1.xlarge flavor
   environment: "{{admin_openrc_env}}"
@@ -252,4 +252,4 @@
     name: w1.xlarge
     ram: 16384
     vcpus: 32
-    disk: 512
+    disk: 256
