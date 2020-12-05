@@ -87,8 +87,7 @@
     - linux-headers-generic
   when:
   - ansible_virtualization_type != 'lxc'
-  - ansible_virtualization_type == 'host'
-  - ansible_virtualization_role == 'guest' and mode == 'desktop'
+  - ansible_virtualization_role == 'host' or (ansible_virtualization_role == 'guest' and mode == 'desktop')
 
 
 - name: ubuntu - apt install minimum tools
