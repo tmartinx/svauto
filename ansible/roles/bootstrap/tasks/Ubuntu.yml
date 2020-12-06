@@ -115,6 +115,7 @@
     - ppa-purge
     - traceroute
     - btrfs-progs
+    - btrfs-compsize
     - ecryptfs-utils
     - command-not-found
     - popularity-contest
