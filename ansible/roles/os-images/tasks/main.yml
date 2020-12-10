@@ -216,20 +216,20 @@
 
 
 - stat:
-    path: /srv/cloud/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.raw
+    path: /srv/cloud/CentOS-8-GenericCloud-8.3.2011-20201204.2.x86_64.raw
     get_checksum: False
   register: centos8_image_register
 
-- name: main - uploading "centos-8.2.2004-20200611.2"
+- name: main - uploading "centos-8.3.2011-20201204.2"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: centos-8.2.2004-20200611.2
+    name: centos-8.3.2011-20201204.2
     is_public: yes
     container_format: bare
     disk_format: raw
     state: present
-    filename: /srv/cloud/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.raw
+    filename: /srv/cloud/CentOS-8-GenericCloud-8.3.2011-20201204.2.x86_64.qcow2
     properties:
       cpu_arch: x86_64
       os_distro: centos

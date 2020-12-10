@@ -64,10 +64,10 @@ downloads:
   image_type: cloud
   getit: false
 
-- name: CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2
+- name: CentOS-8-GenericCloud-8.3.2011-20201204.2.x86_64.qcow2
   distro: centos
-  url: http://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2
-  dest: /srv/cloud/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2
+  url: http://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.3.2011-20201204.2.x86_64.qcow2
+  dest: /srv/cloud/CentOS-8-GenericCloud-8.3.2011-20201204.2.x86_64.qcow2
   image_type: cloud
   getit: false
 
@@ -174,10 +174,10 @@ downloads:
   image_type: iso
   getit: false
 
-- name: debian-10.5.0-amd64-netinst.iso
+- name: debian-10.7.0-amd64-netinst.iso
   distro: debian
-  url: https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.5.0-amd64-netinst.iso
-  dest: /srv/iso/debian-10.5.0-amd64-netinst.iso
+  url: https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.7.0-amd64-netinst.iso
+  dest: /srv/iso/debian-10.7.0-amd64-netinst.iso
   image_type: iso
   getit: false
 
@@ -188,10 +188,10 @@ downloads:
   image_type: iso
   getit: false
 
-- name: CentOS-8.2.2004-x86_64-boot.iso
+- name: CentOS-8.3.2011-x86_64-boot.iso
   distro: centos
-  url: https://mirror.rcg.sfu.ca/mirror/CentOS/8.2.2004/isos/x86_64/CentOS-8.2.2004-x86_64-boot.iso
-  dest: /srv/iso/CentOS-8.2.2004-x86_64-boot.iso
+  url: https://mirror.rcg.sfu.ca/mirror/CentOS/8.3.2011/isos/x86_64/CentOS-8.3.2011-x86_64-boot.iso
+  dest: /srv/iso/CentOS-8.3.2011-x86_64-boot.iso
   image_type: iso
   getit: false
 
