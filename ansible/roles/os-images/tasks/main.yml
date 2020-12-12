@@ -229,7 +229,7 @@
     container_format: bare
     disk_format: raw
     state: present
-    filename: /srv/cloud/CentOS-8-GenericCloud-8.3.2011-20201204.2.x86_64.qcow2
+    filename: /srv/cloud/CentOS-8-GenericCloud-8.3.2011-20201204.2.x86_64.raw
     properties:
       cpu_arch: x86_64
       os_distro: centos
