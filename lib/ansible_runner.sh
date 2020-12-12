@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# Copyright 2018, TCMC.
+# Copyright 2020, TCMC.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ ansible_runner()
 	if ! which ansible-playbook >/dev/null
 	then
 
-		OS_DETECTION=$(lib/os_detection.py | tr A-Z a-z)
+		source lib/os-detection.sh
 
-		case $OS_DETECTION in
+		case $OS_NAME in
 
 			ubuntu*)
 
@@ -33,11 +33,6 @@ ansible_runner()
 				sudo apt update &>/dev/null
 				sudo apt -y install ansible &>/dev/null
 
-				# Review Ansible install on Ubuntu 16.04!
-                                # sudo apt update &>/dev/null
-                                # sudo apt -y install software-properties-common &>/dev/null
-                                # sudo add-apt-repository -y ppa:ansible/ansible &>/dev/null
-
 				;;
 
 			centos*)
@@ -45,7 +40,8 @@ ansible_runner()
 				echo
 				echo "Running: \"sudo yum install ansible\""
 
-				sudo yum --enablerepo=epel-testing -y install ansible libselinux-python &>/dev/null
+				sudo yum -y install epel-release &>/dev/null
+				sudo yum -y install ansible libselinux-python &>/dev/null
 				;;
 
 			*)
