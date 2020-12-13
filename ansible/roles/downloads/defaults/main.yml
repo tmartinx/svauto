@@ -64,6 +64,13 @@ downloads:
   image_type: cloud
   getit: false
 
+- name: CentOS-Stream-GenericCloud-8-20201019.1.x86_64.qcow2
+  distro: centos
+  url: https://cloud.centos.org/centos/8-stream/x86_64/images/CentOS-Stream-GenericCloud-8-20201019.1.x86_64.qcow2
+  dest: /srv/cloud/CentOS-Stream-GenericCloud-8-20201019.1.x86_64.qcow2
+  image_type: cloud
+  getit: false
+
 - name: CentOS-8-GenericCloud-8.3.2011-20201204.2.x86_64.qcow2
   distro: centos
   url: http://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.3.2011-20201204.2.x86_64.qcow2
@@ -75,13 +82,6 @@ downloads:
   distro: centos
   url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2c
   dest: /srv/cloud/CentOS-7-x86_64-GenericCloud-2009.qcow2c
-  image_type: cloud
-  getit: false
-
-- name: CentOS-6-x86_64-GenericCloud.qcow2c
-  distro: centos
-  url: http://cloud.centos.org/centos/6/images/CentOS-6-x86_64-GenericCloud.qcow2c
-  dest: /srv/cloud/CentOS-6-x86_64-GenericCloud.qcow2c
   image_type: cloud
   getit: false
 
@@ -188,6 +188,13 @@ downloads:
   image_type: iso
   getit: false
 
+- name: CentOS-Stream-8-x86_64-20201210-boot.iso
+  distro: centos
+  url: https://mirror.rcg.sfu.ca/mirror/CentOS/8-stream/isos/x86_64/CentOS-Stream-8-x86_64-20201210-boot.iso
+  dest: /srv/iso/CentOS-Stream-8-x86_64-20201210-boot.iso
+  image_type: iso
+  getit: false
+
 - name: CentOS-8.3.2011-x86_64-boot.iso
   distro: centos
   url: https://mirror.rcg.sfu.ca/mirror/CentOS/8.3.2011/isos/x86_64/CentOS-8.3.2011-x86_64-boot.iso
@@ -199,13 +206,6 @@ downloads:
   distro: centos
   url: https://mirror.rcg.sfu.ca/mirror/CentOS/7.9.2009/isos/x86_64/CentOS-7-x86_64-Minimal-2009.iso
   dest: /srv/iso/CentOS-7-x86_64-Minimal-2009.iso
-  image_type: iso
-  getit: false
-
-- name: CentOS-6.10-x86_64-minimal.iso
-  distro: centos
-  url: http://mirror.its.sfu.ca/mirror/CentOS/6.10/isos/x86_64/CentOS-6.10-x86_64-minimal.iso
-  dest: /srv/iso/CentOS-6.10-x86_64-minimal.iso
   image_type: iso
   getit: false
 

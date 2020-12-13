@@ -216,6 +216,31 @@
 
 
 - stat:
+    path: /srv/cloud/CentOS-Stream-GenericCloud-8-20201019.1.x86_64.raw
+    get_checksum: False
+  register: centos_stream_image_register
+
+- name: main - uploading "centos-stream-8-20201019.1"
+  environment: "{{admin_openrc_env}}"
+  os_image:
+    validate_certs: false
+    name: centos-stream-8-20201019.1
+    is_public: yes
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: /srv/cloud/CentOS-Stream-GenericCloud-8-20201019.1.x86_64.raw
+    properties:
+      cpu_arch: x86_64
+      os_distro: centos
+      hw_scsi_model: virtio-scsi
+      hw_disk_bus: scsi
+      hw_qemu_guest_agent: yes
+      os_require_quiesce: yes
+  when: centos_stream_image_register.stat.exists == True
+
+
+- stat:
     path: /srv/cloud/CentOS-8-GenericCloud-8.3.2011-20201204.2.x86_64.raw
     get_checksum: False
   register: centos8_image_register
@@ -263,31 +288,6 @@
       hw_qemu_guest_agent: yes
       os_require_quiesce: yes
   when: centos7_image_register.stat.exists == True
-
-
-- stat:
-    path: /srv/cloud/CentOS-6-x86_64-GenericCloud.raw
-    get_checksum: False
-  register: centos6_image_register
-
-- name: main - uploading "centos-6.10"
-  environment: "{{admin_openrc_env}}"
-  os_image:
-    validate_certs: false
-    name: centos-6.10
-    is_public: yes
-    container_format: bare
-    disk_format: raw
-    state: present
-    filename: /srv/cloud/CentOS-6-x86_64-GenericCloud.raw
-    properties:
-      cpu_arch: x86_64
-      os_distro: centos
-      hw_scsi_model: virtio-scsi
-      hw_disk_bus: scsi
-      hw_qemu_guest_agent: yes
-      os_require_quiesce: yes
-  when: centos6_image_register.stat.exists == True
 
 
 - stat:
