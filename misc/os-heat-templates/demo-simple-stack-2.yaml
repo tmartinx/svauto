@@ -1,4 +1,4 @@
-heat_template_version: 2016-04-08
+heat_template_version: 2018-08-31
 
 description: >
 
@@ -13,7 +13,7 @@ description: >
 
   We want to wire them as:
 
-    --|ctrl_subnet|---- Control Network (with Internet access via router_i0)
+    --|ctrl_subnet|---- Control Network (with Internet access via router_i_1)
     |
    ---
    | |
@@ -27,6 +27,7 @@ description: >
    ---
 
 parameters:
+
   ssh_key:
     type: string
     label: "Your SSH keypair name (pre-create please!)"
@@ -41,27 +42,28 @@ parameters:
     type: string
     label: Public External Network
     description: Public Network with Floating IP addresses
-    default: "ext-net"
+    default: "intranet-1"
 
-  demosrv_image:
+  os_image_1:
     type: string
     label: "Ubuntu Server - 64-bit"
-    description: "Ubuntu - Xenial Xerus - LTS"
-    default: "ubuntu-16.04-amd64"
+    description: "Ubuntu - Focal Fossa - LTS"
+    default: "ubuntu-20.04.1-20201201"
 
 resources:
-  router_0:
+
+  router_1:
     type: OS::Neutron::Router
     properties:
       admin_state_up: True
-      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-router-0' } }
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-router-1' } }
       external_gateway_info:
         network: { get_param: public_network }
 
-  router_0_i0:
+  router_1_i_1:
     type: OS::Neutron::RouterInterface
     properties:
-      router: { get_resource: router_0 }
+      router: { get_resource: router_1 }
       subnet: { get_resource: ctrl_subnet }
 
   basic_security_group:
@@ -83,17 +85,17 @@ resources:
     type: OS::Neutron::Subnet
     properties:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-control' } }
-      dns_nameservers: [8.8.8.8, 8.8.4.4]
+      dns_nameservers: [1.1.1.1, 9.9.9.9, 8.8.8.8]
       network: { get_resource: ctrl_net }
       enable_dhcp: True
       cidr: 192.168.192.0/25
 
-  demosrv:
+  instance_1:
     type: OS::Nova::Server
     properties:
-      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-demosrv' } }
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-instance-1' } }
       key_name: { get_param: 'ssh_key' }
-      image: { get_param: 'demosrv_image' }
+      image: { get_param: 'os_image_1' }
       flavor: "m1.small"
       networks:
         - network: { get_resource: ctrl_net }
@@ -107,10 +109,7 @@ resources:
             name: "tcmc"
         chpasswd:
           list: |
-            root:tcmc
             tcmc:tcmc
           expire: False
-        runcmd:
-        - 'su -c "\curl -s https://raw.githubusercontent.com/tmartinx/svauto/dev/scripts/svauto-deployments.sh | bash -s -- --base-os=ubuntu16 --ansible-remote-user=root --ansible-inventory-builder=all,localhost,ansible_connection=local,openstack_release=rocky,mode=server --ansible-playbook-builder=localhost,bootstrap\;base_os_upgrade=true,grub,post-cleanup" tcmc'
 
 outputs:
