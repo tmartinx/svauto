@@ -1,0 +1,490 @@
+heat_template_version: 2018-08-31
+
+description: >
+
+  HOT template to create standard setup, with Security Groups and Floating IPs. Also, no Neutron ports are pre-defined, wiring the Instance directly to the Control Network.
+
+
+  We have 6 Instances:
+
+
+  * 3 Ubuntu as Ceph Control Plane, for MONs, MGRs, Dashboard and etc
+  * 3 Ubuntu as Ceph OSDs
+
+
+  We want to wire them as:
+
+    Control Network (with Internet access via router_i_1)
+  
+     ---------|ctrl_subnet|--------
+     |     |     |     |     |    |
+    ---   ---   ---   ---   ---  ---
+    | |   | |   | |   | |   | |  | |
+    | |---| |ceph_pub_subnet| |--| |
+    | |   | |   | |   | |   | |  | |
+    |C|   |C|   |C|   |C|   |C|  |C|
+    |E|   |E|   |E|   |E|   |E|  |E|
+    |P|   |P|   |P|   |P|   |P|  |P|
+    |H|   |H|   |H|   |H|   |H|  |H|
+    | |   | |   | |   | |   | |  | |
+    |C|   |C|   |C|   |O|   |O|  |O|
+    |P|   |P|   |P|   |S|   |S|  |S|
+    | |   | |   | |   |D|   |D|  |D|
+    ---   ---   ---   ---   ---  ---
+                       |     |    |
+                     |ceph_pri_subnet|
+
+parameters:
+
+  # Hard-coded SSH Public Key name
+  ssh_key:
+    type: string
+    label: 'Your SSH keypair name (pre-create please!)'
+    description: |
+        If you have not created your key, please go to
+        Project/Compute/Access & Security, and either import
+        one or create one. If you create it, make sure you keep
+        the downloaded file (as you don't get a second chance)
+    default: 'default'
+
+  # Hard-coded External Network (i.e., the World)
+  public_network:
+    type: string
+    label: Public External Network
+    description: Public Network with Floating IP addresses
+    default: 'intranet-1'
+
+  # Only Ubuntu LTS matters!
+  os_image_1:
+    type: string
+    label: 'Ubuntu Server - 64-bit'
+    description: 'Ubuntu - Focal Fossa - LTS'
+    default: 'ubuntu-20.04.1-20201201'
+
+resources:
+
+  # L3 Router to reach the outside world.
+  router_1:
+    type: OS::Neutron::Router
+    properties:
+      admin_state_up: True
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-router-1' } }
+      external_gateway_info:
+        network: { get_param: public_network }
+
+  router_1_i_1:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router: { get_resource: router_1 }
+      subnet: { get_resource: ctrl_subnet }
+
+  # Basic Security Group, for now, only SSH is allowed to reach the instances.
+  basic_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-basic-rules' } }
+      rules:
+        - protocol: icmp
+        - protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+
+  # Ceph Ports: https://docs.ceph.com/en/latest/rados/configuration/network-config-ref/
+  ceph_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-rules' } }
+      rules:
+        - protocol: tcp
+          port_range_min: 6800
+          port_range_max: 7300
+
+  # Control Network, to SSH into the Ceph Clueters, so `ceph-ansible` can do its job from the outside.
+  ctrl_net:
+    type: OS::Neutron::Net
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-control' } }
+
+  ctrl_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-control' } }
+      network: { get_resource: ctrl_net }
+      cidr: 192.168.192.0/24
+      gateway_ip: '192.168.192.1'
+      enable_dhcp: False
+      dns_nameservers: [1.1.1.1, 9.9.9.9, 8.8.8.8]
+
+  # Ceph Public Network
+  ceph_pub_net:
+    type: OS::Neutron::Net
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-public' } }
+
+  ceph_pub_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-public' } }
+      network: { get_resource: ceph_pub_net }
+      cidr: 10.192.0.0/24
+      gateway_ip: ''
+      enable_dhcp: False
+
+  # Ceph Private/Cluster Network
+  ceph_pri_net:
+    type: OS::Neutron::Net
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-cluster' } }
+
+  ceph_pri_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-cluster' } }
+      network: { get_resource: ceph_pri_net }
+      cidr: 10.192.1.0/24
+      gateway_ip: ''
+      enable_dhcp: False
+
+  #
+  # Ceph Control Plane Instances entry point
+  #
+
+  # Floating IP & Network Ports for Ceph Control Plane 1
+  floating_ip_cp_1:
+    type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: ceph_cp_1_ctrl_port }
+
+  ceph_cp_1_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-cp-1']] }
+      network: { get_resource: ctrl_net }
+      fixed_ips:
+        - ip_address: 192.168.192.11
+      security_groups:
+        - { get_resource: basic_security_group }
+
+  ceph_cp_1_pub_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-cp-1']]}
+      network: { get_resource: ceph_pub_net }
+      fixed_ips:
+        - ip_address: 10.192.0.11
+      security_groups:
+        - { get_resource: ceph_security_group }
+
+  # Floating IP & Network Ports for Ceph Control Plane 1
+  floating_ip_cp_2:
+    type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: ceph_cp_2_ctrl_port }
+
+  ceph_cp_2_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-cp-2']] }
+      network: { get_resource: ctrl_net }
+      fixed_ips:
+        - ip_address: 192.168.192.12
+      security_groups:
+        - { get_resource: basic_security_group }
+
+  ceph_cp_2_pub_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-cp-2']]}
+      network: { get_resource: ceph_pub_net }
+      fixed_ips:
+        - ip_address: 10.192.0.12
+      security_groups:
+        - { get_resource: ceph_security_group }
+
+  # Floating IP & Network Ports for Ceph Control Plane 1
+  floating_ip_cp_3:
+    type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: ceph_cp_3_ctrl_port }
+
+  ceph_cp_3_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-cp-3']] }
+      network: { get_resource: ctrl_net }
+      fixed_ips:
+        - ip_address: 192.168.192.13
+      security_groups:
+        - { get_resource: basic_security_group }
+
+  ceph_cp_3_pub_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-cp-3']]}
+      network: { get_resource: ceph_pub_net }
+      fixed_ips:
+        - ip_address: 10.192.0.13
+      security_groups:
+        - { get_resource: ceph_security_group }
+
+  #
+  # Ceph OSD Instances entry point
+  #
+
+  # Floating IP & Network Ports for Ceph OSD 1
+  floating_ip_osd_1:
+    type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: ceph_osd_1_ctrl_port }
+
+  ceph_osd_1_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-osd-1']] }
+      network: { get_resource: ctrl_net }
+      fixed_ips:
+        - ip_address: 192.168.192.21
+      security_groups:
+        - { get_resource: basic_security_group }
+
+  ceph_osd_1_pub_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-osd-1']]}
+      network: { get_resource: ceph_pub_net }
+      fixed_ips:
+        - ip_address: 10.192.0.21
+      security_groups:
+        - { get_resource: ceph_security_group }
+
+  ceph_osd_1_pri_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'cluster-port-ceph-osd-1']]}
+      network: { get_resource: ceph_pri_net }
+      fixed_ips:
+        - ip_address: 10.192.1.21
+      security_groups:
+        - { get_resource: ceph_security_group }
+
+  # Floating IP & Network Ports for Ceph OSD 1
+  floating_ip_osd_2:
+    type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: ceph_osd_2_ctrl_port }
+
+  ceph_osd_2_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-osd-2']] }
+      network: { get_resource: ctrl_net }
+      fixed_ips:
+        - ip_address: 192.168.192.22
+      security_groups:
+        - { get_resource: basic_security_group }
+
+  ceph_osd_2_pub_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-osd-2']]}
+      network: { get_resource: ceph_pub_net }
+      fixed_ips:
+        - ip_address: 10.192.0.22
+      security_groups:
+        - { get_resource: ceph_security_group }
+
+  ceph_osd_2_pri_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'cluster-port-ceph-osd-2']]}
+      network: { get_resource: ceph_pri_net }
+      fixed_ips:
+        - ip_address: 10.192.1.22
+      security_groups:
+        - { get_resource: ceph_security_group }
+
+  # Floating IP & Network Ports for Ceph OSD 1
+  floating_ip_osd_3:
+    type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: ceph_osd_3_ctrl_port }
+
+  ceph_osd_3_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-osd-3']] }
+      network: { get_resource: ctrl_net }
+      fixed_ips:
+        - ip_address: 192.168.192.23
+      security_groups:
+        - { get_resource: basic_security_group }
+
+  ceph_osd_3_pub_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-osd-3']]}
+      network: { get_resource: ceph_pub_net }
+      fixed_ips:
+        - ip_address: 10.192.0.23
+      security_groups:
+        - { get_resource: ceph_security_group }
+
+  ceph_osd_3_pri_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'cluster-port-ceph-osd-3']]}
+      network: { get_resource: ceph_pri_net }
+      fixed_ips:
+        - ip_address: 10.192.1.23
+      security_groups:
+        - { get_resource: ceph_security_group }
+
+  #
+  # Ceph Control Plane Instances - MONs, MGRs, Dashboard and etc
+  #
+  ceph_cp_1:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-cp-1' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'os_image_1' }
+      flavor: 'm1.small'
+      networks:
+        - port: { get_resource: ceph_cp_1_ctrl_port }
+        - port: { get_resource: ceph_cp_1_pub_port }
+      user_data_format: RAW
+      user_data: |
+        #cloud-config
+        system_info:
+          default_user:
+            name: 'it-network'
+        chpasswd:
+          list: |
+            it-network:it-network
+          expire: False
+
+  ceph_cp_2:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-cp-2' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'os_image_1' }
+      flavor: 'm1.small'
+      networks:
+        - port: { get_resource: ceph_cp_2_ctrl_port }
+        - port: { get_resource: ceph_cp_2_pub_port }
+      user_data_format: RAW
+      user_data: |
+        #cloud-config
+        system_info:
+          default_user:
+            name: 'it-network'
+        chpasswd:
+          list: |
+            it-network:it-network
+          expire: False
+
+  ceph_cp_3:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-cp-3' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'os_image_1' }
+      flavor: 'm1.small'
+      networks:
+        - port: { get_resource: ceph_cp_3_ctrl_port }
+        - port: { get_resource: ceph_cp_3_pub_port }
+      user_data_format: RAW
+      user_data: |
+        #cloud-config
+        system_info:
+          default_user:
+            name: 'it-network'
+        chpasswd:
+          list: |
+            it-network:it-network
+          expire: False
+
+
+  #
+  # Ceph OSD Instances
+  #
+  ceph_osd_1:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-osd-1' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'os_image_1' }
+      flavor: 'o1.little'
+      networks:
+        - port: { get_resource: ceph_osd_1_ctrl_port }
+        - port: { get_resource: ceph_osd_1_pub_port }
+        - port: { get_resource: ceph_osd_1_pri_port }
+      user_data_format: RAW
+      user_data: |
+        #cloud-config
+        system_info:
+          default_user:
+            name: 'it-network'
+        chpasswd:
+          list: |
+            it-network:it-network
+          expire: False
+
+  ceph_osd_2:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-osd-2' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'os_image_1' }
+      flavor: 'o1.little'
+      networks:
+        - port: { get_resource: ceph_osd_2_ctrl_port }
+        - port: { get_resource: ceph_osd_1_pub_port }
+        - port: { get_resource: ceph_osd_1_pri_port }
+      user_data_format: RAW
+      user_data: |
+        #cloud-config
+        system_info:
+          default_user:
+            name: 'it-network'
+        chpasswd:
+          list: |
+            it-network:it-network
+          expire: False
+
+  ceph_osd_3:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-osd-3' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'os_image_1' }
+      flavor: 'o1.little'
+      networks:
+        - port: { get_resource: ceph_osd_3_ctrl_port }
+        - port: { get_resource: ceph_osd_1_pub_port }
+        - port: { get_resource: ceph_osd_1_pri_port }
+      user_data_format: RAW
+      user_data: |
+        #cloud-config
+        system_info:
+          default_user:
+            name: 'it-network'
+        chpasswd:
+          list: |
+            it-network:it-network
+          expire: False
+
+outputs:
