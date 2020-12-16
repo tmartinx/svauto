@@ -2,7 +2,7 @@ heat_template_version: 2018-08-31
 
 description: >
 
-  HOT template to create standard setup, with Security Groups and Floating IPs (TODO, missing Port definition?). Also, no Neutron ports are pre-defined, wiring the Instance directly to the Control Network.
+  HOT template to create standard setup, with Security Groups and Floating IPs. Also, no Neutron ports are pre-defined, wiring the Instance directly to the Control Network.
 
 
   We have 1 Instance:
@@ -90,11 +90,22 @@ resources:
       enable_dhcp: True
       cidr: 192.168.192.0/25
 
+
+  instance_1_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ["-", [{ get_param: "OS::stack_name" } , "ctrl-port-instance-1"]] }
+      network: { get_resource: ctrl_net }
+      security_groups:
+        - { get_resource: basic_security_group }
+
   floating_ip:
     type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
     properties:
       floating_network_id: { get_param: public_network }
-      #port_id: { get_param: non_existent_port_I_dont_want_to_define_ports }
+      port_id: { get_resource: instance_1_ctrl_port }
+
 
   instance_1:
     type: OS::Nova::Server
@@ -103,9 +114,8 @@ resources:
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
       flavor: "m1.small"
-      networks: [ { "network": { get_resource: ctrl_net }, "floating_ip": { get_resource: floating_ip } } ]
-      security_groups:
-        - { get_resource: basic_security_group }
+      networks:
+        - port: { get_resource: instance_1_ctrl_port }
       user_data_format: RAW
       user_data: |
         #cloud-config
