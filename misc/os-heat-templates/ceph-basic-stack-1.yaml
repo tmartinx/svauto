@@ -160,7 +160,7 @@ resources:
   ceph_cp_1_ctrl_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-cp-1']] }
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-ceph-cp-1']] }
       network: { get_resource: ctrl_net }
       fixed_ips:
         - ip_address: 192.168.192.11
@@ -170,7 +170,7 @@ resources:
   ceph_cp_1_pub_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-cp-1']]}
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-ceph-cp-1']]}
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.11
@@ -188,7 +188,7 @@ resources:
   ceph_cp_2_ctrl_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-cp-2']] }
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-ceph-cp-2']] }
       network: { get_resource: ctrl_net }
       fixed_ips:
         - ip_address: 192.168.192.12
@@ -198,7 +198,7 @@ resources:
   ceph_cp_2_pub_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-cp-2']]}
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-ceph-cp-2']]}
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.12
@@ -216,7 +216,7 @@ resources:
   ceph_cp_3_ctrl_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-cp-3']] }
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-ceph-cp-3']] }
       network: { get_resource: ctrl_net }
       fixed_ips:
         - ip_address: 192.168.192.13
@@ -226,7 +226,7 @@ resources:
   ceph_cp_3_pub_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-cp-3']]}
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-ceph-cp-3']]}
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.13
@@ -248,7 +248,7 @@ resources:
   ceph_osd_1_ctrl_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-osd-1']] }
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-ceph-osd-1']] }
       network: { get_resource: ctrl_net }
       fixed_ips:
         - ip_address: 192.168.192.21
@@ -258,7 +258,7 @@ resources:
   ceph_osd_1_pub_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-osd-1']]}
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-ceph-osd-1']]}
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.21
@@ -268,7 +268,7 @@ resources:
   ceph_osd_1_pri_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'cluster-port-ceph-osd-1']]}
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'cluster-ceph-osd-1']]}
       network: { get_resource: ceph_pri_net }
       fixed_ips:
         - ip_address: 10.192.1.21
@@ -286,7 +286,7 @@ resources:
   ceph_osd_2_ctrl_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-osd-2']] }
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-ceph-osd-2']] }
       network: { get_resource: ctrl_net }
       fixed_ips:
         - ip_address: 192.168.192.22
@@ -296,7 +296,7 @@ resources:
   ceph_osd_2_pub_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-osd-2']]}
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-ceph-osd-2']]}
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.22
@@ -306,7 +306,7 @@ resources:
   ceph_osd_2_pri_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'cluster-port-ceph-osd-2']]}
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'cluster-ceph-osd-2']]}
       network: { get_resource: ceph_pri_net }
       fixed_ips:
         - ip_address: 10.192.1.22
@@ -324,7 +324,7 @@ resources:
   ceph_osd_3_ctrl_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-ceph-osd-3']] }
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-ceph-osd-3']] }
       network: { get_resource: ctrl_net }
       fixed_ips:
         - ip_address: 192.168.192.23
@@ -334,7 +334,7 @@ resources:
   ceph_osd_3_pub_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-port-ceph-osd-3']]}
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-ceph-osd-3']]}
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.23
@@ -344,7 +344,7 @@ resources:
   ceph_osd_3_pri_port:
     type: OS::Neutron::Port
     properties:
-      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'cluster-port-ceph-osd-3']]}
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'cluster-ceph-osd-3']]}
       network: { get_resource: ceph_pri_net }
       fixed_ips:
         - ip_address: 10.192.1.23
@@ -452,8 +452,8 @@ resources:
       flavor: 'o1.little'
       networks:
         - port: { get_resource: ceph_osd_2_ctrl_port }
-        - port: { get_resource: ceph_osd_1_pub_port }
-        - port: { get_resource: ceph_osd_1_pri_port }
+        - port: { get_resource: ceph_osd_2_pub_port }
+        - port: { get_resource: ceph_osd_2_pri_port }
       user_data_format: RAW
       user_data: |
         #cloud-config
@@ -474,8 +474,8 @@ resources:
       flavor: 'o1.little'
       networks:
         - port: { get_resource: ceph_osd_3_ctrl_port }
-        - port: { get_resource: ceph_osd_1_pub_port }
-        - port: { get_resource: ceph_osd_1_pri_port }
+        - port: { get_resource: ceph_osd_3_pub_port }
+        - port: { get_resource: ceph_osd_3_pri_port }
       user_data_format: RAW
       user_data: |
         #cloud-config
