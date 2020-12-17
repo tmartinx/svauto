@@ -2,37 +2,42 @@ heat_template_version: 2018-08-31
 
 description: >
 
-  HOT template to create standard setup, with Security Groups and Floating IPs. Also, no Neutron ports are pre-defined, wiring the Instance directly to the Control Network.
+  HOT template to create standard setup, with Security Groups and
+
+  Floating IPs. Also, no Neutron ports are pre-defined, wiring the
+
+  Instance directly to the Control Network.
 
 
-  We have 6 Instances:
+  Total of 6 Instances for a basic Ceph Cluster.
 
 
   * 3 Ubuntu as Ceph Control Plane, for MONs, MGRs, Dashboard and etc
+
   * 3 Ubuntu as Ceph OSDs
 
 
-  We want to wire them as:
+  Network Diagram - ASCII
 
-    Control Network (with Internet access via router_i_1)
-  
-     ---------|ctrl_subnet|--------
-     |     |     |     |     |    |
-    ---   ---   ---   ---   ---  ---
-    | |   | |   | |   | |   | |  | |
-    | |---| |ceph_pub_subnet| |--| |
-    | |   | |   | |   | |   | |  | |
-    |C|   |C|   |C|   |C|   |C|  |C|
-    |E|   |E|   |E|   |E|   |E|  |E|
-    |P|   |P|   |P|   |P|   |P|  |P|
-    |H|   |H|   |H|   |H|   |H|  |H|
-    | |   | |   | |   | |   | |  | |
-    |C|   |C|   |C|   |O|   |O|  |O|
-    |P|   |P|   |P|   |S|   |S|  |S|
-    | |   | |   | |   |D|   |D|  |D|
-    ---   ---   ---   ---   ---  ---
-                       |     |    |
-                     |ceph_pri_subnet|
+   Control Network (with Internet access via router_i_1)
+
+    ---------|ctrl_subnet|--------
+    |     |     |     |     |    |
+   ---   ---   ---   ---   ---  ---
+   | |   | |   | |   | |   | |  | |
+   | |---| |ceph_pub_subnet| |--| |
+   | |   | |   | |   | |   | |  | |
+   |C|   |C|   |C|   |C|   |C|  |C|
+   |E|   |E|   |E|   |E|   |E|  |E|
+   |P|   |P|   |P|   |P|   |P|  |P|
+   |H|   |H|   |H|   |H|   |H|  |H|
+   | |   | |   | |   | |   | |  | |
+   |C|   |C|   |C|   |O|   |O|  |O|
+   |P|   |P|   |P|   |S|   |S|  |S|
+   | |   | |   | |   |D|   |D|  |D|
+   ---   ---   ---   ---   ---  ---
+                      |     |    |
+                    |ceph_pri_subnet|
 
 parameters:
 
@@ -89,15 +94,16 @@ resources:
           port_range_min: 22
           port_range_max: 22
 
-  # Ceph Ports: https://docs.ceph.com/en/latest/rados/configuration/network-config-ref/
-  ceph_security_group:
-    type: OS::Neutron::SecurityGroup
-    properties:
-      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-rules' } }
-      rules:
-        - protocol: tcp
-          port_range_min: 6800
-          port_range_max: 7300
+#  # Ceph Ports: https://docs.ceph.com/en/latest/rados/configuration/network-config-ref/
+#  ceph_security_group:
+#    type: OS::Neutron::SecurityGroup
+#    properties:
+#      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-rules' } }
+#      rules:
+#        - protocol: icmp
+#        - protocol: tcp
+#          port_range_min: 6800
+#          port_range_max: 7300
 
   # Control Network, to SSH into the Ceph Clueters, so `ceph-ansible` can do its job from the outside.
   ctrl_net:
@@ -174,8 +180,9 @@ resources:
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.11
-      security_groups:
-        - { get_resource: ceph_security_group }
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
 
   # Floating IP & Network Ports for Ceph Control Plane 1
   floating_ip_cp_2:
@@ -202,8 +209,9 @@ resources:
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.12
-      security_groups:
-        - { get_resource: ceph_security_group }
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
 
   # Floating IP & Network Ports for Ceph Control Plane 1
   floating_ip_cp_3:
@@ -230,8 +238,9 @@ resources:
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.13
-      security_groups:
-        - { get_resource: ceph_security_group }
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
 
   #
   # Ceph OSD Instances entry point
@@ -262,8 +271,9 @@ resources:
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.21
-      security_groups:
-        - { get_resource: ceph_security_group }
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
 
   ceph_osd_1_pri_port:
     type: OS::Neutron::Port
@@ -272,8 +282,9 @@ resources:
       network: { get_resource: ceph_pri_net }
       fixed_ips:
         - ip_address: 10.192.1.21
-      security_groups:
-        - { get_resource: ceph_security_group }
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
 
   # Floating IP & Network Ports for Ceph OSD 1
   floating_ip_osd_2:
@@ -300,8 +311,9 @@ resources:
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.22
-      security_groups:
-        - { get_resource: ceph_security_group }
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
 
   ceph_osd_2_pri_port:
     type: OS::Neutron::Port
@@ -310,8 +322,9 @@ resources:
       network: { get_resource: ceph_pri_net }
       fixed_ips:
         - ip_address: 10.192.1.22
-      security_groups:
-        - { get_resource: ceph_security_group }
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
 
   # Floating IP & Network Ports for Ceph OSD 1
   floating_ip_osd_3:
@@ -338,8 +351,9 @@ resources:
       network: { get_resource: ceph_pub_net }
       fixed_ips:
         - ip_address: 10.192.0.23
-      security_groups:
-        - { get_resource: ceph_security_group }
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
 
   ceph_osd_3_pri_port:
     type: OS::Neutron::Port
@@ -348,8 +362,9 @@ resources:
       network: { get_resource: ceph_pri_net }
       fixed_ips:
         - ip_address: 10.192.1.23
-      security_groups:
-        - { get_resource: ceph_security_group }
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
 
   #
   # Ceph Control Plane Instances - MONs, MGRs, Dashboard and etc
