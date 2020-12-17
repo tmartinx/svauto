@@ -9,12 +9,14 @@ description: >
   Instance directly to the Control Network.
 
 
-  Total of 6 Instances for a basic Ceph Cluster.
+  Total of 7 Instances for a basic Ceph Cluster.
 
 
   * 3 Ubuntu as Ceph Control Plane, for MONs, MGRs, Dashboard and etc
 
   * 3 Ubuntu as Ceph OSDs
+
+  * 1 Ubuntu as Ceph Client (RBD)
 
 
   Network Diagram - ASCII
@@ -25,7 +27,7 @@ description: >
     |     |     |     |     |    |
    ---   ---   ---   ---   ---  ---
    | |   | |   | |   | |   | |  | |
-   | |---| |ceph_pub_subnet| |--| |
+   |-|---|-|ceph_pub_subnet|-|--|-|--|CEPH CLIENT|
    | |   | |   | |   | |   | |  | |
    |C|   |C|   |C|   |C|   |C|  |C|
    |E|   |E|   |E|   |E|   |E|  |E|
@@ -367,6 +369,39 @@ resources:
       port_security_enabled: False
 
   #
+  # Ceph Client
+  #
+
+  # Floating IP & Network Ports for Ceph Client
+  floating_ip_client_1:
+    type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: ceph_client_1_ctrl_port }
+
+  ceph_client_1_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-ceph-client-1']] }
+      network: { get_resource: ctrl_net }
+      fixed_ips:
+        - ip_address: 192.168.192.5
+      security_groups:
+        - { get_resource: basic_security_group }
+
+  ceph_client_1_pub_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-ceph-client-1']]}
+      network: { get_resource: ceph_pub_net }
+      fixed_ips:
+        - ip_address: 10.192.0.5
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
+
+  #
   # Ceph Control Plane Instances - MONs, MGRs, Dashboard and etc
   #
   ceph_cp_1:
@@ -491,6 +526,30 @@ resources:
         - port: { get_resource: ceph_osd_3_ctrl_port }
         - port: { get_resource: ceph_osd_3_pub_port }
         - port: { get_resource: ceph_osd_3_pri_port }
+      user_data_format: RAW
+      user_data: |
+        #cloud-config
+        system_info:
+          default_user:
+            name: 'it-network'
+        chpasswd:
+          list: |
+            it-network:it-network
+          expire: False
+
+  #
+  # Ceph Client
+  #
+  ceph_client_1:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-client-1' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'os_image_1' }
+      flavor: 'm1.small'
+      networks:
+        - port: { get_resource: ceph_client_1_ctrl_port }
+        - port: { get_resource: ceph_client_1_pub_port }
       user_data_format: RAW
       user_data: |
         #cloud-config
