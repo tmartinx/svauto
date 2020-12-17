@@ -92,13 +92,13 @@ case $i in
 	# Options starting with --ansible-* are passed to Ansible itself,
 	# or being used by dynamic stuff.
 
-	--dump)
+	--ansible-dump)
 
 		ANSIBLE_DUMP="yes"
 		shift
 		;;
 
-        --ansible-remote-user=*)
+        --ansible-user=*)
 
                 ANSIBLE_REMOTE_USER="${i#*=}"
                 shift
@@ -679,7 +679,7 @@ then
 		echo "Run this script with the following arguments:"
 		echo
 		echo "pushd ~/svauto"
-		echo "./svauto.sh --os-project=demo --os-stack-name=sv-stack-1 --ansible-remote-user=tcmc"
+		echo "./svauto.sh --os-project=demo --os-stack-name=sv-stack-1 --ansible-user=tcmc"
 		echo
 		echo
 		echo "If you don't have a compatible Stack up and running."
