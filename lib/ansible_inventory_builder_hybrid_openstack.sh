@@ -25,7 +25,7 @@ ansible_inventory_builder_hybrid_os()
 		INSTANCE_NAME=$(echo $line | cut -d \  -f 1)
 		#INSTANCE_IPv4=$(echo $line | cut -d \  -f 2)
 
-		INSTANCES_GROUPS_LIST=$(echo $INSTANCE_NAME | sed -e 's/'$OS_STACK_NAME'\-//g' | sed -e 's/\-[0-9]*//g')
+		INSTANCES_GROUPS_LIST=$(echo $INSTANCE_NAME | sed -e 's/'$OS_STACK_NAME'\-//g' | sed -e 's/\(.*\)-.*$/\1 /')
 		INSTANCES_TMP="$INSTANCES_TMP $INSTANCES_GROUPS_LIST"
 
 	done < $STACK_LIST_FILE
@@ -44,7 +44,9 @@ ansible_inventory_builder_hybrid_os()
 	for G in `echo $INSTANCES_CONDENSED_LIST`
 	do
 
-		echo "[$G-servers]"
+		GN=`echo $G | sed -e 's/\-/_/g'`
+
+		echo "[$GN]"
 
 		while read line
 		do
