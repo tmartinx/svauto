@@ -201,6 +201,61 @@
 
 
 #
+# Linux Flavors - Storage Intensive
+#
+
+- name: main - nova creating s1.little flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    validate_certs: false
+    state: present
+    name: s1.little
+    ram: 1024
+    vcpus: 1
+    disk: 32
+
+- name: main - nova creating s1.small flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    validate_certs: false
+    state: present
+    name: s1.small
+    ram: 2048
+    vcpus: 2
+    disk: 64
+
+- name: main - nova creating s1.medium flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    validate_certs: false
+    state: present
+    name: s1.medium
+    ram: 4096
+    vcpus: 4
+    disk: 128
+
+- name: main - nova creating s1.large flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    validate_certs: false
+    state: present
+    name: s1.large
+    ram: 8192
+    vcpus: 8
+    disk: 256
+
+- name: main - nova creating s1.xlarge flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    validate_certs: false
+    state: present
+    name: s1.xlarge
+    ram: 16384
+    vcpus: 16
+    disk: 512
+
+
+#
 # Windows Flavors
 #
 
@@ -209,7 +264,7 @@
   os_nova_flavor:
     validate_certs: false
     state: present
-    name: w1.small
+    name: w1.little
     ram: 2048
     vcpus: 2
     disk: 48
@@ -220,7 +275,7 @@
     validate_certs: false
     state: present
     name: w1.small
-    ram: 2048
+    ram: 4096
     vcpus: 4
     disk: 64
 
@@ -230,7 +285,7 @@
     validate_certs: false
     state: present
     name: w1.medium
-    ram: 4096
+    ram: 8192
     vcpus: 8
     disk: 96
 
@@ -240,7 +295,7 @@
     validate_certs: false
     state: present
     name: w1.large
-    ram: 8192
+    ram: 16384
     vcpus: 16
     disk: 128
 
@@ -250,6 +305,46 @@
     validate_certs: false
     state: present
     name: w1.xlarge
-    ram: 16384
+    ram: 32768
     vcpus: 32
     disk: 256
+
+
+#
+# Linux Flavors - Storage Intensive with Eplhemeral Vol - EXPERIMENTAL for Ceph OSD lab
+#
+
+- name: main - nova creating o1.little flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    validate_certs: false
+    state: present
+    name: o1.little
+    ram: 2048
+    vcpus: 2
+    disk: 8
+    ephemeral: 16
+
+
+- name: main - nova creating o1.little flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    validate_certs: false
+    state: present
+    name: o1.small
+    ram: 2048
+    vcpus: 2
+    disk: 8
+    ephemeral: 32
+
+
+- name: main - nova creating o1.medium flavor
+  environment: "{{admin_openrc_env}}"
+  os_nova_flavor:
+    validate_certs: false
+    state: present
+    name: o1.medium
+    ram: 2048
+    vcpus: 2
+    disk: 8
+    ephemeral: 64
