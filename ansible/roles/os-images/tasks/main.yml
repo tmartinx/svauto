@@ -120,11 +120,11 @@
     get_checksum: False
   register: debian10_image_register
 
-- name: main - uploading "debian-10"
+- name: main - uploading "debian-10-10122020"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: debian-10
+    name: debian-10-10122020
     is_public: yes
     container_format: bare
     disk_format: raw
@@ -145,11 +145,11 @@
     get_checksum: False
   register: debian11_image_register
 
-- name: main - uploading "debian-testing"
+- name: main - uploading "debian-testing-01072019"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: debian-testing
+    name: debian-testing-01072019
     is_public: yes
     container_format: bare
     disk_format: raw
@@ -366,11 +366,11 @@
     get_checksum: False
   register: win10_image_register
 
-- name: main - uploading "windows-10-pro"
+- name: main - uploading "windows-10-pro-28122020"
   environment: "{{admin_openrc_env}}"
   os_image:
     validate_certs: false
-    name: windows-10-pro
+    name: windows-10-pro-28122020
     is_public: yes
     container_format: bare
     disk_format: raw
