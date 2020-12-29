@@ -120,7 +120,7 @@ resources:
       dns_nameservers: [8.8.8.8, 8.8.4.4]
       network: { get_resource: ctrl_net }
       enable_dhcp: True
-      cidr: 192.168.192.0/25
+      cidr: 192.168.192.0/24
       allocation_pools:
         - start: 192.168.192.50
           end: 192.168.192.126

@@ -2,11 +2,9 @@ heat_template_version: 2018-08-31
 
 description: >
 
-  HOT template to create standard setup, with Security Groups and
+  HOT template to create standard setup for a Ceph Cluster, with
 
-  Floating IPs. Also, no Neutron ports are pre-defined, wiring the
-
-  Instance directly to the Control Network.
+  Security Groups and Floating IPs.
 
 
   Total of 7 Instances for a basic Ceph Cluster.

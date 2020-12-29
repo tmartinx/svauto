@@ -2,7 +2,7 @@ heat_template_version: 2018-08-31
 
 description: >
 
-  HOT template to create standard setup, no Security Groups, no fixed or Floating IPs are assigned. Also, no Neutron ports are pre-defined, wiring the Instance directly to the Control Network.
+  HOT template to create standard setup, with Security Groups and Floating IPs. Also, no Neutron ports are pre-defined, wiring the Instance directly to the Control Network.
 
 
   We have 1 Instance:
@@ -66,6 +66,16 @@ resources:
       router: { get_resource: router_1 }
       subnet: { get_resource: ctrl_subnet }
 
+  basic_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-basic-rules' } }
+      rules:
+        - protocol: icmp
+        - protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+
   ctrl_net:
     type: OS::Neutron::Net
     properties:
@@ -78,7 +88,24 @@ resources:
       dns_nameservers: [1.1.1.1, 9.9.9.9, 8.8.8.8]
       network: { get_resource: ctrl_net }
       enable_dhcp: True
-      cidr: 192.168.192.0/25
+      cidr: 192.168.192.0/24
+
+
+  instance_1_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ["-", [{ get_param: "OS::stack_name" } , "ctrl-port-instance-1"]] }
+      network: { get_resource: ctrl_net }
+      security_groups:
+        - { get_resource: basic_security_group }
+
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: instance_1_ctrl_port }
+
 
   instance_1:
     type: OS::Nova::Server
@@ -88,7 +115,7 @@ resources:
       image: { get_param: 'os_image_1' }
       flavor: "m1.small"
       networks:
-        - network: { get_resource: ctrl_net }
+        - port: { get_resource: instance_1_ctrl_port }
       user_data_format: RAW
       user_data: |
         #cloud-config
