@@ -195,7 +195,7 @@
        <address type='pci' domain='0x0000' bus='0x00' slot='0x0{{ interface.source.slot }}' function='0x0'/>
 
 {% if (interface.queues is defined and interface.queues >= 1) %}
-      <driver queues='{{ interface.queues }}'/>
+      <driver name='vhost' queues='{{ interface.queues }}'/>
 {% endif %}
 
 {% if (interface.csum_off is defined and interface.csum_off == true) %}
