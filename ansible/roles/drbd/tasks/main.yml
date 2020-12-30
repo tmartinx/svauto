@@ -16,7 +16,9 @@
 
 
 - name: main - apt installing DRBD
-  apt: pkg=drbd-utils state=latest
+  apt:
+    state: latest
+    name: drbd-utils
 
 
 - name: main - check if drbd0 already present
@@ -25,7 +27,9 @@
 
 
 - name: main - configure DRBD resource
-  template: src=drbd0.res.j2 dest=/etc/drbd.d/drbd0.res
+  template:
+    src: drbd0.res.j2
+    dest: /etc/drbd.d/drbd0.res
   register: drbd0_config
 
 

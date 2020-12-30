@@ -1,0 +1,10 @@
+---
+
+#
+# Top Level Playbook for Shared Storage between two servers (DRBD)
+#
+
+- hosts: metals
+  become: yes
+  roles:
+  - drbd
