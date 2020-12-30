@@ -1,0 +1,10 @@
+---
+
+#
+# Top Level Playbook for Shared Storage between two servers (OCFS2)
+#
+
+- hosts: metals
+  become: yes
+  roles:
+  - ocfs2

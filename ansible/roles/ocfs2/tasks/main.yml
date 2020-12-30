@@ -16,24 +16,34 @@
 
 
 - name: main - apt install OCFS2
-  apt: pkg=ocfs2-tools state=latest
+  apt:
+    state: latest
+    name: ocfs2-tools
 
 
 - name: main - configure OCFS2 Cluster
-  template: src=cluster.conf.j2 dest=/etc/ocfs2/cluster.conf
+  template:
+    src: cluster.conf.j2
+    dest: /etc/ocfs2/cluster.conf
   register: ocfs2_config
 
 
 - name: main - restart O2CB
-  systemd: name=o2cb state=restarted
+  systemd:
+    name: o2cb
+    state: restarted
 
 
 - name: main - restart OCFS2
-  systemd: name=ocfs2 state=restarted
+  systemd:
+    name: ocfs2
+    state: restarted
 
 
 #- name: main - drbdadm create-md in remote shell
 #  shell: mkfs.ocfs2 -N 8 -L "{{ ocfs2_cluster_name }}" {{ ocfs2_backing_device }} >> /root/ocfs2-mkfs.log
+# or:
+#  shell: mkfs.ocfs2 -N 8 -L "{{ ocfs2_cluster_name }}" /dev/drbd0 >> /root/ocfs2-mkfs.log
 
 # Add systemd-mount service thing? Instead of this mount via /etc/fstab ... ?
 #- name: Mount up device by NAME
