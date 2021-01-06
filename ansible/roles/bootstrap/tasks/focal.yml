@@ -20,13 +20,13 @@
     pkg: python-is-python3
 
 
-#- name: focal - Installing Linux HWE
-#  apt:
-#    pkg:
-#    - linux-generic-hwe-20.04
-#  when: (mode == 'server' or mode == 'desktop') and ansible_virtualization_type != 'lxc'
-#
-#
+- name: focal - Installing Linux HWE
+  apt:
+    pkg:
+    - linux-generic-hwe-20.04
+  when: (mode == 'server' or mode == 'desktop') and ansible_virtualization_type != 'lxc'
+
+
 #- name: focal - Installing XOrg HWE
 #  apt:
 #    pkg: xserver-xorg-hwe-20.04
