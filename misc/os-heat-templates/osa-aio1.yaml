@@ -1,0 +1,310 @@
+heat_template_version: 2018-08-31
+
+description: >
+
+  HOT Template to automatically deploy OpenStack Ansible All-in-One.
+
+  This is a standard Heat template, with Security Groups, Floating IPs,
+
+  and the Instance is wired at a Control Network with Internet.
+
+  At the end of the process, OpenStack's Horizon should be available at
+
+  the Instance's Floating IP (http://$floating_ip).
+
+
+  There is 1 Instance:
+
+
+  * Ubuntu with OpenStack Ansible All-in-One Deployment
+
+
+  Wired like:
+
+    --|ctrl_subnet|-- Control Network (Internet Gateway via router_i_1)
+    |
+   -------
+   |     |
+   | OSA |
+   |     |
+   | AIO |
+   |     |
+   -------
+
+parameters:
+
+  # Note about SSH Public Keypair:
+  # Just called it 'default'
+  ssh_key:
+    type: string
+    label: 'Your SSH keypair name (pre-create please!)'
+    description: |
+        If you have not created your key, please go to
+        Project/Compute/Access & Security, and either import
+        one or create one. If you create it, make sure you keep
+        the downloaded file (as you don't get a second chance)
+    default: default
+
+  # Note about the public network: It's supposed to have Floating IPs
+  # and Internet access.
+  public_network:
+    type: string
+    label: 'Public External Network'
+    description: 'Public Network with Floating IP addresses'
+    default: 'intranet-1'
+
+  # Note about the image, download it from here:
+  #
+  # https://uec-images.ubuntu.com/releases/focal/release-20201201/ubuntu-20.04-server-cloudimg-amd64.img
+  #
+  # Register it at Glance as 'ubuntu-20.04.1-20201201'
+  aio1_image:
+    type: string
+    label: 'Ubuntu Server - 64-bit'
+    description: 'Ubuntu - Focal Fossa - LTS'
+    default: 'ubuntu-20.04.1-20201201'
+
+  # Note about the flavor (Storage Intensive - 128G root file system min):
+  #
+  # - os_nova_flavor:
+  #     state: present
+  #     name: r1.xlarge
+  #     ram: 16384
+  #     vcpus: 8
+  #     disk: 128
+
+  aio1_flavor:
+    type: string
+    default: 'm1.xlarge'
+
+
+resources:
+
+  router_1:
+    type: OS::Neutron::Router
+    properties:
+      admin_state_up: True
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-router-1' } }
+      external_gateway_info:
+        network: { get_param: public_network }
+
+  router_1_i_1:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router: { get_resource: router_1 }
+      subnet: { get_resource: ctrl_subnet }
+
+  basic_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-basic-rules' } }
+      rules:
+        - protocol: icmp
+        - protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+        - protocol: tcp
+          port_range_min: 80
+          port_range_max: 80
+        - protocol: tcp
+          port_range_min: 443
+          port_range_max: 443
+
+
+  ctrl_net:
+    type: OS::Neutron::Net
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-control' } }
+
+  ctrl_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-control' } }
+      dns_nameservers: [1.1.1.1, 9.9.9.9, 8.8.8.8]
+      network: { get_resource: ctrl_net }
+      enable_dhcp: True
+      cidr: 192.168.192.0/24
+
+
+  aio1_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-port-aio1']] }
+      network: { get_resource: ctrl_net }
+      security_groups:
+        - { get_resource: basic_security_group }
+
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: aio1_ctrl_port }
+
+
+  aio1:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-aio1' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'aio1_image' }
+      flavor: { get_param: 'aio1_flavor' }
+      networks:
+        - port: { get_resource: aio1_ctrl_port }
+      user_data_format: RAW
+      user_data: |
+        #cloud-config
+        system_info:
+          default_user:
+            name: 'it-network'
+        chpasswd:
+          list: |
+            it-network:it-network
+          expire: False
+        packages:
+        - zram-config
+        runcmd:
+
+        #
+        # Automatic OpenStack Ansible AIO Deployment
+        #
+        # Reference: https://docs.openstack.org/openstack-ansible/victoria/user/aio/quickstart.html
+        #
+
+        #
+        # Prepare Swap
+        #
+
+        - fallocate -l 16G /swapfile
+        - chmod 0600 /swapfile
+        - mkswap /swapfile
+        - swapon /swapfile
+        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+        #
+        # Run Ubuntu Apt Full-Upgrade
+        #
+
+        - apt-get update
+        - apt-get -y full-upgrade
+
+        # Linux 5.8 breaks Ansible run, easy to reproduce (especially when with Ceph).
+        #- apt -y install linux-generic-hwe-20.04
+
+        #
+        # WARNING: Better issue a reboot at this point
+        #
+
+        #
+        # Download OpenStack Ansible and Bootstrap Ansible
+        #
+
+        - git clone -b stable/victoria https://opendev.org/openstack/openstack-ansible /opt/openstack-ansible
+
+        - cd /opt/openstack-ansible ; ./scripts/bootstrap-ansible.sh
+
+        #
+        # If a manual bootstrap is desired, comment out all lines below:
+        #
+
+        #
+        # The default deployment, no Ceph, just the most basic with a "data disk" as a loopback.
+        #
+        # For Ceph, comment those next 5~6 command lines bellow and enable Ceph SCENARIO later on.
+        #
+        # NOTE: The loop20 device won't come back automatically after a server reboot.
+        #
+
+        - fallocate -l 50G /loopfile1.img
+        - losetup /dev/loop20 /loopfile1.img
+
+        # Workaround so OSA TASK can find the partitions within the loopback block device (loop20 above):
+        - sed -i 's/}}1/}}p1/g' /opt/openstack-ansible/tests/roles/bootstrap-host/tasks/prepare_data_disk.yml
+        - sed -i 's/}}2/}}p2/g' /opt/openstack-ansible/tests/roles/bootstrap-host/tasks/prepare_data_disk.yml
+
+        - export BOOTSTRAP_OPTS='bootstrap_host_data_disk_device=loop20'
+
+        #
+        # Enable Some Stuff
+        #
+
+        #- cd /opt/openstack-ansible ; cp etc/openstack_deploy/conf.d/{aodh,gnocchi,ceilometer}.yml.aio /etc/openstack_deploy/conf.d/
+        #- cd /opt/openstack-ansible ; for f in $(ls -1 /etc/openstack_deploy/conf.d/*.aio); do mv -v ${f} ${f%.*}; done
+
+        #
+        # Some Diff Scenarios
+        #
+
+        #
+        # The Default SCENARIO is 'aio_lxc'
+        #
+
+        - export SCENARIO='aio_lxc'
+
+        #
+        # OSA AIO with Ceph
+        #
+
+        #- export SCENARIO='aio_lxc_ceph'
+
+        #
+        # Curiosuly, there is a Ceph-only deployment available in OSA!
+        #
+        # Let's try AIO with 2 servers:
+        #
+        # server-1 with supported SCENARIO='ceph'
+        # server-2 with a new SCENARIO='cephfile'
+        #
+        # Where we'll follow:
+        #
+        # https://docs.openstack.org/openstack-ansible-ceph_client/latest/config-from-file.html
+        #
+        # ...to configure AIO as a Ceph Client of an already running Ceph Cluster (at server-1).
+        #
+
+        #- export SCENARIO='ceph'
+
+        # Bootstrap AIO
+        - cd /opt/openstack-ansible ; ./scripts/bootstrap-aio.sh
+
+        # Disable undesirable/failing playbooks:
+        - sed -i '/security-hardening\.yml/d' /opt/openstack-ansible/playbooks/setup-hosts.yml
+        - sed -i '/os-tempest-install\.yml/d' /opt/openstack-ansible/playbooks/setup-openstack.yml
+
+        #
+        # Individual Top-Level Playbooks, all included in setup-everything.yml
+        #
+
+        # Deploy bare metal and Containers
+        - cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-hosts.yml
+
+        # Deploy Infra Serices, Galera, Rabbit, Memcached, Ceph and etc.
+        - cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-infrastructure.yml
+
+        #
+        # A Bug? A workaround:
+        #
+
+        - sed -i 's/{. ansible_env\.HOME .}/\/root/g' /etc/ansible/roles/openstack_openrc/defaults/main.yml
+
+        # Deploy OpenStack
+        - cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-openstack.yml
+
+
+        # Clear PageCache only (Freeing RAM)
+        - sync ; echo 1 > /proc/sys/vm/drop_caches
+
+        #
+        # Galera Rolling Reboot for Fun & Hmmm... Updates!
+        #
+
+        #- cd /opt/openstack-ansible/playbooks ; openstack-ansible /opt/openstack-ansible/scripts/upgrade-utilities/galera-cluster-rolling-restart.yml
+
+        #
+        # OSA Major Upgrade, from Victoria to Wallaby
+        #
+
+        #- cd /opt/openstack-ansible ; git pull ; git checkout master
+        #- cd /opt/openstack-ansible ; ./scripts/run-upgrade.sh
+
+outputs:
