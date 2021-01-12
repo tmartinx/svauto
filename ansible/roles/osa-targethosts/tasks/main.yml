@@ -24,9 +24,10 @@
     pkg:
     - vlan
     - ifenslave
-    - bridge-utils
+    - pkg-config
     - debootstrap
     - python3-apt
+    - bridge-utils
 
 - name: main - Delete freaking docker.io
   apt:
