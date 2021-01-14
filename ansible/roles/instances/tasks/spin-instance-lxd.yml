@@ -7,9 +7,13 @@
     source:
       type: image
       mode: pull
-      server: https://images.linuxcontainers.org
       protocol: simplestreams
-      alias: "ubuntu/{{ instance.distro }}/cloud"
+      # From Canonical
+      alias: "{{ instance.distro }}"
+      server: https://cloud-images.ubuntu.com/releases
+      # From Community
+      #server: https://images.linuxcontainers.org
+      #alias: "ubuntu/{{ instance.distro }}/cloud"
     config:
       user.user-data: "{{ lookup('template', 'lxd-user-data.j2') }}"
       user.network-config: "{{ lookup('template', 'lxd-network-config.j2') }}"
