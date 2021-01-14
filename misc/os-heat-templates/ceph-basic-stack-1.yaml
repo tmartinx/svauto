@@ -21,11 +21,12 @@ description: >
 
    Control Network (with Internet access via router_i_1)
 
-    ---------|ctrl_subnet|--------
-    |     |     |     |     |    |
-   ---   ---   ---   ---   ---  ---
-   | |   | |   | |   | |   | |  | |
-   |-|---|-|ceph_pub_subnet|-|--|-|--|CEPH CLIENT|
+    ---------|ctrl_subnet|-------------
+    |     |     |     |     |    |    |
+   ---   ---   ---   ---   ---  ---   |---|CEPH DASHBOARD|
+   | |   | |   | |   | |   | |  | |   |   | & PROMETHEUS |
+   | |   | |   | |   | |   | |  | |   |
+   |-|---|-|ceph_pub_subnet|-|--|-|--------|CEPH CLIENT|
    | |   | |   | |   | |   | |  | |
    |C|   |C|   |C|   |C|   |C|  |C|
    |E|   |E|   |E|   |E|   |E|  |E|
@@ -50,7 +51,7 @@ parameters:
         Project/Compute/Access & Security, and either import
         one or create one. If you create it, make sure you keep
         the downloaded file (as you don't get a second chance)
-    default: 'default'
+    default: 'jump'
 
   # Hard-coded External Network (i.e., the World)
   public_network:
@@ -65,6 +66,15 @@ parameters:
     label: 'Ubuntu Server - 64-bit'
     description: 'Ubuntu - Focal Fossa - LTS'
     default: 'ubuntu-20.04.1-20201201'
+
+  # Flavors for Ceph
+  ceph_cp_flavor:
+    type: string
+    default: 'm1.small'
+
+  ceph_osd_flavor:
+    type: string
+    default: 's1.medium'
 
 resources:
 
@@ -93,6 +103,23 @@ resources:
         - protocol: tcp
           port_range_min: 22
           port_range_max: 22
+
+  # Basic Security Group, for now, only SSH is allowed to reach the instances.
+  dash_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-dash-rules' } }
+      rules:
+        - protocol: icmp
+        - protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+        - protocol: tcp
+          port_range_min: 3000
+          port_range_max: 3000
+        - protocol: tcp
+          port_range_min: 9092
+          port_range_max: 9092
 
 #  # Ceph Ports: https://docs.ceph.com/en/latest/rados/configuration/network-config-ref/
 #  ceph_security_group:
@@ -152,8 +179,38 @@ resources:
       enable_dhcp: False
 
   #
-  # Ceph Control Plane Instances entry point
+  # Ceph Control Plane Instances' entry point
   #
+
+  # Floating IP & Network Ports for Ceph Control Dashboard 1
+  floating_ip_dash_1:
+    type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: ceph_dash_1_ctrl_port }
+
+  ceph_dash_1_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-ceph-dash-1']] }
+      network: { get_resource: ctrl_net }
+      fixed_ips:
+        - ip_address: 192.168.192.10
+      security_groups:
+        - { get_resource: dash_security_group }
+
+  ceph_dash_1_pub_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-ceph-dash-1']]}
+      network: { get_resource: ceph_pub_net }
+      fixed_ips:
+        - ip_address: 10.192.0.10
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
+
 
   # Floating IP & Network Ports for Ceph Control Plane 1
   floating_ip_cp_1:
@@ -243,7 +300,7 @@ resources:
       port_security_enabled: False
 
   #
-  # Ceph OSD Instances entry point
+  # Ceph OSD Instances' entry point
   #
 
   # Floating IP & Network Ports for Ceph OSD 1
@@ -399,16 +456,51 @@ resources:
 #        - { get_resource: ceph_security_group }
       port_security_enabled: False
 
+
   #
   # Ceph Control Plane Instances - MONs, MGRs, Dashboard and etc
   #
+  ceph_dash_1:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-dash-1' } }
+      key_name: { get_param: 'ssh_key' }
+      image: { get_param: 'os_image_1' }
+      flavor: { get_param: 'ceph_cp_flavor' }
+      networks:
+        - port: { get_resource: ceph_dash_1_ctrl_port }
+        - port: { get_resource: ceph_dash_1_pub_port }
+      user_data_format: RAW
+      user_data: |
+        #cloud-config
+        system_info:
+          default_user:
+            name: 'it-network'
+        chpasswd:
+          list: |
+            it-network:it-network
+          expire: False
+        packages:
+        - zram-config
+        runcmd:
+        #
+        # Prepare Swap
+        #
+
+        - fallocate -l 1G /swapfile
+        - chmod 0600 /swapfile
+        - mkswap /swapfile
+        - swapon /swapfile
+        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+
   ceph_cp_1:
     type: OS::Nova::Server
     properties:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-cp-1' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: 'm1.small'
+      flavor: { get_param: 'ceph_cp_flavor' }
       networks:
         - port: { get_resource: ceph_cp_1_ctrl_port }
         - port: { get_resource: ceph_cp_1_pub_port }
@@ -422,6 +514,19 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        packages:
+        - zram-config
+        runcmd:
+        #
+        # Prepare Swap
+        #
+
+        - fallocate -l 1G /swapfile
+        - chmod 0600 /swapfile
+        - mkswap /swapfile
+        - swapon /swapfile
+        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
 
   ceph_cp_2:
     type: OS::Nova::Server
@@ -429,7 +534,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-cp-2' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: 'm1.small'
+      flavor: { get_param: 'ceph_cp_flavor' }
       networks:
         - port: { get_resource: ceph_cp_2_ctrl_port }
         - port: { get_resource: ceph_cp_2_pub_port }
@@ -443,6 +548,18 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        packages:
+        - zram-config
+        runcmd:
+        #
+        # Prepare Swap
+        #
+
+        - fallocate -l 1G /swapfile
+        - chmod 0600 /swapfile
+        - mkswap /swapfile
+        - swapon /swapfile
+        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
 
   ceph_cp_3:
     type: OS::Nova::Server
@@ -450,7 +567,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-cp-3' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: 'm1.small'
+      flavor: { get_param: 'ceph_cp_flavor' }
       networks:
         - port: { get_resource: ceph_cp_3_ctrl_port }
         - port: { get_resource: ceph_cp_3_pub_port }
@@ -464,6 +581,18 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        packages:
+        - zram-config
+        runcmd:
+        #
+        # Prepare Swap
+        #
+
+        - fallocate -l 1G /swapfile
+        - chmod 0600 /swapfile
+        - mkswap /swapfile
+        - swapon /swapfile
+        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
 
 
   #
@@ -475,7 +604,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-osd-1' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: 'o1.little'
+      flavor: { get_param: 'ceph_osd_flavor' }
       networks:
         - port: { get_resource: ceph_osd_1_ctrl_port }
         - port: { get_resource: ceph_osd_1_pub_port }
@@ -490,6 +619,31 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        packages:
+        - zram-config
+        - nbdkit
+        - nbd-client
+        runcmd:
+
+        #
+        # Prepare Swap
+        #
+
+        - fallocate -l 2G /swapfile
+        - chmod 0600 /swapfile
+        - mkswap /swapfile
+        - swapon /swapfile
+        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+        #
+        # Prepare Test Vol for Ceph OSD
+        #
+        - modprobe nbd
+        - fallocate -l 96G /ceph-osd-1.img
+        - nbdkit file file=/ceph-osd-1.img
+        - nbd-client 127.0.0.1 /dev/nbd0
+        - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
+
 
   ceph_osd_2:
     type: OS::Nova::Server
@@ -497,7 +651,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-osd-2' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: 'o1.little'
+      flavor: { get_param: 'ceph_osd_flavor' }
       networks:
         - port: { get_resource: ceph_osd_2_ctrl_port }
         - port: { get_resource: ceph_osd_2_pub_port }
@@ -512,6 +666,31 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        packages:
+        - zram-config
+        - nbdkit
+        - nbd-client
+        runcmd:
+
+        #
+        # Prepare Swap
+        #
+
+        - fallocate -l 2G /swapfile
+        - chmod 0600 /swapfile
+        - mkswap /swapfile
+        - swapon /swapfile
+        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+        #
+        # Prepare Test Vol for Ceph OSD
+        #
+        - modprobe nbd
+        - fallocate -l 96G /ceph-osd-1.img
+        - nbdkit file file=/ceph-osd-1.img
+        - nbd-client 127.0.0.1 /dev/nbd0
+        - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
+
 
   ceph_osd_3:
     type: OS::Nova::Server
@@ -519,7 +698,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-osd-3' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: 'o1.little'
+      flavor: { get_param: 'ceph_osd_flavor' }
       networks:
         - port: { get_resource: ceph_osd_3_ctrl_port }
         - port: { get_resource: ceph_osd_3_pub_port }
@@ -534,6 +713,31 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        packages:
+        - zram-config
+        - nbdkit
+        - nbd-client
+        runcmd:
+
+        #
+        # Prepare Swap
+        #
+
+        - fallocate -l 2G /swapfile
+        - chmod 0600 /swapfile
+        - mkswap /swapfile
+        - swapon /swapfile
+        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+        #
+        # Prepare Test Vol for Ceph OSD
+        #
+        - modprobe nbd
+        - fallocate -l 96G /ceph-osd-1.img
+        - nbdkit file file=/ceph-osd-1.img
+        - nbd-client 127.0.0.1 /dev/nbd0
+        - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
+
 
   #
   # Ceph Client
@@ -544,7 +748,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-client-1' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: 'm1.small'
+      flavor: { get_param: 'ceph_cp_flavor' }
       networks:
         - port: { get_resource: ceph_client_1_ctrl_port }
         - port: { get_resource: ceph_client_1_pub_port }
@@ -558,5 +762,18 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        packages:
+        - zram-config
+        runcmd:
+
+        #
+        # Prepare Swap
+        #
+
+        - fallocate -l 1G /swapfile
+        - chmod 0600 /swapfile
+        - mkswap /swapfile
+        - swapon /swapfile
+        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
 
 outputs:
