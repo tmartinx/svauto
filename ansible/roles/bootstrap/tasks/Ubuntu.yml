@@ -115,6 +115,7 @@
     - ppa-purge
     - traceroute
     - btrfs-progs
+    - ubuntu-server
     - btrfs-compsize
     - ecryptfs-utils
     - command-not-found

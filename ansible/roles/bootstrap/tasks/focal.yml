@@ -22,6 +22,7 @@
 
 - name: focal - Installing Linux HWE
   apt:
+    state: absent
     pkg:
     - linux-generic-hwe-20.04
   when: (mode == 'server' or mode == 'desktop') and ansible_virtualization_type != 'lxc'
