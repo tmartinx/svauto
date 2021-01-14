@@ -645,7 +645,7 @@ resources:
         # Prepare Test Vol for Ceph OSD
         #
         - modprobe nbd
-        - fallocate -l 96G /ceph-osd-1.img
+        - fallocate -l 48G /ceph-osd-1.img
         - nbdkit file file=/ceph-osd-1.img
         - nbd-client 127.0.0.1 /dev/nbd0
         - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
@@ -692,7 +692,7 @@ resources:
         # Prepare Test Vol for Ceph OSD
         #
         - modprobe nbd
-        - fallocate -l 96G /ceph-osd-1.img
+        - fallocate -l 48G /ceph-osd-1.img
         - nbdkit file file=/ceph-osd-1.img
         - nbd-client 127.0.0.1 /dev/nbd0
         - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
@@ -739,7 +739,7 @@ resources:
         # Prepare Test Vol for Ceph OSD
         #
         - modprobe nbd
-        - fallocate -l 96G /ceph-osd-1.img
+        - fallocate -l 48G /ceph-osd-1.img
         - nbdkit file file=/ceph-osd-1.img
         - nbd-client 127.0.0.1 /dev/nbd0
         - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
