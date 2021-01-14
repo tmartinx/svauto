@@ -43,7 +43,7 @@ parameters:
         Project/Compute/Access & Security, and either import
         one or create one. If you create it, make sure you keep
         the downloaded file (as you don't get a second chance)
-    default: default
+    default: 'default'
 
   # Note about the public network: It's supposed to have Floating IPs
   # and Internet access.
