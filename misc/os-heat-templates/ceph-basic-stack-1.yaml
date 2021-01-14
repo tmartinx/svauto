@@ -68,13 +68,13 @@ parameters:
     default: 'ubuntu-20.04.1-20201201'
 
   # Flavors for Ceph
-  ceph_cp_flavor:
+  flavor_ceph_generic:
     type: string
     default: 'm1.small'
 
-  ceph_osd_flavor:
+  flavor_ceph_osd:
     type: string
-    default: 's1.medium'
+    default: 'm1.medium'
 
 resources:
 
@@ -466,7 +466,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-dash-1' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: { get_param: 'ceph_cp_flavor' }
+      flavor: { get_param: 'flavor_ceph_generic' }
       networks:
         - port: { get_resource: ceph_dash_1_ctrl_port }
         - port: { get_resource: ceph_dash_1_pub_port }
@@ -506,7 +506,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-cp-1' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: { get_param: 'ceph_cp_flavor' }
+      flavor: { get_param: 'flavor_ceph_generic' }
       networks:
         - port: { get_resource: ceph_cp_1_ctrl_port }
         - port: { get_resource: ceph_cp_1_pub_port }
@@ -540,7 +540,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-cp-2' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: { get_param: 'ceph_cp_flavor' }
+      flavor: { get_param: 'flavor_ceph_generic' }
       networks:
         - port: { get_resource: ceph_cp_2_ctrl_port }
         - port: { get_resource: ceph_cp_2_pub_port }
@@ -573,7 +573,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-cp-3' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: { get_param: 'ceph_cp_flavor' }
+      flavor: { get_param: 'flavor_ceph_generic' }
       networks:
         - port: { get_resource: ceph_cp_3_ctrl_port }
         - port: { get_resource: ceph_cp_3_pub_port }
@@ -610,7 +610,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-osd-1' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: { get_param: 'ceph_osd_flavor' }
+      flavor: { get_param: 'flavor_ceph_osd' }
       networks:
         - port: { get_resource: ceph_osd_1_ctrl_port }
         - port: { get_resource: ceph_osd_1_pub_port }
@@ -628,6 +628,7 @@ resources:
         packages:
         - zram-config
         - nbdkit
+        - nbd-server
         - nbd-client
         runcmd:
 
@@ -644,9 +645,9 @@ resources:
         #
         # Prepare Test Vol for Ceph OSD
         #
+        - truncate -s 8T /ceph-osd-1.img
+        - nbdkit file /ceph-osd-1.img
         - modprobe nbd
-        - fallocate -l 48G /ceph-osd-1.img
-        - nbdkit file file=/ceph-osd-1.img
         - nbd-client 127.0.0.1 /dev/nbd0
         - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
 
@@ -657,7 +658,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-osd-2' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: { get_param: 'ceph_osd_flavor' }
+      flavor: { get_param: 'flavor_ceph_osd' }
       networks:
         - port: { get_resource: ceph_osd_2_ctrl_port }
         - port: { get_resource: ceph_osd_2_pub_port }
@@ -675,6 +676,7 @@ resources:
         packages:
         - zram-config
         - nbdkit
+        - nbd-server
         - nbd-client
         runcmd:
 
@@ -691,9 +693,9 @@ resources:
         #
         # Prepare Test Vol for Ceph OSD
         #
+        - truncate -s 8T /ceph-osd-1.img
+        - nbdkit file /ceph-osd-1.img
         - modprobe nbd
-        - fallocate -l 48G /ceph-osd-1.img
-        - nbdkit file file=/ceph-osd-1.img
         - nbd-client 127.0.0.1 /dev/nbd0
         - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
 
@@ -704,7 +706,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-osd-3' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: { get_param: 'ceph_osd_flavor' }
+      flavor: { get_param: 'flavor_ceph_osd' }
       networks:
         - port: { get_resource: ceph_osd_3_ctrl_port }
         - port: { get_resource: ceph_osd_3_pub_port }
@@ -722,6 +724,7 @@ resources:
         packages:
         - zram-config
         - nbdkit
+        - nbd-server
         - nbd-client
         runcmd:
 
@@ -738,9 +741,9 @@ resources:
         #
         # Prepare Test Vol for Ceph OSD
         #
+        - truncate -s 8T /ceph-osd-1.img
+        - nbdkit file /ceph-osd-1.img
         - modprobe nbd
-        - fallocate -l 48G /ceph-osd-1.img
-        - nbdkit file file=/ceph-osd-1.img
         - nbd-client 127.0.0.1 /dev/nbd0
         - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
 
@@ -754,7 +757,7 @@ resources:
       name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-client-1' } }
       key_name: { get_param: 'ssh_key' }
       image: { get_param: 'os_image_1' }
-      flavor: { get_param: 'ceph_cp_flavor' }
+      flavor: { get_param: 'flavor_ceph_generic' }
       networks:
         - port: { get_resource: ceph_client_1_ctrl_port }
         - port: { get_resource: ceph_client_1_pub_port }
