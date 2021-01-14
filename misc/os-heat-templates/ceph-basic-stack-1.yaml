@@ -482,6 +482,7 @@ resources:
           expire: False
         packages:
         - zram-config
+        - net-tools
         runcmd:
         #
         # Prepare Swap
@@ -522,6 +523,7 @@ resources:
           expire: False
         packages:
         - zram-config
+        - net-tools
         runcmd:
         #
         # Prepare Swap
@@ -556,6 +558,7 @@ resources:
           expire: False
         packages:
         - zram-config
+        - net-tools
         runcmd:
         #
         # Prepare Swap
@@ -589,6 +592,7 @@ resources:
           expire: False
         packages:
         - zram-config
+        - net-tools
         runcmd:
         #
         # Prepare Swap
@@ -618,18 +622,69 @@ resources:
       user_data_format: RAW
       user_data: |
         #cloud-config
+
         system_info:
           default_user:
             name: 'it-network'
+
         chpasswd:
           list: |
             it-network:it-network
           expire: False
+
+        package_upgrade: true
+
         packages:
+        - net-tools
         - zram-config
-        - nbdkit
         - nbd-server
         - nbd-client
+
+        write_files:
+
+        - path: /etc/nbd-server/conf.d/exports.conf
+          permissions: 0644
+          owner: root
+          content: |
+            [nbd0]
+            exportname = /ceph-osd-0.img
+            [nbd1]
+            exportname = /ceph-osd-1.img
+            
+        - path: /etc/nbdtab
+          permissions: 0644
+          owner: root
+          content: |
+            nbd0 127.0.0.1 nbd0
+            nbd1 127.0.0.1 nbd1
+            
+        - path: /etc/rc.local
+          permissions: 0755
+          owner: root
+          content: |
+            #! /bin/bash
+            systemctl restart nbd@nbd0
+            systemctl restart nbd@nbd1
+            
+        - path: /usr/local/sbin/nbd-fixes.sh
+          permissions: 0755
+          owner: root
+          content: |
+            #! /bin/bash
+
+            #
+            # NBD Client Bootstrap
+            #
+
+            echo nbd > /etc/modules-load.d/nbd.conf
+            modprobe nbd
+
+            sed -i 's/ExecStart=\/\/sbin\/nbd-client %i/ExecStart=\/sbin\/nbd-client -L %i/g' /lib/systemd/system/nbd@.service
+            systemctl daemon-reload
+
+            systemctl enable nbd@nbd0 --now
+            systemctl enable nbd@nbd1 --now
+            
         runcmd:
 
         #
@@ -645,11 +700,12 @@ resources:
         #
         # Prepare Test Vol for Ceph OSD
         #
-        - truncate -s 8T /ceph-osd-1.img
-        - nbdkit file /ceph-osd-1.img
-        - modprobe nbd
-        - nbd-client 127.0.0.1 /dev/nbd0
-        - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
+
+        - [ sh, -c, 'truncate -s 3T /ceph-osd-0.img' ]
+        - [ sh, -c, 'truncate -s 3T /ceph-osd-1.img' ]
+        - [ sh, -c, 'chown nbd: /ceph-osd-*.img' ]
+
+        - [ sh, -c, '/usr/local/sbin/nbd-fixes.sh' ]
 
 
   ceph_osd_2:
@@ -673,11 +729,60 @@ resources:
           list: |
             it-network:it-network
           expire: False
+
+        package_upgrade: true
+
         packages:
+        - net-tools
         - zram-config
-        - nbdkit
         - nbd-server
         - nbd-client
+
+        write_files:
+
+        - path: /etc/nbd-server/conf.d/exports.conf
+          permissions: 0644
+          owner: root
+          content: |
+            [nbd0]
+            exportname = /ceph-osd-0.img
+            [nbd1]
+            exportname = /ceph-osd-1.img
+            
+        - path: /etc/nbdtab
+          permissions: 0644
+          owner: root
+          content: |
+            nbd0 127.0.0.1 nbd0
+            nbd1 127.0.0.1 nbd1
+            
+        - path: /etc/rc.local
+          permissions: 0755
+          owner: root
+          content: |
+            #! /bin/bash
+            systemctl restart nbd@nbd0
+            systemctl restart nbd@nbd1
+            
+        - path: /usr/local/sbin/nbd-fixes.sh
+          permissions: 0755
+          owner: root
+          content: |
+            #! /bin/bash
+
+            #
+            # NBD Client Bootstrap
+            #
+
+            echo nbd > /etc/modules-load.d/nbd.conf
+            modprobe nbd
+
+            sed -i 's/ExecStart=\/\/sbin\/nbd-client %i/ExecStart=\/sbin\/nbd-client -L %i/g' /lib/systemd/system/nbd@.service
+            systemctl daemon-reload
+
+            systemctl enable nbd@nbd0 --now
+            systemctl enable nbd@nbd1 --now
+            
         runcmd:
 
         #
@@ -693,11 +798,13 @@ resources:
         #
         # Prepare Test Vol for Ceph OSD
         #
-        - truncate -s 8T /ceph-osd-1.img
-        - nbdkit file /ceph-osd-1.img
-        - modprobe nbd
-        - nbd-client 127.0.0.1 /dev/nbd0
-        - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
+
+        - [ sh, -c, 'truncate -s 3T /ceph-osd-0.img' ]
+        - [ sh, -c, 'truncate -s 3T /ceph-osd-1.img' ]
+        - [ sh, -c, 'chown nbd: /ceph-osd-*.img' ]
+
+        - [ sh, -c, '/usr/local/sbin/nbd-fixes.sh' ]
+
 
 
   ceph_osd_3:
@@ -721,11 +828,60 @@ resources:
           list: |
             it-network:it-network
           expire: False
+
+        package_upgrade: true
+
         packages:
+        - net-tools
         - zram-config
-        - nbdkit
         - nbd-server
         - nbd-client
+
+        write_files:
+
+        - path: /etc/nbd-server/conf.d/exports.conf
+          permissions: 0644
+          owner: root
+          content: |
+            [nbd0]
+            exportname = /ceph-osd-0.img
+            [nbd1]
+            exportname = /ceph-osd-1.img
+            
+        - path: /etc/nbdtab
+          permissions: 0644
+          owner: root
+          content: |
+            nbd0 127.0.0.1 nbd0
+            nbd1 127.0.0.1 nbd1
+            
+        - path: /etc/rc.local
+          permissions: 0755
+          owner: root
+          content: |
+            #! /bin/bash
+            systemctl restart nbd@nbd0
+            systemctl restart nbd@nbd1
+            
+        - path: /usr/local/sbin/nbd-fixes.sh
+          permissions: 0755
+          owner: root
+          content: |
+            #! /bin/bash
+
+            #
+            # NBD Client Bootstrap
+            #
+
+            echo nbd > /etc/modules-load.d/nbd.conf
+            modprobe nbd
+
+            sed -i 's/ExecStart=\/\/sbin\/nbd-client %i/ExecStart=\/sbin\/nbd-client -L %i/g' /lib/systemd/system/nbd@.service
+            systemctl daemon-reload
+
+            systemctl enable nbd@nbd0 --now
+            systemctl enable nbd@nbd1 --now
+            
         runcmd:
 
         #
@@ -741,11 +897,13 @@ resources:
         #
         # Prepare Test Vol for Ceph OSD
         #
-        - truncate -s 8T /ceph-osd-1.img
-        - nbdkit file /ceph-osd-1.img
-        - modprobe nbd
-        - nbd-client 127.0.0.1 /dev/nbd0
-        - sleep 3 ; nbd-client 127.0.0.1 /dev/nbd0
+
+        - [ sh, -c, 'truncate -s 3T /ceph-osd-0.img' ]
+        - [ sh, -c, 'truncate -s 3T /ceph-osd-1.img' ]
+        - [ sh, -c, 'chown nbd: /ceph-osd-*.img' ]
+
+        - [ sh, -c, '/usr/local/sbin/nbd-fixes.sh' ]
+
 
 
   #
@@ -773,6 +931,7 @@ resources:
           expire: False
         packages:
         - zram-config
+        - net-tools
         runcmd:
 
         #
