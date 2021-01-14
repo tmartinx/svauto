@@ -268,7 +268,7 @@ resources:
         - cd /opt/openstack-ansible ; ./scripts/bootstrap-aio.sh
 
         # Disable undesirable/failing playbooks:
-        - sed -i '/security-hardening\.yml/d' /opt/openstack-ansible/playbooks/setup-hosts.yml
+        - [ sh, -c, 'echo "apply_security_hardening: false" >> /etc/openstack_deploy/user_variables.yml' ]
         - sed -i '/os-tempest-install\.yml/d' /opt/openstack-ansible/playbooks/setup-openstack.yml
 
         #
