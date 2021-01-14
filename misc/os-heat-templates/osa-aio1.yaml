@@ -242,7 +242,7 @@ resources:
         - export SCENARIO='aio_lxc'
 
         #
-        # OSA AIO with Ceph
+        # OpenStack Ansible AIO with Ceph
         #
 
         #- export SCENARIO='aio_lxc_ceph'
