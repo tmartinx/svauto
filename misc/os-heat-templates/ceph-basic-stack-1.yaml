@@ -493,6 +493,12 @@ resources:
         - swapon /swapfile
         - echo '/swapfile none swap sw 0 0' >> /etc/fstab
 
+        - echo '#! /bin/bash' > /etc/rc.local
+        - echo 'iptables -t nat -A PREROUTING -d 192.168.192.10 -m tcp -p tcp --dport 3000 -j DNAT --to-destination 10.192.0.10' >> /etc/rc.local
+        - echo 'iptables -t nat -A PREROUTING -d 192.168.192.10 -m tcp -p tcp --dport 9092 -j DNAT --to-destination 10.192.0.10' >> /etc/rc.local
+        - chmod +x /etc/rc.local
+        - /etc/rc.local
+
 
   ceph_cp_1:
     type: OS::Nova::Server
