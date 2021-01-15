@@ -480,26 +480,44 @@ resources:
           list: |
             it-network:it-network
           expire: False
-        package_upgrade: true
         packages:
         - zram-config
         - net-tools
+
+        write_files:
+
+        - path: /etc/rc.local
+          permissions: 0755
+          owner: root
+          content: |
+            #! /bin/bash
+            iptables -t nat -A PREROUTING -d 192.168.192.10 -m tcp -p tcp --dport 3000 -j DNAT --to-destination 10.192.0.10
+            iptables -t nat -A PREROUTING -d 192.168.192.10 -m tcp -p tcp --dport 9092 -j DNAT --to-destination 10.192.0.10
+            
+        - path: /usr/local/sbin/bootstrap-instance.sh
+          permissions: 0755
+          owner: root
+          content: |
+            #! /bin/bash
+
+            #
+            # Bootstrap Instance
+            #
+
+            echo "*** Bootstrapping Instance..."
+
+            # Swap
+            fallocate -l 1G /swapfile
+            chmod 0600 /swapfile
+            mkswap /swapfile
+            swapon /swapfile
+            echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+            echo "*** Boostrap Done!!!"
+            
         runcmd:
-        #
-        # Prepare Swap
-        #
 
-        - fallocate -l 1G /swapfile
-        - chmod 0600 /swapfile
-        - mkswap /swapfile
-        - swapon /swapfile
-        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
-
-        - echo '#! /bin/bash' > /etc/rc.local
-        - echo 'iptables -t nat -A PREROUTING -d 192.168.192.10 -m tcp -p tcp --dport 3000 -j DNAT --to-destination 10.192.0.10' >> /etc/rc.local
-        - echo 'iptables -t nat -A PREROUTING -d 192.168.192.10 -m tcp -p tcp --dport 9092 -j DNAT --to-destination 10.192.0.10' >> /etc/rc.local
-        - chmod +x /etc/rc.local
-        - /etc/rc.local
+        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
 
 
   ceph_cp_1:
@@ -522,7 +540,6 @@ resources:
           list: |
             it-network:it-network
           expire: False
-        package_upgrade: true
         packages:
         - zram-config
         - net-tools
@@ -558,7 +575,6 @@ resources:
           list: |
             it-network:it-network
           expire: False
-        package_upgrade: true
         packages:
         - zram-config
         - net-tools
@@ -593,7 +609,6 @@ resources:
           list: |
             it-network:it-network
           expire: False
-        package_upgrade: true
         packages:
         - zram-config
         - net-tools
@@ -635,8 +650,6 @@ resources:
           list: |
             it-network:it-network
           expire: False
-
-        package_upgrade: true
 
         packages:
         - net-tools
@@ -704,7 +717,12 @@ resources:
             echo nbd > /etc/modules-load.d/nbd.conf
             modprobe nbd
 
+            # MUDAR PARA:
+            # Type=oneshot
+            # ExecStart=/usr/sbin/nbd-client %i
+            # ExecStop=/usr/sbin/nbd-client -d /dev/%i
             sed -i 's/ExecStart=\/\/sbin\/nbd-client %i/ExecStart=\/sbin\/nbd-client -L %i/g' /lib/systemd/system/nbd@.service
+
             systemctl daemon-reload
 
             systemctl enable nbd@nbd0 --now
@@ -739,8 +757,6 @@ resources:
           list: |
             it-network:it-network
           expire: False
-
-        package_upgrade: true
 
         packages:
         - net-tools
@@ -846,8 +862,6 @@ resources:
             it-network:it-network
           expire: False
 
-        package_upgrade: true
-
         packages:
         - net-tools
         - zram-config
@@ -951,20 +965,34 @@ resources:
           list: |
             it-network:it-network
           expire: False
-        package_upgrade: true
         packages:
         - zram-config
         - net-tools
+        write_files:
+
+        - path: /usr/local/sbin/bootstrap-instance.sh
+          permissions: 0755
+          owner: root
+          content: |
+            #! /bin/bash
+
+            #
+            # Bootstrap Instance
+            #
+
+            echo "*** Bootstrapping Instance..."
+
+            # Swap
+            fallocate -l 1G /swapfile
+            chmod 0600 /swapfile
+            mkswap /swapfile
+            swapon /swapfile
+            echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+            echo "*** Boostrap Done!!!"
+            
         runcmd:
 
-        #
-        # Prepare Swap
-        #
-
-        - fallocate -l 1G /swapfile
-        - chmod 0600 /swapfile
-        - mkswap /swapfile
-        - swapon /swapfile
-        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
 
 outputs:
