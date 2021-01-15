@@ -115,6 +115,9 @@ resources:
           port_range_min: 22
           port_range_max: 22
         - protocol: tcp
+          port_range_min: 8443
+          port_range_max: 8443
+        - protocol: tcp
           port_range_min: 3000
           port_range_max: 3000
         - protocol: tcp
@@ -543,6 +546,16 @@ resources:
         packages:
         - zram-config
         - net-tools
+
+        write_files:
+
+        - path: /etc/rc.local
+          permissions: 0755
+          owner: root
+          content: |
+            #! /bin/bash
+            iptables -t nat -A PREROUTING -d 192.168.192.11 -m tcp -p tcp --dport 8443 -j DNAT --to-destination 10.192.0.11
+
         runcmd:
         #
         # Prepare Swap
@@ -839,7 +852,6 @@ resources:
         - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
 
 
-
   ceph_osd_3:
     type: OS::Nova::Server
     properties:
@@ -939,7 +951,6 @@ resources:
         runcmd:
 
         - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
-
 
 
   #
