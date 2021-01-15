@@ -161,150 +161,165 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: true
         packages:
         - zram-config
+        write_files:
+        - path: /usr/local/sbin/bootstrap-instance.sh
+          permissions: 0755
+          owner: root
+          content: |
+            #! /bin/bash
+
+            #
+            # Bootstrap Instance
+            #
+
+            echo '***'
+            echo '*** Bootstrapping Instance...'
+            echo '***'
+
+            #
+            # Prepare Swap
+            #
+
+            fallocate -l 16G /swapfile
+            chmod 0600 /swapfile
+            mkswap /swapfile
+            swapon /swapfile
+            echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+            #
+            # Automatic OpenStack Ansible AIO Deployment
+            #
+            # Reference: https://docs.openstack.org/openstack-ansible/victoria/user/aio/quickstart.html
+            #
+
+            # Linux 5.8 breaks Ansible run, easy to reproduce (especially when with Ceph).
+            #apt -y install linux-generic-hwe-20.04
+
+            #
+            # WARNING: Better issue a reboot at this point
+            #
+
+            #
+            # Download OpenStack Ansible and Bootstrap Ansible
+            #
+
+            git clone -b stable/victoria https://opendev.org/openstack/openstack-ansible /opt/openstack-ansible
+
+            cd /opt/openstack-ansible ; ./scripts/bootstrap-ansible.sh
+
+            #
+            # If a manual bootstrap is desired, comment out all lines below:
+            #
+
+            #
+            # The default deployment, no Ceph, just the most basic with a "data disk" as a loopback.
+            #
+            # For Ceph, comment those next 5~6 command lines bellow and enable Ceph SCENARIO later on.
+            #
+            # NOTE: The loop20 device won't come back automatically after a server reboot.
+            #
+
+            fallocate -l 50G /loopfile1.img
+            losetup /dev/loop20 /loopfile1.img
+
+            # Workaround so OSA TASK can find the partitions within the loopback block device (loop20 above):
+            sed -i 's/}}1/}}p1/g' /opt/openstack-ansible/tests/roles/bootstrap-host/tasks/prepare_data_disk.yml
+            sed -i 's/}}2/}}p2/g' /opt/openstack-ansible/tests/roles/bootstrap-host/tasks/prepare_data_disk.yml
+
+            export BOOTSTRAP_OPTS='bootstrap_host_data_disk_device=loop20'
+
+            #
+            # Enable Some Stuff
+            #
+
+            #cd /opt/openstack-ansible ; cp etc/openstack_deploy/conf.d/{aodh,gnocchi,ceilometer}.yml.aio /etc/openstack_deploy/conf.d/
+            #cd /opt/openstack-ansible ; for f in $(ls -1 /etc/openstack_deploy/conf.d/*.aio); do mv -v ${f} ${f%.*}; done
+
+            #
+            # Some Diff Scenarios
+            #
+
+            #
+            # The Default SCENARIO is 'aio_lxc'
+            #
+
+            export SCENARIO='aio_lxc'
+
+            #
+            # OpenStack Ansible AIO with Ceph
+            #
+
+            #export SCENARIO='aio_lxc_ceph'
+
+            #
+            # Curiosuly, there is a Ceph-only deployment available in OSA!
+            #
+            # Let's try AIO with 2 servers:
+            #
+            # server-1 with supported SCENARIO='ceph'
+            # server-2 with a new SCENARIO='cephfile'
+            #
+            # Where we'll follow:
+            #
+            # https://docs.openstack.org/openstack-ansible-ceph_client/latest/config-from-file.html
+            #
+            # ...to configure AIO as a Ceph Client of an already running Ceph Cluster (at server-1).
+            #
+
+            #export SCENARIO='ceph'
+
+            # Bootstrap AIO
+            cd /opt/openstack-ansible ; ./scripts/bootstrap-aio.sh
+
+            # Disable undesirable/failing playbooks:
+            echo 'apply_security_hardening: false' >> /etc/openstack_deploy/user_variables.yml
+            sed -i '/os-tempest-install\.yml/d' /opt/openstack-ansible/playbooks/setup-openstack.yml
+
+            #
+            # Individual Top-Level Playbooks, all included in setup-everything.yml
+            #
+
+            # Deploy bare metal and Containers
+            cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-hosts.yml
+
+            # Deploy Infra Serices, Galera, Rabbit, Memcached, Ceph and etc.
+            cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-infrastructure.yml
+
+            #
+            # A Bug? A workaround:
+            #
+
+            sed -i 's/{. ansible_env\.HOME .}/\/root/g' /etc/ansible/roles/openstack_openrc/defaults/main.yml
+
+            # Deploy OpenStack
+            cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-openstack.yml
+
+            # Clear PageCache only (Freeing RAM)
+            sync
+            echo 1 > /proc/sys/vm/drop_caches
+
+            #
+            # Galera Rolling Reboot for Fun & Hmmm... Updates!
+            #
+
+            #cd /opt/openstack-ansible/playbooks ; openstack-ansible /opt/openstack-ansible/scripts/upgrade-utilities/galera-cluster-rolling-restart.yml
+
+            #
+            # OSA Major Upgrade, from Victoria to Wallaby
+            #
+
+            #cd /opt/openstack-ansible ; git pull ; git checkout master
+            #cd /opt/openstack-ansible ; ./scripts/run-upgrade.sh
+
+            echo '***'
+            echo "*** Boostrap Done!!!"
+            echo '***'
+            
         runcmd:
 
-        #
-        # Automatic OpenStack Ansible AIO Deployment
-        #
-        # Reference: https://docs.openstack.org/openstack-ansible/victoria/user/aio/quickstart.html
-        #
-
-        #
-        # Prepare Swap
-        #
-
-        - fallocate -l 16G /swapfile
-        - chmod 0600 /swapfile
-        - mkswap /swapfile
-        - swapon /swapfile
-        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
-
-        #
-        # Run Ubuntu Apt Full-Upgrade
-        #
-
-        - apt-get update
-        - apt-get -y full-upgrade
-
-        # Linux 5.8 breaks Ansible run, easy to reproduce (especially when with Ceph).
-        #- apt -y install linux-generic-hwe-20.04
-
-        #
-        # WARNING: Better issue a reboot at this point
-        #
-
-        #
-        # Download OpenStack Ansible and Bootstrap Ansible
-        #
-
-        - git clone -b stable/victoria https://opendev.org/openstack/openstack-ansible /opt/openstack-ansible
-
-        - cd /opt/openstack-ansible ; ./scripts/bootstrap-ansible.sh
-
-        #
-        # If a manual bootstrap is desired, comment out all lines below:
-        #
-
-        #
-        # The default deployment, no Ceph, just the most basic with a "data disk" as a loopback.
-        #
-        # For Ceph, comment those next 5~6 command lines bellow and enable Ceph SCENARIO later on.
-        #
-        # NOTE: The loop20 device won't come back automatically after a server reboot.
-        #
-
-        - fallocate -l 50G /loopfile1.img
-        - losetup /dev/loop20 /loopfile1.img
-
-        # Workaround so OSA TASK can find the partitions within the loopback block device (loop20 above):
-        - sed -i 's/}}1/}}p1/g' /opt/openstack-ansible/tests/roles/bootstrap-host/tasks/prepare_data_disk.yml
-        - sed -i 's/}}2/}}p2/g' /opt/openstack-ansible/tests/roles/bootstrap-host/tasks/prepare_data_disk.yml
-
-        - export BOOTSTRAP_OPTS='bootstrap_host_data_disk_device=loop20'
-
-        #
-        # Enable Some Stuff
-        #
-
-        #- cd /opt/openstack-ansible ; cp etc/openstack_deploy/conf.d/{aodh,gnocchi,ceilometer}.yml.aio /etc/openstack_deploy/conf.d/
-        #- cd /opt/openstack-ansible ; for f in $(ls -1 /etc/openstack_deploy/conf.d/*.aio); do mv -v ${f} ${f%.*}; done
-
-        #
-        # Some Diff Scenarios
-        #
-
-        #
-        # The Default SCENARIO is 'aio_lxc'
-        #
-
-        - export SCENARIO='aio_lxc'
-
-        #
-        # OpenStack Ansible AIO with Ceph
-        #
-
-        #- export SCENARIO='aio_lxc_ceph'
-
-        #
-        # Curiosuly, there is a Ceph-only deployment available in OSA!
-        #
-        # Let's try AIO with 2 servers:
-        #
-        # server-1 with supported SCENARIO='ceph'
-        # server-2 with a new SCENARIO='cephfile'
-        #
-        # Where we'll follow:
-        #
-        # https://docs.openstack.org/openstack-ansible-ceph_client/latest/config-from-file.html
-        #
-        # ...to configure AIO as a Ceph Client of an already running Ceph Cluster (at server-1).
-        #
-
-        #- export SCENARIO='ceph'
-
-        # Bootstrap AIO
-        - cd /opt/openstack-ansible ; ./scripts/bootstrap-aio.sh
-
-        # Disable undesirable/failing playbooks:
-        - [ sh, -c, 'echo "apply_security_hardening: false" >> /etc/openstack_deploy/user_variables.yml' ]
-        - sed -i '/os-tempest-install\.yml/d' /opt/openstack-ansible/playbooks/setup-openstack.yml
-
-        #
-        # Individual Top-Level Playbooks, all included in setup-everything.yml
-        #
-
-        # Deploy bare metal and Containers
-        - cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-hosts.yml
-
-        # Deploy Infra Serices, Galera, Rabbit, Memcached, Ceph and etc.
-        - cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-infrastructure.yml
-
-        #
-        # A Bug? A workaround:
-        #
-
-        - sed -i 's/{. ansible_env\.HOME .}/\/root/g' /etc/ansible/roles/openstack_openrc/defaults/main.yml
-
-        # Deploy OpenStack
-        - cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-openstack.yml
-
-
-        # Clear PageCache only (Freeing RAM)
-        - sync ; echo 1 > /proc/sys/vm/drop_caches
-
-        #
-        # Galera Rolling Reboot for Fun & Hmmm... Updates!
-        #
-
-        #- cd /opt/openstack-ansible/playbooks ; openstack-ansible /opt/openstack-ansible/scripts/upgrade-utilities/galera-cluster-rolling-restart.yml
-
-        #
-        # OSA Major Upgrade, from Victoria to Wallaby
-        #
-
-        #- cd /opt/openstack-ansible ; git pull ; git checkout master
-        #- cd /opt/openstack-ansible ; ./scripts/run-upgrade.sh
+        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
 
 outputs:
