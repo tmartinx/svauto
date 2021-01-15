@@ -123,13 +123,13 @@ resources:
         #cloud-config
         system_info:
           default_user:
-            name: "tcmc"
+            name: "it-network"
         chpasswd:
           list: |
-            root:tcmc
-            tcmc:tcmc
+            root:it-network
+            it-network:it-network
           expire: False
         runcmd:
-        - 'su -c "\curl -s https://raw.githubusercontent.com/tmartinx/svauto/dev/scripts/svauto-deployments.sh | bash -s -- --base-os=ubuntu16 --ansible-remote-user=root --ansible-inventory-builder=all,localhost,ansible_connection=local,openstack_release=rocky,mode=server --ansible-playbook-builder=localhost,bootstrap\;base_os_upgrade=true,grub,post-cleanup" tcmc'
+        - 'su -c "\curl -s https://raw.githubusercontent.com/tmartinx/svauto/dev/scripts/svauto-deployments.sh | bash -s -- --base-os=ubuntu16 --ansible-remote-user=root --ansible-inventory-builder=all,localhost,ansible_connection=local,openstack_release=rocky,mode=server --ansible-playbook-builder=localhost,bootstrap\;base_os_upgrade=true,grub,post-cleanup" it-network'
 
 outputs:

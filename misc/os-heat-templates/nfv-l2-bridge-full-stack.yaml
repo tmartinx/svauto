@@ -352,11 +352,11 @@ resources:
         #cloud-config
         system_info:
           default_user:
-            name: "tcmc"
+            name: "it-network"
         chpasswd:
           list: |
-            root:tcmc
-            tcmc:tcmc
+            root:it-network
+            it-network:it-network
           expire: False
 
   database_1:
@@ -374,11 +374,11 @@ resources:
         #cloud-config
         system_info:
           default_user:
-            name: "tcmc"
+            name: "it-network"
         chpasswd:
           list: |
-            root:tcmc
-            tcmc:tcmc
+            root:it-network
+            it-network:it-network
           expire: False
 
   engine_1:
@@ -396,11 +396,11 @@ resources:
         #cloud-config
         system_info:
           default_user:
-            name: "tcmc"
+            name: "it-network"
         chpasswd:
           list: |
-            root:tcmc
-            tcmc:tcmc
+            root:it-network
+            it-network:it-network
           expire: False
 
 outputs:

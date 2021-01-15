@@ -121,10 +121,12 @@ resources:
         #cloud-config
         system_info:
           default_user:
-            name: "tcmc"
+            name: "it-network"
         chpasswd:
           list: |
-            tcmc:tcmc
+            it-network:it-network
           expire: False
+        runcmd:
+        - sleep 10 && reboot
 
 outputs:

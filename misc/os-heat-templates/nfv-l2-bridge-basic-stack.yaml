@@ -205,11 +205,11 @@ resources:
         #cloud-config
         system_info:
           default_user:
-            name: "tcmc"
+            name: "it-network"
         chpasswd:
           list: |
-            root:tcmc
-            tcmc:tcmc
+            root:it-network
+            it-network:it-network
           expire: False
 
   ubuntu_1:
@@ -226,11 +226,11 @@ resources:
         #cloud-config
         system_info:
           default_user:
-            name: "tcmc"
+            name: "it-network"
         chpasswd:
           list: |
-            root:tcmc
-            tcmc:tcmc
+            root:it-network
+            it-network:it-network
           expire: False
 
 outputs:
