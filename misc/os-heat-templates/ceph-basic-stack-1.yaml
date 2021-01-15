@@ -480,6 +480,7 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: true
         packages:
         - zram-config
         - net-tools
@@ -521,6 +522,7 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: true
         packages:
         - zram-config
         - net-tools
@@ -556,6 +558,7 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: true
         packages:
         - zram-config
         - net-tools
@@ -590,6 +593,7 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: true
         packages:
         - zram-config
         - net-tools
@@ -646,17 +650,20 @@ resources:
           permissions: 0644
           owner: root
           content: |
-            [nbd0]
-            exportname = /ceph-osd-0.img
-            [nbd1]
-            exportname = /ceph-osd-1.img
+            [vol0]
+            exportname = /vol-0.img
+            [vol1]
+            exportname = /vol-1.img
+            [vol2]
+            exportname = /vol-2.img
             
         - path: /etc/nbdtab
           permissions: 0644
           owner: root
           content: |
-            nbd0 127.0.0.1 nbd0
-            nbd1 127.0.0.1 nbd1
+            nbd0 127.0.0.1 vol0
+            nbd1 127.0.0.1 vol1
+            nbd2 127.0.0.1 vol2
             
         - path: /etc/rc.local
           permissions: 0755
@@ -666,15 +673,32 @@ resources:
             systemctl restart nbd@nbd0
             systemctl restart nbd@nbd1
             
-        - path: /usr/local/sbin/nbd-fixes.sh
+        - path: /usr/local/sbin/bootstrap-instance.sh
           permissions: 0755
           owner: root
           content: |
             #! /bin/bash
 
             #
-            # NBD Client Bootstrap
+            # Bootstrap Instance
             #
+
+            echo "*** Bootstrapping Instance..."
+
+            # Swap
+            fallocate -l 2G /swapfile
+            chmod 0600 /swapfile
+            mkswap /swapfile
+            swapon /swapfile
+            echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+            # For NBD Server
+            truncate -s 3T /vol-0.img
+            truncate -s 3T /vol-1.img
+            truncate -s 3T /vol-2.img
+            chown nbd:nbd /vol-*.img
+
+            # NBD Client
 
             echo nbd > /etc/modules-load.d/nbd.conf
             modprobe nbd
@@ -684,28 +708,13 @@ resources:
 
             systemctl enable nbd@nbd0 --now
             systemctl enable nbd@nbd1 --now
+            systemctl enable nbd@nbd2 --now
+
+            echo "*** Boostrap Done!!!"
             
         runcmd:
 
-        #
-        # Prepare Swap
-        #
-
-        - fallocate -l 2G /swapfile
-        - chmod 0600 /swapfile
-        - mkswap /swapfile
-        - swapon /swapfile
-        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
-
-        #
-        # Prepare Test Vol for Ceph OSD
-        #
-
-        - [ sh, -c, 'truncate -s 3T /ceph-osd-0.img' ]
-        - [ sh, -c, 'truncate -s 3T /ceph-osd-1.img' ]
-        - [ sh, -c, 'chown nbd: /ceph-osd-*.img' ]
-
-        - [ sh, -c, '/usr/local/sbin/nbd-fixes.sh' ]
+        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
 
 
   ceph_osd_2:
@@ -744,17 +753,20 @@ resources:
           permissions: 0644
           owner: root
           content: |
-            [nbd0]
-            exportname = /ceph-osd-0.img
-            [nbd1]
-            exportname = /ceph-osd-1.img
+            [vol0]
+            exportname = /vol-0.img
+            [vol1]
+            exportname = /vol-1.img
+            [vol2]
+            exportname = /vol-2.img
             
         - path: /etc/nbdtab
           permissions: 0644
           owner: root
           content: |
-            nbd0 127.0.0.1 nbd0
-            nbd1 127.0.0.1 nbd1
+            nbd0 127.0.0.1 vol0
+            nbd1 127.0.0.1 vol1
+            nbd2 127.0.0.1 vol2
             
         - path: /etc/rc.local
           permissions: 0755
@@ -764,16 +776,32 @@ resources:
             systemctl restart nbd@nbd0
             systemctl restart nbd@nbd1
             
-        - path: /usr/local/sbin/nbd-fixes.sh
+        - path: /usr/local/sbin/bootstrap-instance.sh
           permissions: 0755
           owner: root
           content: |
             #! /bin/bash
 
             #
-            # NBD Client Bootstrap
+            # Bootstrap Instance
             #
 
+            echo "*** Bootstrapping Instance..."
+
+            # Swap
+            fallocate -l 2G /swapfile
+            chmod 0600 /swapfile
+            mkswap /swapfile
+            swapon /swapfile
+            echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+            # For NBD Server
+            truncate -s 3T /vol-0.img
+            truncate -s 3T /vol-1.img
+            truncate -s 3T /vol-2.img
+            chown nbd:nbd /vol-*.img
+
+            # NBD Client
             echo nbd > /etc/modules-load.d/nbd.conf
             modprobe nbd
 
@@ -782,28 +810,15 @@ resources:
 
             systemctl enable nbd@nbd0 --now
             systemctl enable nbd@nbd1 --now
+            systemctl enable nbd@nbd2 --now
+
+            #shutdown -r 1
+
+            echo "*** Boostrap Done!!!"
             
         runcmd:
 
-        #
-        # Prepare Swap
-        #
-
-        - fallocate -l 2G /swapfile
-        - chmod 0600 /swapfile
-        - mkswap /swapfile
-        - swapon /swapfile
-        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
-
-        #
-        # Prepare Test Vol for Ceph OSD
-        #
-
-        - [ sh, -c, 'truncate -s 3T /ceph-osd-0.img' ]
-        - [ sh, -c, 'truncate -s 3T /ceph-osd-1.img' ]
-        - [ sh, -c, 'chown nbd: /ceph-osd-*.img' ]
-
-        - [ sh, -c, '/usr/local/sbin/nbd-fixes.sh' ]
+        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
 
 
 
@@ -843,17 +858,20 @@ resources:
           permissions: 0644
           owner: root
           content: |
-            [nbd0]
-            exportname = /ceph-osd-0.img
-            [nbd1]
-            exportname = /ceph-osd-1.img
+            [vol0]
+            exportname = /vol-0.img
+            [vol1]
+            exportname = /vol-1.img
+            [vol2]
+            exportname = /vol-2.img
             
         - path: /etc/nbdtab
           permissions: 0644
           owner: root
           content: |
-            nbd0 127.0.0.1 nbd0
-            nbd1 127.0.0.1 nbd1
+            nbd0 127.0.0.1 vol0
+            nbd1 127.0.0.1 vol1
+            nbd2 127.0.0.1 vol2
             
         - path: /etc/rc.local
           permissions: 0755
@@ -863,16 +881,32 @@ resources:
             systemctl restart nbd@nbd0
             systemctl restart nbd@nbd1
             
-        - path: /usr/local/sbin/nbd-fixes.sh
+        - path: /usr/local/sbin/bootstrap-instance.sh
           permissions: 0755
           owner: root
           content: |
             #! /bin/bash
 
             #
-            # NBD Client Bootstrap
+            # Bootstrap Instance
             #
 
+            echo "*** Bootstrapping Instance..."
+
+            # Swap
+            fallocate -l 2G /swapfile
+            chmod 0600 /swapfile
+            mkswap /swapfile
+            swapon /swapfile
+            echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+            # For NBD Server
+            truncate -s 3T /vol-0.img
+            truncate -s 3T /vol-1.img
+            truncate -s 3T /vol-2.img
+            chown nbd:nbd /vol-*.img
+
+            # NBD Client
             echo nbd > /etc/modules-load.d/nbd.conf
             modprobe nbd
 
@@ -881,28 +915,13 @@ resources:
 
             systemctl enable nbd@nbd0 --now
             systemctl enable nbd@nbd1 --now
+            systemctl enable nbd@nbd2 --now
+
+            echo "*** Boostrap Done!!!"
             
         runcmd:
 
-        #
-        # Prepare Swap
-        #
-
-        - fallocate -l 2G /swapfile
-        - chmod 0600 /swapfile
-        - mkswap /swapfile
-        - swapon /swapfile
-        - echo '/swapfile none swap sw 0 0' >> /etc/fstab
-
-        #
-        # Prepare Test Vol for Ceph OSD
-        #
-
-        - [ sh, -c, 'truncate -s 3T /ceph-osd-0.img' ]
-        - [ sh, -c, 'truncate -s 3T /ceph-osd-1.img' ]
-        - [ sh, -c, 'chown nbd: /ceph-osd-*.img' ]
-
-        - [ sh, -c, '/usr/local/sbin/nbd-fixes.sh' ]
+        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
 
 
 
@@ -929,6 +948,7 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: true
         packages:
         - zram-config
         - net-tools
