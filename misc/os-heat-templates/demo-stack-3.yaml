@@ -126,6 +126,7 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: True
         runcmd:
         - sleep 10 && reboot
 
