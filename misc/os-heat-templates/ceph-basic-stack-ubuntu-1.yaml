@@ -7,8 +7,9 @@ description: >
   Security Groups and Floating IPs.
 
 
-  Total of 7 Instances for a basic Ceph Cluster.
+  Total of 8 Instances for a basic Ceph Cluster.
 
+  * 1 Ubuntu as Ceph Ansible
 
   * 3 Ubuntu as Ceph Control Plane, for MONs, MGRs, Dashboard and etc
 
@@ -21,16 +22,17 @@ description: >
 
    Control Network (with Internet access via router_i_1)
 
-    ---------|ctrl_subnet|-------------
-    |     |     |     |     |    |    |
-   ---   ---   ---   ---   ---  ---   |---|CEPH DASHBOARD|
-   | |   | |   | |   | |   | |  | |   |   | & PROMETHEUS |
-   | |   | |   | |   | |   | |  | |   |
-   |-|---|-|ceph_pub_subnet|-|--|-|--------|CEPH CLIENT|
-   | |   | |   | |   | |   | |  | |
-   |C|   |C|   |C|   |C|   |C|  |C|
-   |E|   |E|   |E|   |E|   |E|  |E|
-   |P|   |P|   |P|   |P|   |P|  |P|
+    ---------|ctrl_subnet|---------------------------------
+    |     |     |     |     |    |                        |
+    |     |     |     |     |    |                        |
+   ---   ---   ---   ---   ---  ---                       |
+   | |   | |   | |   | |   | |  | |                       |
+   | |   | |   | |   | |   | |  | |   ----|CEPH ANSIBLE|--|
+   |-|---|-|ceph_pub_subnet|-|--|-|---|                   |
+   | |   | |   | |   | |   | |  | |   |---|CEPH GRAFANA|--|
+   |C|   |C|   |C|   |C|   |C|  |C|   |   |& PROMETHEUS|  |
+   |E|   |E|   |E|   |E|   |E|  |E|   |                   |
+   |P|   |P|   |P|   |P|   |P|  |P|   ----|CEPH CLIENT|----
    |H|   |H|   |H|   |H|   |H|  |H|
    | |   | |   | |   | |   | |  | |
    |C|   |C|   |C|   |O|   |O|  |O|
@@ -51,7 +53,7 @@ parameters:
         Project/Compute/Access & Security, and either import
         one or create one. If you create it, make sure you keep
         the downloaded file (as you don't get a second chance)
-    default: 'jump'
+    default: 'default'
 
   # Hard-coded External Network (i.e., the World)
   public_network:
@@ -103,6 +105,13 @@ resources:
         - protocol: tcp
           port_range_min: 22
           port_range_max: 22
+        - protocol: tcp
+          port_range_min: 8443
+          port_range_max: 8443
+        - protocol: tcp
+          port_range_min: 6969
+          port_range_max: 6969
+
 
   # Basic Security Group, for now, only SSH is allowed to reach the instances.
   dash_security_group:
@@ -123,6 +132,9 @@ resources:
         - protocol: tcp
           port_range_min: 9092
           port_range_max: 9092
+        - protocol: tcp
+          port_range_min: 6969
+          port_range_max: 6969
 
 #  # Ceph Ports: https://docs.ceph.com/en/latest/rados/configuration/network-config-ref/
 #  ceph_security_group:
@@ -184,6 +196,36 @@ resources:
   #
   # Ceph Control Plane Instances' entry point
   #
+
+  # Floating IP & Network Ports for Ceph Ansible 1
+  floating_ip_ansible_1:
+    type: OS::Neutron::FloatingIP
+    depends_on: router_1_i_1
+    properties:
+      floating_network_id: { get_param: public_network }
+      port_id: { get_resource: ceph_ansible_1_ctrl_port }
+
+  ceph_ansible_1_ctrl_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'ctrl-ceph-ansible-1']] }
+      network: { get_resource: ctrl_net }
+      fixed_ips:
+        - ip_address: 192.168.192.4
+      security_groups:
+        - { get_resource: dash_security_group }
+
+  ceph_ansible_1_pub_port:
+    type: OS::Neutron::Port
+    properties:
+      name: { list_join: ['-', [{ get_param: 'OS::stack_name' } , 'pub-ceph-ansible-1']]}
+      network: { get_resource: ceph_pub_net }
+      fixed_ips:
+        - ip_address: 10.192.0.4
+#      security_groups:
+#        - { get_resource: ceph_security_group }
+      port_security_enabled: False
+
 
   # Floating IP & Network Ports for Ceph Control Dashboard 1
   floating_ip_dash_1:
@@ -461,6 +503,460 @@ resources:
 
 
   #
+  # Ceph Ansible Instance
+  #
+  ceph_ansible_1:
+    type: OS::Nova::Server
+    properties:
+      name: { str_replace: { params: { $stack_name: { get_param: 'OS::stack_name' } }, template: '$stack_name-ceph-ansible-1' } }
+      flavor: { get_param: 'flavor_ceph_generic' }
+      image: { get_param: 'os_image_1' }
+      key_name: { get_param: 'ssh_key' }
+      networks:
+        - port: { get_resource: ceph_ansible_1_ctrl_port }
+        - port: { get_resource: ceph_ansible_1_pub_port }
+      user_data_format: RAW
+      user_data: |
+        #cloud-config
+        system_info:
+          default_user:
+            name: 'it-network'
+        chpasswd:
+          list: |
+            it-network:it-network
+          expire: False
+        package_upgrade: True
+        packages:
+        - zram-config
+        - net-tools
+        - ansible
+        - python3-netaddr
+
+        write_files:
+
+        - path: /etc/hosts
+          permissions: '0755'
+          owner: root
+          append: true
+          content: |
+            
+            # Uses 'ceph_public' internally within the Stack.
+            10.192.0.5 cephao-1-ceph-client-1
+            10.192.0.10 cephao-1-ceph-dash-1
+            10.192.0.11 cephao-1-ceph-cp-1
+            10.192.0.12 cephao-1-ceph-cp-2
+            10.192.0.13 cephao-1-ceph-cp-3
+            10.192.0.21 cephao-1-ceph-osd-1
+            10.192.0.22 cephao-1-ceph-osd-2
+            10.192.0.23 cephao-1-ceph-osd-3
+            
+        - path: /etc/inventory/project/stack-1/ceph/hosts.ini
+          permissions: '0644'
+          owner: root
+          content: |
+            
+            #
+            # Ceph Ansible Main Inventory
+            #
+
+            #
+            # All Hosts - Using the 'ctrl_subnet' for accessing them.
+            #
+
+            cephao-1-ceph-cp-1 ansible_host=192.168.192.11
+            cephao-1-ceph-cp-2 ansible_host=192.168.192.12
+            cephao-1-ceph-cp-3 ansible_host=192.168.192.13
+
+            cephao-1-ceph-osd-1 ansible_host=192.168.192.21
+            cephao-1-ceph-osd-2 ansible_host=192.168.192.22
+            cephao-1-ceph-osd-3 ansible_host=192.168.192.23
+
+            cephao-1-ceph-dash-1 ansible_host=192.168.192.5
+
+            cephao-1-ceph-client-1 ansible_host=192.168.192.10
+
+            #
+            # Ceph Control Plane
+            #
+
+            [all:vars]
+            ansible_user=it-network
+
+            [mons]
+            cephao-1-ceph-cp-1
+            cephao-1-ceph-cp-2
+            cephao-1-ceph-cp-3
+
+            [mgrs]
+            cephao-1-ceph-cp-1
+            cephao-1-ceph-cp-2
+            cephao-1-ceph-cp-3
+
+            #
+            # Ceph OSDs
+            #
+
+            [osds]
+            cephao-1-ceph-osd-1
+            cephao-1-ceph-osd-2
+            cephao-1-ceph-osd-3
+
+            #
+            # NOTE: Bellow this line, everything is actually optional.
+            #
+
+            #
+            # Ceph Client (nice to have it)
+            #
+
+            [clients]
+            cephao-1-ceph-client-1
+
+            #
+            # Ceph Control Plane Optionals
+            #
+
+            # Must configure: 'dashboard_enabled: true' in 'group_vars/all.yml'.
+            [grafana-server]
+            cephao-1-ceph-dash-1
+
+            [mdss]
+            cephao-1-ceph-cp-1
+            cephao-1-ceph-cp-2
+            cephao-1-ceph-cp-3
+
+            #
+            # More Optionals
+            #
+
+            # Not working on Ubuntu, no package matching 'nfs-ganesha-rgw' is available.
+            #[nfss]
+            #cephao-1-ceph-cp-1
+            #cephao-1-ceph-cp-2
+            #cephao-1-ceph-cp-3
+
+            [rgws]
+            cephao-1-ceph-cp-1
+            cephao-1-ceph-cp-2
+            cephao-1-ceph-cp-3
+
+            [rgwloadbalancers]
+            cephao-1-ceph-cp-1
+            cephao-1-ceph-cp-2
+            cephao-1-ceph-cp-3
+
+            #[rbdmirrors]
+            #cephao-1-ceph-cp-1
+            #cephao-1-ceph-cp-2
+            #cephao-1-ceph-cp-3
+
+            # Not working on Ubuntu, "only CentOS".
+            #[iscsigws]
+            #cephao-1-ceph-cp-1
+            #cephao-1-ceph-cp-2
+            #cephao-1-ceph-cp-3
+            
+        - path: /etc/inventory/project/stack-1/ceph/group_vars/all.yml
+          permissions: '0644'
+          owner: root
+          content: |
+            ---
+            cluster: ceph
+            ntp_daemon_type: chronyd
+            ceph_origin: distro
+            ceph_stable_release: octopus
+            generate_fsid: false
+            fsid: a46d52d3-5a8b-4609-9a1f-e22e06f710f9
+            ceph_conf_key_directory: /etc/ceph
+            ceph_keyring_permissions: '0600'
+            cephx: true
+            monitor_interface: ens4
+            cephfs: cephfs # name of the ceph filesystem
+            cephfs_data_pool:
+              name: "{{ cephfs_data if cephfs_data is defined else 'cephfs_data' }}"
+            cephfs_data_pool_ec:
+              name: "cephfs_data_pool_ec"
+              type: 'erasure'
+              erasure_profile: 'default'
+            cephfs_metadata_pool:
+              name: "{{ cephfs_metadata if cephfs_metadata is defined else 'cephfs_metadata' }}"
+            cephfs_pools:
+              - "{{ cephfs_data_pool }}"
+              - "{{ cephfs_data_pool_ec }}"
+              - "{{ cephfs_metadata_pool }}"
+            public_network: 10.192.0.0/24
+            cluster_network: 10.192.1.0/24
+            osd_objectstore: bluestore
+            radosgw_interface: ens4
+            nfs_file_gw: false
+            nfs_obj_gw: "{{ False if groups.get(mon_group_name, []) | length == 0 else True }}"
+            containerized_deployment: false
+            openstack_config: True
+            openstack_cinder_pool:
+              name: "volumes"
+              application: "rbd"
+            openstack_cinder_pool_ec:
+              name: "volumes_ec"
+              application: "rbd"
+              type: 'erasure'
+              erasure_profile: "default"
+            openstack_nova_pool:
+              name: "vms"
+              application: "rbd"
+            openstack_nova_pool_ec:
+              name: "vms_ec"
+              application: "rbd"
+              type: 'erasure'
+              erasure_profile: "default"
+            openstack_cinder_backup_pool:
+              name: "backups"
+              application: "rbd"
+            openstack_cinder_backup_pool_ec:
+              name: "backups_ec"
+              application: "rbd"
+              type: 'erasure'
+            openstack_gnocchi_pool:
+              name: "metrics"
+              application: "rbd"
+            openstack_gnocchi_pool_ec:
+              name: "metrics_ec"
+              application: "rbd"
+              type: 'erasure'
+              erasure_profile: "default"
+            openstack_glance_pool:
+              name: "images"
+              application: "rbd"
+            openstack_glance_pool_ec:
+              name: "images_ec"
+              application: "rbd"
+              type: 'erasure'
+              erasure_profile: "default"
+            openstack_cephfs_data_pool:
+              name: "manila_data"
+              application: "cephfs"
+            openstack_cephfs_metadata_pool:
+              name: "manila_metadata"
+              application: "cephfs"
+            openstack_pools:
+              - "{{ openstack_glance_pool }}"
+              - "{{ openstack_glance_pool_ec }}"
+              - "{{ openstack_cinder_pool }}"
+              - "{{ openstack_cinder_pool_ec }}"
+              - "{{ openstack_nova_pool }}"
+              - "{{ openstack_nova_pool_ec }}"
+              - "{{ openstack_cinder_backup_pool }}"
+              - "{{ openstack_cinder_backup_pool_ec }}"
+              - "{{ openstack_gnocchi_pool }}"
+              - "{{ openstack_gnocchi_pool_ec }}"
+              - "{{ openstack_cephfs_data_pool }}"
+              - "{{ openstack_cephfs_metadata_pool }}"
+            openstack_keys:
+              - { name: client.glance, caps: { mon: "profile rbd", osd: "profile rbd pool={{ openstack_cinder_pool.name }}, profile rbd pool={{ openstack_glance_pool.name }}"}, mode: "0600" }
+              - { name: client.glance, caps: { mon: "profile rbd", osd: "profile rbd pool={{ openstack_cinder_pool_ec.name }}, profile rbd pool={{ openstack_glance_pool_ec.name }}"}, mode: "0600" }
+              - { name: client.cinder, caps: { mon: "profile rbd", osd: "profile rbd pool={{ openstack_cinder_pool.name }}, profile rbd pool={{ openstack_nova_pool.name }}, profile rbd pool={{ openstack_glance_pool.name }}"}, mode: "0600" }
+              - { name: client.cinder, caps: { mon: "profile rbd", osd: "profile rbd pool={{ openstack_cinder_pool_ec.name }}, profile rbd pool={{ openstack_nova_pool_ec.name }}, profile rbd pool={{ openstack_glance_pool_ec.name }}"}, mode: "0600" }
+              - { name: client.cinder-backup, caps: { mon: "profile rbd", osd: "profile rbd pool={{ openstack_cinder_backup_pool.name }}"}, mode: "0600" }
+              - { name: client.cinder-backup, caps: { mon: "profile rbd", osd: "profile rbd pool={{ openstack_cinder_backup_pool_ec.name }}"}, mode: "0600" }
+              - { name: client.gnocchi, caps: { mon: "profile rbd", osd: "profile rbd pool={{ openstack_gnocchi_pool.name }}"}, mode: "0600", }
+              - { name: client.gnocchi, caps: { mon: "profile rbd", osd: "profile rbd pool={{ openstack_gnocchi_pool_ec.name }}"}, mode: "0600", }
+              - { name: client.openstack, caps: { mon: "profile rbd", osd: "profile rbd pool={{ openstack_glance_pool.name }}, profile rbd pool={{ openstack_nova_pool.name }}, profile rbd pool={{ openstack_cinder_pool.name }}, profile rbd pool={{ openstack_cinder_backup_pool.name }}"}, mode: "0600" }
+              - { name: client.openstack, caps: { mon: "profile rbd", osd: "profile rbd pool={{ openstack_glance_pool_ec.name }}, profile rbd pool={{ openstack_nova_pool_ec.name }}, profile rbd pool={{ openstack_cinder_pool_ec.name }}, profile rbd pool={{ openstack_cinder_backup_pool_ec.name }}"}, mode: "0600" }
+            dashboard_enabled: True
+            dashboard_protocol: https
+            dashboard_port: 8443
+            dashboard_admin_user: admin
+            dashboard_admin_password: p@ssw0rd
+            dashboard_crt: ''
+            dashboard_key: ''
+            grafana_admin_user: admin
+            grafana_admin_password: admin
+            grafana_container_cpu_cores: 1
+            grafana_container_memory: 2
+            prometheus_container_cpu_cores: 1
+            prometheus_container_memory: 2
+            alertmanager_container_cpu_cores: 1
+            alertmanager_container_memory: 1
+            
+        - path: /etc/inventory/project/stack-1/ceph/group_vars/clients.yml
+          permissions: '0644'
+          owner: root
+          content: |
+            ---
+            user_config: True
+            test:
+              name: "test"
+              application: "rbd"
+            test_ec:
+              name: "test_ec"
+              application: "rbd"
+              type: 'erasure'
+              erasure_profile: "default"
+              allow_ec_overwrites: true # NOT WORKING! Need manual step after `ceph-ansible`.
+            test2:
+              name: "test2"
+              application: "rbd"
+            test2_ec:
+              name: "test2_ec"
+              application: "rbd"
+              type: 'erasure'
+              erasure_profile: "default"
+            pools:
+              - "{{ test }}"
+              - "{{ test_ec }}"
+              - "{{ test2 }}"
+              - "{{ test2_ec }}"
+            keys:
+              - { name: client.test, key:"AQApDgFgjbOeDxAAO3cpV1NSRHcuALAGukiK/A==", caps: { mon: "profile rbd", osd: "allow class-read object_prefix rbd_children, profile rbd pool=test" },  mode: "{{ ceph_keyring_permissions }}" }
+              - { name: client.test2, key: "AQBvDgFgydkhDhAAyh32Qw7LOenJnulzZWLEnA==", caps: { mon: "profile rbd", osd: "allow class-read object_prefix rbd_children, profile rbd pool=test2" },  mode: "{{ ceph_keyring_permissions }}" }
+            
+        - path: /etc/inventory/project/stack-1/ceph/group_vars/osds.yml
+          permissions: '0644'
+          owner: root
+          content: |
+            ---
+            osd_auto_discovery: false
+            
+        - path: /etc/inventory/project/stack-1/ceph/group_vars/rgwloadbalancers.yml
+          permissions: '0644'
+          owner: root
+          content: |
+            ---
+            haproxy_frontend_port: 80
+            virtual_ips:
+               - 192.168.192.10
+            virtual_ip_netmask: 24
+            virtual_ip_interface: ens3
+            
+        - path: /etc/inventory/project/stack-1/ceph/host_vars/cephao-1-ceph-osd-1.yaml
+          permissions: '0644'
+          owner: root
+          content: |
+            ---
+            devices:
+              - /dev/nbd0
+              - /dev/nbd1
+              - /dev/nbd2
+              - /dev/nbd3
+              - /dev/nbd4
+              - /dev/nbd5
+            
+        - path: /etc/inventory/project/stack-1/ceph/host_vars/cephao-1-ceph-osd-2.yaml
+          permissions: '0644'
+          owner: root
+          content: |
+            ---
+            devices:
+              - /dev/nbd0
+              - /dev/nbd1
+              - /dev/nbd2
+              - /dev/nbd3
+              - /dev/nbd4
+              - /dev/nbd5
+            
+        - path: /etc/inventory/project/stack-1/ceph/host_vars/cephao-1-ceph-osd-3.yaml
+          permissions: '0644'
+          owner: root
+          content: |
+            ---
+            devices:
+              - /dev/nbd0
+              - /dev/nbd1
+              - /dev/nbd2
+              - /dev/nbd3
+              - /dev/nbd4
+              - /dev/nbd5
+            
+        - path: /usr/local/bin/netcat-tarpipe-send-ssh-pubkey.sh
+          permissions: '0755'
+          owner: root
+          content: |
+            #!/bin/bash
+
+            INSTANCES="192.168.192.5 192.168.192.10 192.168.192.11 192.168.192.12 192.168.192.13 192.168.192.21 192.168.192.22 192.168.192.23"
+
+            pushd /home/it-network
+
+            for I in $INSTANCES
+            do
+
+                tries=0
+                success=false
+
+                while (( !${success} && ${tries} < 15 )); do
+                  {
+                    echo "Trying ($tries) to connect to server at $I on 6969..." &&
+                    $(tar cf - .ssh/id_rsa.pub | netcat $I 6969) &&
+                    success=true &&
+                    echo "SSH Key sent over to $I!" &&
+                    break
+                  } || {
+                    success=false &&
+                    echo "Failed to send SSH Public Key to $I...   :-("
+                    sleep 3
+                  }
+                  let tries=tries+1
+                done
+
+            done
+
+            popd
+            
+        - path: /usr/local/bin/ceph-ansible-deploy.sh
+          permissions: '0755'
+          owner: root
+          content: |
+            #! /bin/bash
+
+            pushd /home/it-network/ceph-ansible
+            time ansible-playbook -i /etc/inventory/project/stack-1/ceph/hosts.ini site.yml
+            popd
+            
+        - path: /usr/local/sbin/bootstrap-instance.sh
+          permissions: '0755'
+          owner: root
+          content: |
+            #! /bin/bash
+
+            #
+            # Bootstrap Instance
+            #
+
+            echo '***'
+            echo '*** Bootstrapping Instance...'
+            echo '***'
+
+            # Swap
+            fallocate -l 1G /swapfile
+            chmod 0600 /swapfile
+            mkswap /swapfile
+            swapon /swapfile
+            echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+            pushd /home/it-network
+
+            git clone -b stable-5.0 https://github.com/ceph/ceph-ansible.git
+            cp /home/it-network/ceph-ansible/site.yml.sample /home/it-network/ceph-ansible/site.yml
+
+            ssh-keygen -b 2048 -t rsa -f .ssh/id_rsa -q -C 'it-network@cephao-1-ceph-ansible-1' -N ''
+
+            mkdir ansible
+            touch ansible/ansible.log
+
+            chown -R it-network:it-network /home/it-network
+
+            popd
+
+            echo '***'
+            echo '*** Bootstrap Done!!!'
+            echo '***'
+            
+        runcmd:
+
+        - /usr/local/sbin/bootstrap-instance.sh
+        - /usr/local/bin/netcat-tarpipe-send-ssh-pubkey.sh
+        - sync ; sleep 10 && reboot
+
+  #
   # Ceph Control Plane Instances - MONs, MGRs, Dashboard and etc
   #
   ceph_dash_1:
@@ -483,22 +979,57 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: True
         packages:
         - zram-config
         - net-tools
 
         write_files:
 
+        - path: /etc/hosts
+          permissions: '0755'
+          owner: root
+          append: true
+          content: |
+            
+            # Uses 'ceph_public' internally within the Stack.
+            10.192.0.5 cephao-1-ceph-client-1
+            10.192.0.10 cephao-1-ceph-dash-1
+            10.192.0.11 cephao-1-ceph-cp-1
+            10.192.0.12 cephao-1-ceph-cp-2
+            10.192.0.13 cephao-1-ceph-cp-3
+            10.192.0.21 cephao-1-ceph-osd-1
+            10.192.0.22 cephao-1-ceph-osd-2
+            10.192.0.23 cephao-1-ceph-osd-3
+            
         - path: /etc/rc.local
-          permissions: 0755
+          permissions: '0755'
           owner: root
           content: |
             #! /bin/bash
             iptables -t nat -A PREROUTING -d 192.168.192.10 -m tcp -p tcp --dport 3000 -j DNAT --to-destination 10.192.0.10
             iptables -t nat -A PREROUTING -d 192.168.192.10 -m tcp -p tcp --dport 9092 -j DNAT --to-destination 10.192.0.10
             
+        - path: /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+          permissions: '0755'
+          owner: root
+          content: |
+            #! /bin/bash
+
+            echo '***'
+            echo '*** Waiting for the SSH Public Key from Ceph Ansible Instance...'
+            echo '***'
+
+            pushd /home/it-network
+            netcat -l -p 6969 | tar Ox >> .ssh/authorized_keys
+            popd
+
+            echo '***'
+            echo '*** SSH Public Key Received!'
+            echo '***'
+            
         - path: /usr/local/sbin/bootstrap-instance.sh
-          permissions: 0755
+          permissions: '0755'
           owner: root
           content: |
             #! /bin/bash
@@ -507,7 +1038,9 @@ resources:
             # Bootstrap Instance
             #
 
-            echo "*** Bootstrapping Instance..."
+            echo '***'
+            echo '*** Bootstrapping Instance...'
+            echo '***'
 
             # Swap
             fallocate -l 1G /swapfile
@@ -516,11 +1049,15 @@ resources:
             swapon /swapfile
             echo '/swapfile none swap sw 0 0' >> /etc/fstab
 
-            echo "*** Boostrap Done!!!"
+            echo '***'
+            echo '*** Bootstrap Done!!!'
+            echo '***'
             
         runcmd:
 
-        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
+        - /usr/local/sbin/bootstrap-instance.sh
+        - /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+        - sync ; sleep 10 && reboot
 
 
   ceph_cp_1:
@@ -543,19 +1080,55 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: True
         packages:
         - zram-config
         - net-tools
 
         write_files:
 
+        - path: /etc/hosts
+          permissions: '0755'
+          owner: root
+          append: true
+          content: |
+            
+            # Uses 'ceph_public' internally within the Stack.
+            10.192.0.5 cephao-1-ceph-client-1
+            10.192.0.10 cephao-1-ceph-dash-1
+            10.192.0.11 cephao-1-ceph-cp-1
+            10.192.0.12 cephao-1-ceph-cp-2
+            10.192.0.13 cephao-1-ceph-cp-3
+            10.192.0.21 cephao-1-ceph-osd-1
+            10.192.0.22 cephao-1-ceph-osd-2
+            10.192.0.23 cephao-1-ceph-osd-3
+            
+
+        - path: /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+          permissions: '0755'
+          owner: root
+          content: |
+            #! /bin/bash
+
+            echo '***'
+            echo '*** Waiting for the SSH Public Key from Ceph Ansible Instance...'
+            echo '***'
+
+            pushd /home/it-network
+            netcat -l -p 6969 | tar Ox >> .ssh/authorized_keys
+            popd
+
+            echo '***'
+            echo '*** SSH Public Key Received!'
+            echo '***'
+            
         - path: /etc/rc.local
-          permissions: 0755
+          permissions: '0755'
           owner: root
           content: |
             #! /bin/bash
             iptables -t nat -A PREROUTING -d 192.168.192.11 -m tcp -p tcp --dport 8443 -j DNAT --to-destination 10.192.0.11
-
+            
         runcmd:
         #
         # Prepare Swap
@@ -566,6 +1139,8 @@ resources:
         - mkswap /swapfile
         - swapon /swapfile
         - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+        - /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+        - sync ; sleep 10 && reboot
 
 
   ceph_cp_2:
@@ -588,9 +1163,48 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: True
         packages:
         - zram-config
         - net-tools
+
+        write_files:
+
+        - path: /etc/hosts
+          permissions: '0755'
+          owner: root
+          append: true
+          content: |
+            
+            # Uses 'ceph_public' internally within the Stack.
+            10.192.0.5 cephao-1-ceph-client-1
+            10.192.0.10 cephao-1-ceph-dash-1
+            10.192.0.11 cephao-1-ceph-cp-1
+            10.192.0.12 cephao-1-ceph-cp-2
+            10.192.0.13 cephao-1-ceph-cp-3
+            10.192.0.21 cephao-1-ceph-osd-1
+            10.192.0.22 cephao-1-ceph-osd-2
+            10.192.0.23 cephao-1-ceph-osd-3
+            
+
+        - path: /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+          permissions: '0755'
+          owner: root
+          content: |
+            #! /bin/bash
+
+            echo '***'
+            echo '*** Waiting for the SSH Public Key from Ceph Ansible Instance...'
+            echo '***'
+
+            pushd /home/it-network
+            netcat -l -p 6969 | tar Ox >> .ssh/authorized_keys
+            popd
+
+            echo '***'
+            echo '*** SSH Public Key Received!'
+            echo '***'
+            
         runcmd:
         #
         # Prepare Swap
@@ -601,6 +1215,8 @@ resources:
         - mkswap /swapfile
         - swapon /swapfile
         - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+        - /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+        - sync ; sleep 10 && reboot
 
   ceph_cp_3:
     type: OS::Nova::Server
@@ -622,9 +1238,48 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: True
         packages:
         - zram-config
         - net-tools
+
+        write_files:
+
+        - path: /etc/hosts
+          permissions: '0755'
+          owner: root
+          append: true
+          content: |
+            
+            # Uses 'ceph_public' internally within the Stack.
+            10.192.0.5 cephao-1-ceph-client-1
+            10.192.0.10 cephao-1-ceph-dash-1
+            10.192.0.11 cephao-1-ceph-cp-1
+            10.192.0.12 cephao-1-ceph-cp-2
+            10.192.0.13 cephao-1-ceph-cp-3
+            10.192.0.21 cephao-1-ceph-osd-1
+            10.192.0.22 cephao-1-ceph-osd-2
+            10.192.0.23 cephao-1-ceph-osd-3
+            
+
+        - path: /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+          permissions: '0755'
+          owner: root
+          content: |
+            #! /bin/bash
+
+            echo '***'
+            echo '*** Waiting for the SSH Public Key from Ceph Ansible Instance...'
+            echo '***'
+
+            pushd /home/it-network
+            netcat -l -p 6969 | tar Ox >> .ssh/authorized_keys
+            popd
+
+            echo '***'
+            echo '*** SSH Public Key Received!'
+            echo '***'
+            
         runcmd:
         #
         # Prepare Swap
@@ -635,11 +1290,18 @@ resources:
         - mkswap /swapfile
         - swapon /swapfile
         - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+        - /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+        - sync ; sleep 10 && reboot
 
 
   #
   # Ceph OSD Instances
   #
+  #
+  # NOTE: The mode OSDs you have, the more PG's you can allocate, the more pools
+  # you can have.
+  #
+
   ceph_osd_1:
     type: OS::Nova::Server
     properties:
@@ -664,6 +1326,7 @@ resources:
             it-network:it-network
           expire: False
 
+        package_upgrade: True
         packages:
         - net-tools
         - zram-config
@@ -672,8 +1335,42 @@ resources:
 
         write_files:
 
+        - path: /etc/hosts
+          permissions: '0755'
+          owner: root
+          append: true
+          content: |
+            
+            # Uses 'ceph_public' internally within the Stack.
+            10.192.0.5 cephao-1-ceph-client-1
+            10.192.0.10 cephao-1-ceph-dash-1
+            10.192.0.11 cephao-1-ceph-cp-1
+            10.192.0.12 cephao-1-ceph-cp-2
+            10.192.0.13 cephao-1-ceph-cp-3
+            10.192.0.21 cephao-1-ceph-osd-1
+            10.192.0.22 cephao-1-ceph-osd-2
+            10.192.0.23 cephao-1-ceph-osd-3
+            
+        - path: /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+          permissions: '0755'
+          owner: root
+          content: |
+            #! /bin/bash
+
+            echo '***'
+            echo '*** Waiting for the SSH Public Key from Ceph Ansible Instance...'
+            echo '***'
+
+            pushd /home/it-network
+            netcat -l -p 6969 | tar Ox >> .ssh/authorized_keys
+            popd
+
+            echo '***'
+            echo '*** SSH Public Key Received!'
+            echo '***'
+            
         - path: /etc/nbd-server/conf.d/exports.conf
-          permissions: 0644
+          permissions: '0644'
           owner: root
           content: |
             [vol0]
@@ -682,26 +1379,38 @@ resources:
             exportname = /vol-1.img
             [vol2]
             exportname = /vol-2.img
+            [vol3]
+            exportname = /vol-3.img
+            [vol4]
+            exportname = /vol-4.img
+            [vol5]
+            exportname = /vol-5.img
             
         - path: /etc/nbdtab
-          permissions: 0644
+          permissions: '0644'
           owner: root
           content: |
             nbd0 127.0.0.1 vol0
             nbd1 127.0.0.1 vol1
             nbd2 127.0.0.1 vol2
+            nbd3 127.0.0.1 vol3
+            nbd4 127.0.0.1 vol4
+            nbd5 127.0.0.1 vol5
             
         - path: /etc/rc.local
-          permissions: 0755
+          permissions: '0755'
           owner: root
           content: |
             #! /bin/bash
             systemctl restart nbd@nbd0
             systemctl restart nbd@nbd1
             systemctl restart nbd@nbd2
+            systemctl restart nbd@nbd3
+            systemctl restart nbd@nbd4
+            systemctl restart nbd@nbd5
             
         - path: /usr/local/sbin/bootstrap-instance.sh
-          permissions: 0755
+          permissions: '0755'
           owner: root
           content: |
             #! /bin/bash
@@ -710,7 +1419,9 @@ resources:
             # Bootstrap Instance
             #
 
-            echo "*** Bootstrapping Instance..."
+            echo '***'
+            echo '*** Bootstrapping Instance...'
+            echo '***'
 
             # Swap
             fallocate -l 2G /swapfile
@@ -723,30 +1434,42 @@ resources:
             truncate -s 3T /vol-0.img
             truncate -s 3T /vol-1.img
             truncate -s 3T /vol-2.img
+            truncate -s 3T /vol-3.img
+            truncate -s 3T /vol-4.img
+            truncate -s 3T /vol-5.img
             chown nbd:nbd /vol-*.img
 
             # NBD Client
-
             echo nbd > /etc/modules-load.d/nbd.conf
             modprobe nbd
 
+            #
             # MUDAR PARA:
+            #
             # Type=oneshot
+            # RemainAfterExit=yes
             # ExecStart=/usr/sbin/nbd-client %i
             # ExecStop=/usr/sbin/nbd-client -d /dev/%i
-            sed -i 's/ExecStart=\/\/sbin\/nbd-client %i/ExecStart=\/sbin\/nbd-client -L %i/g' /lib/systemd/system/nbd@.service
 
-            systemctl daemon-reload
+            #sed -i 's/ExecStart=\/\/sbin\/nbd-client %i/ExecStart=\/sbin\/nbd-client -L %i/g' /lib/systemd/system/nbd@.service
+            #systemctl daemon-reload
 
             systemctl enable nbd@nbd0 --now
             systemctl enable nbd@nbd1 --now
             systemctl enable nbd@nbd2 --now
+            systemctl enable nbd@nbd3 --now
+            systemctl enable nbd@nbd4 --now
+            systemctl enable nbd@nbd5 --now
 
-            echo "*** Boostrap Done!!!"
+            echo '***'
+            echo '*** Bootstrap Done!!!'
+            echo '***'
             
         runcmd:
 
-        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
+        - /usr/local/sbin/bootstrap-instance.sh
+        - /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+        - sync ; sleep 10 && reboot
 
 
   ceph_osd_2:
@@ -771,6 +1494,7 @@ resources:
             it-network:it-network
           expire: False
 
+        package_upgrade: True
         packages:
         - net-tools
         - zram-config
@@ -779,8 +1503,42 @@ resources:
 
         write_files:
 
+        - path: /etc/hosts
+          permissions: '0755'
+          owner: root
+          append: true
+          content: |
+            
+            # Uses 'ceph_public' internally within the Stack.
+            10.192.0.5 cephao-1-ceph-client-1
+            10.192.0.10 cephao-1-ceph-dash-1
+            10.192.0.11 cephao-1-ceph-cp-1
+            10.192.0.12 cephao-1-ceph-cp-2
+            10.192.0.13 cephao-1-ceph-cp-3
+            10.192.0.21 cephao-1-ceph-osd-1
+            10.192.0.22 cephao-1-ceph-osd-2
+            10.192.0.23 cephao-1-ceph-osd-3
+            
+        - path: /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+          permissions: '0755'
+          owner: root
+          content: |
+            #! /bin/bash
+
+            echo '***'
+            echo '*** Waiting for the SSH Public Key from Ceph Ansible Instance...'
+            echo '***'
+
+            pushd /home/it-network
+            netcat -l -p 6969 | tar Ox >> .ssh/authorized_keys
+            popd
+
+            echo '***'
+            echo '*** SSH Public Key Received!'
+            echo '***'
+            
         - path: /etc/nbd-server/conf.d/exports.conf
-          permissions: 0644
+          permissions: '0644'
           owner: root
           content: |
             [vol0]
@@ -789,26 +1547,38 @@ resources:
             exportname = /vol-1.img
             [vol2]
             exportname = /vol-2.img
+            [vol3]
+            exportname = /vol-3.img
+            [vol4]
+            exportname = /vol-4.img
+            [vol5]
+            exportname = /vol-5.img
             
         - path: /etc/nbdtab
-          permissions: 0644
+          permissions: '0644'
           owner: root
           content: |
             nbd0 127.0.0.1 vol0
             nbd1 127.0.0.1 vol1
             nbd2 127.0.0.1 vol2
+            nbd3 127.0.0.1 vol3
+            nbd4 127.0.0.1 vol4
+            nbd5 127.0.0.1 vol5
             
         - path: /etc/rc.local
-          permissions: 0755
+          permissions: '0755'
           owner: root
           content: |
             #! /bin/bash
             systemctl restart nbd@nbd0
             systemctl restart nbd@nbd1
             systemctl restart nbd@nbd2
+            systemctl restart nbd@nbd3
+            systemctl restart nbd@nbd4
+            systemctl restart nbd@nbd5
             
         - path: /usr/local/sbin/bootstrap-instance.sh
-          permissions: 0755
+          permissions: '0755'
           owner: root
           content: |
             #! /bin/bash
@@ -817,7 +1587,9 @@ resources:
             # Bootstrap Instance
             #
 
-            echo "*** Bootstrapping Instance..."
+            echo '***'
+            echo '*** Bootstrapping Instance...'
+            echo '***'
 
             # Swap
             fallocate -l 2G /swapfile
@@ -830,26 +1602,34 @@ resources:
             truncate -s 3T /vol-0.img
             truncate -s 3T /vol-1.img
             truncate -s 3T /vol-2.img
+            truncate -s 3T /vol-3.img
+            truncate -s 3T /vol-4.img
+            truncate -s 3T /vol-5.img
             chown nbd:nbd /vol-*.img
 
             # NBD Client
             echo nbd > /etc/modules-load.d/nbd.conf
             modprobe nbd
 
-            sed -i 's/ExecStart=\/\/sbin\/nbd-client %i/ExecStart=\/sbin\/nbd-client -L %i/g' /lib/systemd/system/nbd@.service
-            systemctl daemon-reload
+            #sed -i 's/ExecStart=\/\/sbin\/nbd-client %i/ExecStart=\/sbin\/nbd-client -L %i/g' /lib/systemd/system/nbd@.service
+            #systemctl daemon-reload
 
             systemctl enable nbd@nbd0 --now
             systemctl enable nbd@nbd1 --now
             systemctl enable nbd@nbd2 --now
+            systemctl enable nbd@nbd3 --now
+            systemctl enable nbd@nbd4 --now
+            systemctl enable nbd@nbd5 --now
 
-            #shutdown -r 1
-
-            echo "*** Boostrap Done!!!"
+            echo '***'
+            echo '*** Bootstrap Done!!!'
+            echo '***'
             
         runcmd:
 
-        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
+        - /usr/local/sbin/bootstrap-instance.sh
+        - /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+        - sync ; sleep 10 && reboot
 
 
   ceph_osd_3:
@@ -874,6 +1654,7 @@ resources:
             it-network:it-network
           expire: False
 
+        package_upgrade: True
         packages:
         - net-tools
         - zram-config
@@ -882,8 +1663,42 @@ resources:
 
         write_files:
 
+        - path: /etc/hosts
+          permissions: '0755'
+          owner: root
+          append: true
+          content: |
+            
+            # Uses 'ceph_public' internally within the Stack.
+            10.192.0.5 cephao-1-ceph-client-1
+            10.192.0.10 cephao-1-ceph-dash-1
+            10.192.0.11 cephao-1-ceph-cp-1
+            10.192.0.12 cephao-1-ceph-cp-2
+            10.192.0.13 cephao-1-ceph-cp-3
+            10.192.0.21 cephao-1-ceph-osd-1
+            10.192.0.22 cephao-1-ceph-osd-2
+            10.192.0.23 cephao-1-ceph-osd-3
+            
+        - path: /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+          permissions: '0755'
+          owner: root
+          content: |
+            #! /bin/bash
+
+            echo '***'
+            echo '*** Waiting for the SSH Public Key from Ceph Ansible Instance...'
+            echo '***'
+
+            pushd /home/it-network
+            netcat -l -p 6969 | tar Ox >> .ssh/authorized_keys
+            popd
+
+            echo '***'
+            echo '*** SSH Public Key Received!'
+            echo '***'
+            
         - path: /etc/nbd-server/conf.d/exports.conf
-          permissions: 0644
+          permissions: '0644'
           owner: root
           content: |
             [vol0]
@@ -892,26 +1707,38 @@ resources:
             exportname = /vol-1.img
             [vol2]
             exportname = /vol-2.img
+            [vol3]
+            exportname = /vol-3.img
+            [vol4]
+            exportname = /vol-4.img
+            [vol5]
+            exportname = /vol-5.img
             
         - path: /etc/nbdtab
-          permissions: 0644
+          permissions: '0644'
           owner: root
           content: |
             nbd0 127.0.0.1 vol0
             nbd1 127.0.0.1 vol1
             nbd2 127.0.0.1 vol2
+            nbd3 127.0.0.1 vol3
+            nbd4 127.0.0.1 vol4
+            nbd5 127.0.0.1 vol5
             
         - path: /etc/rc.local
-          permissions: 0755
+          permissions: '0755'
           owner: root
           content: |
             #! /bin/bash
             systemctl restart nbd@nbd0
             systemctl restart nbd@nbd1
             systemctl restart nbd@nbd2
+            systemctl restart nbd@nbd3
+            systemctl restart nbd@nbd4
+            systemctl restart nbd@nbd5
             
         - path: /usr/local/sbin/bootstrap-instance.sh
-          permissions: 0755
+          permissions: '0755'
           owner: root
           content: |
             #! /bin/bash
@@ -920,7 +1747,9 @@ resources:
             # Bootstrap Instance
             #
 
-            echo "*** Bootstrapping Instance..."
+            echo '***'
+            echo '*** Bootstrapping Instance...'
+            echo '***'
 
             # Swap
             fallocate -l 2G /swapfile
@@ -933,24 +1762,34 @@ resources:
             truncate -s 3T /vol-0.img
             truncate -s 3T /vol-1.img
             truncate -s 3T /vol-2.img
+            truncate -s 3T /vol-3.img
+            truncate -s 3T /vol-4.img
+            truncate -s 3T /vol-5.img
             chown nbd:nbd /vol-*.img
 
             # NBD Client
             echo nbd > /etc/modules-load.d/nbd.conf
             modprobe nbd
 
-            sed -i 's/ExecStart=\/\/sbin\/nbd-client %i/ExecStart=\/sbin\/nbd-client -L %i/g' /lib/systemd/system/nbd@.service
-            systemctl daemon-reload
+            #sed -i 's/ExecStart=\/\/sbin\/nbd-client %i/ExecStart=\/sbin\/nbd-client -L %i/g' /lib/systemd/system/nbd@.service
+            #systemctl daemon-reload
 
             systemctl enable nbd@nbd0 --now
             systemctl enable nbd@nbd1 --now
             systemctl enable nbd@nbd2 --now
+            systemctl enable nbd@nbd3 --now
+            systemctl enable nbd@nbd4 --now
+            systemctl enable nbd@nbd5 --now
 
-            echo "*** Boostrap Done!!!"
+            echo '***'
+            echo '*** Bootstrap Done!!!'
+            echo '***'
             
         runcmd:
 
-        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
+        - /usr/local/sbin/bootstrap-instance.sh
+        - /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+        - sync ; sleep 10 && reboot
 
 
   #
@@ -976,13 +1815,48 @@ resources:
           list: |
             it-network:it-network
           expire: False
+        package_upgrade: True
         packages:
         - zram-config
         - net-tools
         write_files:
 
+        - path: /etc/hosts
+          permissions: '0755'
+          owner: root
+          append: true
+          content: |
+            
+            # Uses 'ceph_public' internally within the Stack.
+            10.192.0.5 cephao-1-ceph-client-1
+            10.192.0.10 cephao-1-ceph-dash-1
+            10.192.0.11 cephao-1-ceph-cp-1
+            10.192.0.12 cephao-1-ceph-cp-2
+            10.192.0.13 cephao-1-ceph-cp-3
+            10.192.0.21 cephao-1-ceph-osd-1
+            10.192.0.22 cephao-1-ceph-osd-2
+            10.192.0.23 cephao-1-ceph-osd-3
+            
+        - path: /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+          permissions: '0755'
+          owner: root
+          content: |
+            #! /bin/bash
+
+            echo '***'
+            echo '*** Waiting for the SSH Public Key from Ceph Ansible Instance...'
+            echo '***'
+
+            pushd /home/it-network
+            netcat -l -p 6969 | tar Ox >> .ssh/authorized_keys
+            popd
+
+            echo '***'
+            echo '*** SSH Public Key Received!'
+            echo '***'
+            
         - path: /usr/local/sbin/bootstrap-instance.sh
-          permissions: 0755
+          permissions: '0755'
           owner: root
           content: |
             #! /bin/bash
@@ -991,7 +1865,9 @@ resources:
             # Bootstrap Instance
             #
 
-            echo "*** Bootstrapping Instance..."
+            echo '***'
+            echo '*** Bootstrapping Instance...'
+            echo '***'
 
             # Swap
             fallocate -l 1G /swapfile
@@ -1000,10 +1876,14 @@ resources:
             swapon /swapfile
             echo '/swapfile none swap sw 0 0' >> /etc/fstab
 
-            echo "*** Boostrap Done!!!"
+            echo '***'
+            echo '*** Bootstrap Done!!!'
+            echo '***'
             
         runcmd:
 
-        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
+        - /usr/local/sbin/bootstrap-instance.sh
+        - /usr/local/bin/netcat-tarpipe-ssh-pubkey.sh
+        - sync ; sleep 10 && reboot
 
 outputs:
