@@ -901,6 +901,13 @@ resources:
 
             popd
             
+        - path: /etc/rc.local
+          permissions: '0755'
+          owner: root
+          content: |
+            #! /bin/bash
+            su - it-network /usr/local/bin/ceph-ansible-deploy.sh
+            
         - path: /usr/local/bin/ceph-ansible-deploy.sh
           permissions: '0755'
           owner: root
@@ -939,8 +946,7 @@ resources:
 
             ssh-keygen -b 2048 -t rsa -f .ssh/id_rsa -q -C 'it-network@cephao-1-ceph-ansible-1' -N ''
 
-            mkdir ansible
-            touch ansible/ansible.log
+            mkdir /home/it-network/ansible
 
             chown -R it-network:it-network /home/it-network
 
