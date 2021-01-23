@@ -206,9 +206,14 @@ resources:
             # Download OpenStack Ansible and Bootstrap Ansible
             #
 
-            git clone -b stable/victoria https://opendev.org/openstack/openstack-ansible /opt/openstack-ansible
+            git clone https://opendev.org/openstack/openstack-ansible /opt/openstack-ansible
 
-            cd /opt/openstack-ansible ; ./scripts/bootstrap-ansible.sh
+            pushd /opt/openstack-ansible
+
+            git checkout 22.0.0
+            scripts/bootstrap-ansible.sh
+
+            popd
 
             #
             # If a manual bootstrap is desired, comment out all lines below:
@@ -235,8 +240,12 @@ resources:
             # Enable Some Stuff
             #
 
-            #cd /opt/openstack-ansible ; cp etc/openstack_deploy/conf.d/{aodh,gnocchi,ceilometer}.yml.aio /etc/openstack_deploy/conf.d/
-            #cd /opt/openstack-ansible ; for f in $(ls -1 /etc/openstack_deploy/conf.d/*.aio); do mv -v ${f} ${f%.*}; done
+            #pushd /opt/openstack-ansible
+
+            #cp etc/openstack_deploy/conf.d/{aodh,gnocchi,ceilometer}.yml.aio /etc/openstack_deploy/conf.d/
+            #for f in $(ls -1 /etc/openstack_deploy/conf.d/*.aio); do mv -v ${f} ${f%.*}; done
+
+            #popd
 
             #
             # Some Diff Scenarios
@@ -272,7 +281,9 @@ resources:
             #export SCENARIO='ceph'
 
             # Bootstrap AIO
-            cd /opt/openstack-ansible ; ./scripts/bootstrap-aio.sh
+            pushd /opt/openstack-ansible
+            scripts/bootstrap-aio.sh
+            popd
 
             # Disable undesirable/failing playbooks:
             echo 'apply_security_hardening: false' >> /etc/openstack_deploy/user_variables.yml
@@ -282,11 +293,13 @@ resources:
             # Individual Top-Level Playbooks, all included in setup-everything.yml
             #
 
+            pushd /opt/openstack-ansible/playbooks
+
             # Deploy bare metal and Containers
-            cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-hosts.yml
+            openstack-ansible setup-hosts.yml
 
             # Deploy Infra Serices, Galera, Rabbit, Memcached, Ceph and etc.
-            cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-infrastructure.yml
+            openstack-ansible setup-infrastructure.yml
 
             #
             # A Bug? A workaround:
@@ -295,17 +308,15 @@ resources:
             sed -i 's/{. ansible_env\.HOME .}/\/root/g' /etc/ansible/roles/openstack_openrc/defaults/main.yml
 
             # Deploy OpenStack
-            cd /opt/openstack-ansible/playbooks ; openstack-ansible setup-openstack.yml
+            openstack-ansible setup-openstack.yml
 
-            # Clear PageCache only (Freeing RAM)
-            sync
-            echo 1 > /proc/sys/vm/drop_caches
+            popd
 
             #
             # Galera Rolling Reboot for Fun & Hmmm... Updates!
             #
 
-            #cd /opt/openstack-ansible/playbooks ; openstack-ansible /opt/openstack-ansible/scripts/upgrade-utilities/galera-cluster-rolling-restart.yml
+            #openstack-ansible /opt/openstack-ansible/scripts/upgrade-utilities/galera-cluster-rolling-restart.yml
 
             #
             # OSA Major Upgrade, from Victoria to Wallaby
@@ -314,12 +325,16 @@ resources:
             #cd /opt/openstack-ansible ; git pull ; git checkout master
             #cd /opt/openstack-ansible ; ./scripts/run-upgrade.sh
 
+            # Clear PageCache only (Freeing RAM)
+            sync
+            echo 1 > /proc/sys/vm/drop_caches
+
             echo '***'
             echo "*** Boostrap Done!!!"
             echo '***'
             
         runcmd:
 
-        - [ sh, -c, '/usr/local/sbin/bootstrap-instance.sh' ]
+        - /usr/local/sbin/bootstrap-instance.sh
 
 outputs:
