@@ -120,10 +120,10 @@ downloads:
   image_type: cloud
   getit: false
 
-- name: OPNsense-20.7-OpenSSL-nano-amd64.img.bz2
+- name: OPNsense-21.1-OpenSSL-nano-amd64.img.bz2
   distro: pfsense
-  url: http://mirror.wdc1.us.leaseweb.net/opnsense/releases/20.7/OPNsense-20.7-OpenSSL-nano-amd64.img.bz2
-  dest: /srv/cloud/OPNsense-20.7-OpenSSL-nano-amd64.img.bz2
+  url: http://mirror.wdc1.us.leaseweb.net/opnsense/releases/21.1/OPNsense-21.1-OpenSSL-nano-amd64.img.bz2
+  dest: /srv/cloud/OPNsense-21.1-OpenSSL-nano-amd64.img.bz2
   image_type: cloud
   getit: false
 
@@ -237,10 +237,10 @@ downloads:
   image_type: iso
   getit: false
 
-- name: OPNsense-20.7-OpenSSL-dvd-amd64.iso.bz2
+- name: OPNsense-21.1-OpenSSL-dvd-amd64.iso.bz2
   distro: pfsense
-  url: http://mirror.wdc1.us.leaseweb.net/opnsense/releases/20.7/OPNsense-20.7-OpenSSL-dvd-amd64.iso.bz2
-  dest: /srv/iso/OPNsense-20.7-OpenSSL-dvd-amd64.iso.bz2
+  url: http://mirror.wdc1.us.leaseweb.net/opnsense/releases/21.1/OPNsense-21.1-OpenSSL-dvd-amd64.iso.bz2
+  dest: /srv/iso/OPNsense-21.1-OpenSSL-dvd-amd64.iso.bz2
   image_type: iso
   getit: false
 
