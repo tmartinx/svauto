@@ -527,6 +527,7 @@ resources:
           expire: False
         package_upgrade: True
         packages:
+        - docker.io
         - zram-config
         - net-tools
         - ansible
@@ -987,6 +988,7 @@ resources:
           expire: False
         package_upgrade: True
         packages:
+        - docker.io
         - zram-config
         - net-tools
 
@@ -1089,6 +1091,7 @@ resources:
           expire: False
         package_upgrade: True
         packages:
+        - docker.io
         - zram-config
         - net-tools
 
@@ -1173,6 +1176,7 @@ resources:
           expire: False
         package_upgrade: True
         packages:
+        - docker.io
         - zram-config
         - net-tools
 
@@ -1249,6 +1253,7 @@ resources:
           expire: False
         package_upgrade: True
         packages:
+        - docker.io
         - zram-config
         - net-tools
 
@@ -1338,6 +1343,7 @@ resources:
 
         package_upgrade: True
         packages:
+        - docker.io
         - net-tools
         - zram-config
         - nbd-server
@@ -1507,6 +1513,7 @@ resources:
 
         package_upgrade: True
         packages:
+        - docker.io
         - net-tools
         - zram-config
         - nbd-server
@@ -1668,6 +1675,7 @@ resources:
 
         package_upgrade: True
         packages:
+        - docker.io
         - net-tools
         - zram-config
         - nbd-server
@@ -1830,6 +1838,7 @@ resources:
           expire: False
         package_upgrade: True
         packages:
+        - docker.io
         - zram-config
         - net-tools
         write_files:
