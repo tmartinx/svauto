@@ -541,6 +541,7 @@ resources:
           content: |
             
             # Uses 'ceph_public' internally within the Stack.
+            10.192.0.4 cephao-1-ceph-ansible-1
             10.192.0.5 cephao-1-ceph-client-1
             10.192.0.10 cephao-1-ceph-dash-1
             10.192.0.11 cephao-1-ceph-cp-1
@@ -563,6 +564,9 @@ resources:
             # All Hosts - Using the 'ctrl_subnet' for accessing them.
             #
 
+            cephao-1-ceph-client-1 ansible_host=192.168.192.5
+            cephao-1-ceph-dash-1 ansible_host=192.168.192.10
+
             cephao-1-ceph-cp-1 ansible_host=192.168.192.11
             cephao-1-ceph-cp-2 ansible_host=192.168.192.12
             cephao-1-ceph-cp-3 ansible_host=192.168.192.13
@@ -570,10 +574,6 @@ resources:
             cephao-1-ceph-osd-1 ansible_host=192.168.192.21
             cephao-1-ceph-osd-2 ansible_host=192.168.192.22
             cephao-1-ceph-osd-3 ansible_host=192.168.192.23
-
-            cephao-1-ceph-dash-1 ansible_host=192.168.192.5
-
-            cephao-1-ceph-client-1 ansible_host=192.168.192.10
 
             #
             # Ceph Control Plane
@@ -690,7 +690,7 @@ resources:
             radosgw_interface: ens4
             nfs_file_gw: false
             nfs_obj_gw: "{{ False if groups.get(mon_group_name, []) | length == 0 else True }}"
-            containerized_deployment: false
+            containerized_deployment: True
             openstack_config: True
             openstack_cinder_pool:
               name: "volumes"
@@ -999,6 +999,7 @@ resources:
           content: |
             
             # Uses 'ceph_public' internally within the Stack.
+            10.192.0.4 cephao-1-ceph-ansible-1
             10.192.0.5 cephao-1-ceph-client-1
             10.192.0.10 cephao-1-ceph-dash-1
             10.192.0.11 cephao-1-ceph-cp-1
@@ -1100,6 +1101,7 @@ resources:
           content: |
             
             # Uses 'ceph_public' internally within the Stack.
+            10.192.0.4 cephao-1-ceph-ansible-1
             10.192.0.5 cephao-1-ceph-client-1
             10.192.0.10 cephao-1-ceph-dash-1
             10.192.0.11 cephao-1-ceph-cp-1
@@ -1183,6 +1185,7 @@ resources:
           content: |
             
             # Uses 'ceph_public' internally within the Stack.
+            10.192.0.4 cephao-1-ceph-ansible-1
             10.192.0.5 cephao-1-ceph-client-1
             10.192.0.10 cephao-1-ceph-dash-1
             10.192.0.11 cephao-1-ceph-cp-1
@@ -1258,6 +1261,7 @@ resources:
           content: |
             
             # Uses 'ceph_public' internally within the Stack.
+            10.192.0.4 cephao-1-ceph-ansible-1
             10.192.0.5 cephao-1-ceph-client-1
             10.192.0.10 cephao-1-ceph-dash-1
             10.192.0.11 cephao-1-ceph-cp-1
@@ -1348,6 +1352,7 @@ resources:
           content: |
             
             # Uses 'ceph_public' internally within the Stack.
+            10.192.0.4 cephao-1-ceph-ansible-1
             10.192.0.5 cephao-1-ceph-client-1
             10.192.0.10 cephao-1-ceph-dash-1
             10.192.0.11 cephao-1-ceph-cp-1
@@ -1516,6 +1521,7 @@ resources:
           content: |
             
             # Uses 'ceph_public' internally within the Stack.
+            10.192.0.4 cephao-1-ceph-ansible-1
             10.192.0.5 cephao-1-ceph-client-1
             10.192.0.10 cephao-1-ceph-dash-1
             10.192.0.11 cephao-1-ceph-cp-1
@@ -1676,6 +1682,7 @@ resources:
           content: |
             
             # Uses 'ceph_public' internally within the Stack.
+            10.192.0.4 cephao-1-ceph-ansible-1
             10.192.0.5 cephao-1-ceph-client-1
             10.192.0.10 cephao-1-ceph-dash-1
             10.192.0.11 cephao-1-ceph-cp-1
@@ -1834,6 +1841,7 @@ resources:
           content: |
             
             # Uses 'ceph_public' internally within the Stack.
+            10.192.0.4 cephao-1-ceph-ansible-1
             10.192.0.5 cephao-1-ceph-client-1
             10.192.0.10 cephao-1-ceph-dash-1
             10.192.0.11 cephao-1-ceph-cp-1
